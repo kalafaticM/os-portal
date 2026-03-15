@@ -478,671 +478,453 @@ function switchTab(el,pane){
 // ════════════════════════════════════════════════════════
 const lessons=[
   {id:'home',num:'',title:'Početna',isHome:true,tags:[]},
-  {id:'l01',num:'01',title:`Uvod u Windows`,
-  level:'Osnovno',duration:'45 min',
-  tags:['uvod', 'istorijat', 'arhitektura', 'kernel', 'hal', 'verzije', 'linux', 'macos'],
-  subsections:[`Istorijat i verzije`,`Arhitektura OS-a`,`Kernel mode vs User mode`,`Poređenje OS-a`],
-  content:`<section><h2 class="sec" id="s1">1. Istorijat i verzije Windowsa</h2>
-<p class="para">Windows je familija operativnih sistema koje razvija <strong>Microsoft Corporation</strong>. Nastao je 1985. godine kao grafička nadgradnja za MS-DOS, tada vladajući tekstualni OS. Tokom nekoliko decenija razvio se u najrasprostranjeniji desktop operativni sistem na svetu, sa tržišnim udelom od oko 72%.</p>
-<p class="para">Svaka generacija Windowsa donela je ključne promene u arhitekturi, bezbednosti i korisničkom iskustvu. Razumevanje ove evolucije pomaže da se shvati zašto moderni Windows funkcioniše onako kako funkcioniše.</p>
-<div class="table-wrap"><table class="data"><tr><th>Verzija</th><th>Godina</th><th>Ključne novosti</th></tr><tr><td>Windows 3.1</td><td>1992</td><td>Grafički interfejs, File Manager, standardizacija</td></tr><tr><td>Windows 95</td><td>1995</td><td>Start meni, Taskbar, Plug and Play, TCP/IP stack</td></tr><tr><td>Windows XP</td><td>2001</td><td>NT kernel za sve korisnike, XP Home/Pro, stabilnost</td></tr><tr><td>Windows Vista</td><td>2007</td><td>UAC, Aero UI, poboljšana bezbednost</td></tr><tr><td>Windows 7</td><td>2009</td><td>Superbar, biblioteke, HomeGroup, brži boot</td></tr><tr><td>Windows 8/8.1</td><td>2012</td><td>Metro UI, Microsoft Store, brži start</td></tr><tr><td>Windows 10</td><td>2015</td><td>Cortana, WSL, Edge, kontinuirano ažuriranje</td></tr><tr><td>Windows 11</td><td>2021</td><td>Novi dizajn, TPM 2.0, Android aplikacije, Snap Layouts</td></tr></table></div>
-<div class="info-box"><div class="ib-title">Zašto je Windows 7 i danas važan?</div><p>Windows 7 je i danas referentna platforma za učenje administracije jer ima jasnu arhitekturu, široku podršku alata i koristi se u nastavi i industriji. VirtualBox okruženje omogućava bezbedan rad bez rizika za host sistem.</p></div>
-</section><section><h2 class="sec" id="s2">2. Arhitektura Windows OS-a</h2>
-<p class="para">Windows koristi <strong>slojevitu hibridnu arhitekturu</strong> podeljenu na dva osnovna sloja: kernel mode i user mode. Ova podela je ključna za stabilnost i bezbednost sistema — kod koji radi u kernel modu ima direktan pristup hardveru i memoriji, dok je user mode izolovan.</p>
-<p class="para">Razlog za ovakvu podelu je zaštita: greška u user modu izoluje samo tu aplikaciju. Greška u kernel modu, međutim, može srušiti ceo sistem i uzrokovati poznati <strong>BSOD (Blue Screen of Death)</strong>.</p>
-<div class="table-wrap"><table class="data"><tr><th>Sloj</th><th>Mode</th><th>Komponente</th><th>Uloga</th></tr><tr><td>HAL</td><td>Kernel</td><td>Hardware Abstraction Layer</td><td>Skriva razlike između hardvera, apstrahuje CPU/memoriju</td></tr><tr><td>Kernel</td><td>Kernel</td><td>ntoskrnl.exe</td><td>Planiranje procesa, upravljanje memorijom, I/O</td></tr><tr><td>Executive</td><td>Kernel</td><td>I/O Mgr, Process Mgr, Cache Mgr</td><td>Visoko-nivo servisi kernela</td></tr><tr><td>Drajveri</td><td>Kernel</td><td>*.sys fajlovi</td><td>Komunikacija sa hardverskim uređajima</td></tr><tr><td>Win32 API</td><td>User</td><td>kernel32.dll, user32.dll</td><td>Interfejs između aplikacija i kernela</td></tr><tr><td>Sistemski procesi</td><td>User</td><td>smss, csrss, lsass</td><td>Infrastrukturni procesi sesije</td></tr><tr><td>Aplikacije</td><td>User</td><td>notepad.exe, chrome.exe</td><td>Programi koje korisnik pokreće</td></tr></table></div>
-</section><section><h2 class="sec" id="s3">3. Kernel mode vs User mode</h2>
-<h3 class="subsec">Kernel mode — šta znači?</h3>
-<p class="para">Kod koji se izvršava u kernel modu ima privilegovani pristup svim resursima sistema: fizičkoj memoriji, I/O portovima, hardverskim prekidima. <strong>Nema ograničenja</strong> — što znači i nema zaštite od grešaka. Upravo zato u kernel modu rade samo provereni, digitalno potpisani drajveri i komponente OS-a.</p>
-<h3 class="subsec">User mode — izolacija i zaštita</h3>
-<p class="para">Svaka aplikacija u user modu dobija <strong>vlastiti virtuelni adresni prostor</strong> koji ne može direktno videti memoriju drugog procesa. Kada aplikacija želi da pristupi hardveru ili sistemskom resursu, mora da to uradi putem <strong>API poziva</strong> koji prolazi kroz kernel. Ovaj prelaz se zove <em>system call</em> ili <em>syscall</em>.</p>
-<ul class="list"><li><strong>Izolacija:</strong> pad jedne aplikacije ne ruši ostale niti OS</li><li><strong>Bezbednost:</strong> malver u user modu ne može direktno menjati kernel memoriju</li><li><strong>Prenos:</strong> prelaz iz user u kernel mode ima mali vremenski trošak (overhead)</li></ul>
-<div class="info-box"><div class="ib-title">Primer: Štampanje dokumenta</div><p>Kada Word šalje dokument na štampač, poziva PrintDocument() API (user mode) → Windows spooler servis (user mode) → Print drajver (kernel mode) → fizički port štampača. Svaki sloj dodaje izolaciju i kontrolu.</p></div>
-</section><section><h2 class="sec" id="s4">4. Poređenje Windows, Linux i macOS</h2>
-<p class="para">Razumevanje razlika između operativnih sistema pomaže pri izboru pravog OS-a za određenu namenu. Evo poređenja tri najrasprostranjenija desktop sistema:</p>
-<div class="table-wrap"><table class="data"><tr><th>Karakteristika</th><th>Windows</th><th>Linux</th><th>macOS</th></tr><tr><td>Kernel tip</td><td>Hybrid kernel</td><td>Monolithic kernel</td><td>Hybrid kernel (XNU)</td></tr><tr><td>Otvoreni kod</td><td>Ne (zatvoren)</td><td>Da (GPL licenca)</td><td>Delimično (Darwin/XNU open)</td></tr><tr><td>Fajl sistem</td><td>NTFS, FAT32, exFAT</td><td>ext4, btrfs, XFS</td><td>APFS, HFS+</td></tr><tr><td>Tržišno učešće desktop</td><td>~72%</td><td>~4%</td><td>~15%</td></tr><tr><td>Sigurnost drajvera</td><td>Potpisani drajveri</td><td>Modul sistem</td><td>Gatekeeper + SIP</td></tr><tr><td>Server verzija</td><td>Windows Server</td><td>Svaka distribucija</td><td>macOS Server (zastareo)</td></tr><tr><td>Komandna linija</td><td>CMD, PowerShell</td><td>Bash, Zsh, Fish</td><td>Zsh (Terminal.app)</td></tr></table></div>
-<div class="warn-box"><div class="ib-title">⚠ Mit o Linuxu i bezbednosti</div><p>Linux nije automatski bezbedniji od Windowsa. Bezbednost zavisi od konfiguracije, ažuriranja i korisničkih navika. Windows ima UAC, SmartScreen, Defender i TPM kao ugrađene slojeve zaštite.</p></div>
-</section>`,
-  vezbe:[{title:`Istraži arhitekturu na školskoj VM`,icon:'🖥️',steps:[`Win+R → <code>winver</code> — zapišite verziju, build broj i SP`,`Win+R → <code>msinfo32</code> — pronađite: OS Architecture, Processor, Total Physical Memory`,`CMD: <code>systeminfo | find /i "OS"</code> — uporedite sa winver`,`CMD: <code>systeminfo | find /i "BIOS"</code> — koja je verzija BIOS/UEFI?`,`Otvorite Task Manager → Performance → CPU — koliko jezgara ima procesor?`,`Nacrtajte slojevitu arhitekturu Windows-a na papiru i objasnite je paru`]}],
-  pitanja:[{q:`Koji sloj arhitekture direktno komunicira sa hardverom i skriva hardverske razlike?`,opts:[`Win32 API`,`HAL (Hardware Abstraction Layer)`,`User mode aplikacije`,`Control Panel`],ans:1},{q:`Šta se dešava kada dođe do greške u kernel modu?`,opts:[`Samo ta aplikacija se zatvara`,`Pojavljuje se BSOD i sistem se ruši`,`Sistem nastavlja normalno`,`Pokreće se System Restore automatski`],ans:1},{q:`Koja verzija Windowsa je uvela Start meni, Taskbar i Plug and Play?`,opts:[`Windows 3.1`,`Windows NT 4.0`,`Windows 95`,`Windows 98`],ans:2},{q:`Koji tip kernela koristi Windows?`,opts:[`Monolithic kernel`,`Micro kernel`,`Hybrid kernel`,`Nano kernel`],ans:2},{q:`Šta je system call (syscall)?`,opts:[`Poziv između dve korisničke aplikacije`,`Mehanizam prelaza iz user moda u kernel mod za pristup sistemskim resursima`,`Direktan poziv drajvera`,`Poruka između procesa`],ans:1},{q:`Koji fajl je Windows kernel?`,opts:[`csrss.exe`,`lsass.exe`,`ntoskrnl.exe`,`smss.exe`],ans:2},{q:`Zašto aplikacije u user modu ne mogu direktno pristupiti hardveru?`,opts:[`Jer nemaju dovoljno memorije`,`Radi izolacije i bezbednosti — moraju koristiti API koji prolazi kroz kernel`,`Jer hardver podržava samo kernel mode`,`Jer je to sporije`],ans:1},{q:`Koji je tržišni udeo Windows-a na desktop računarima (2024)?`,opts:[`~45%`,`~55%`,`~72%`,`~90%`],ans:2},{q:`Šta je BSOD?`,opts:[`Blue Screen of Data — ekran za backup`,`Blue Screen of Death — ekran greške pri kvaru u kernel modu`,`Bezbednosni ekran pri prijavi`,`Ekran za dijagnostiku mreže`],ans:1},{q:`Koji OS koristi XNU hibridni kernel?`,opts:[`Windows 11`,`Ubuntu Linux`,`macOS`,`FreeBSD`],ans:2}]},
-  {id:'l02',num:'02',title:`Instalacija i pokretanje sistema`,
-  level:'Osnovno',duration:'45 min',
-  tags:['instalacija', 'boot', 'bios', 'uefi', 'particije', 'mbr', 'gpt', 'formatiranje'],
-  subsections:[`Sistemski zahtevi`,`Proces instalacije`,`Boot process`,`MBR vs GPT`],
-  content:`<section><h2 class="sec" id="s1">1. Sistemski zahtevi</h2>
-<p class="para">Pre instalacije Windowsa neophodno je proveriti da li hardver zadovoljava minimalne zahteve. Za Windows 7 zahtevi su znatno niži nego za Windows 11, ali razumevanje oba skupa pomaže pri planiranju nadogradnje.</p>
-<div class="table-wrap"><table class="data"><tr><th>Komponenta</th><th>Windows 7 minimum</th><th>Windows 11 minimum</th><th>Preporučeno (oba)</th></tr><tr><td>Procesor</td><td>1 GHz, 32/64-bit</td><td>1 GHz, 64-bit, 2+ jezgra</td><td>Multi-core 2+ GHz</td></tr><tr><td>RAM</td><td>1 GB (32-bit) / 2 GB (64-bit)</td><td>4 GB</td><td>8–16 GB</td></tr><tr><td>Disk</td><td>16 GB / 20 GB</td><td>64 GB</td><td>256 GB SSD</td></tr><tr><td>Grafika</td><td>DirectX 9</td><td>DirectX 12 kompatibilna</td><td>Diskretna GPU</td></tr><tr><td>Firmware</td><td>BIOS ili UEFI</td><td>UEFI + Secure Boot</td><td>Isto</td></tr><tr><td>TPM</td><td>Nije potreban</td><td>TPM 2.0 obavezan</td><td>Isto</td></tr></table></div>
-<div class="info-box"><div class="ib-title">Zašto Windows 11 zahteva TPM 2.0?</div><p>TPM (Trusted Platform Module) je bezbednosni čip koji čuva kriptografske ključeve i podržava BitLocker enkripciju, Secure Boot i Windows Hello. Microsoft ga je učinio obaveznim da bi podigao bezbednosnu osnovu svih Win11 uređaja.</p></div>
-</section><section><h2 class="sec" id="s2">2. Proces instalacije</h2>
-<p class="para">Instalacija Windowsa prolazi kroz nekoliko jasno definisanih faza. Razumevanje svake faze pomaže pri dijagnostici problema i donošenju ispravnih odluka (npr. koje particije kreirati).</p>
-<h3 class="subsec">Faze instalacije</h3>
-<ul class="list"><li><strong>Priprema medijuma</strong> — kreiranje bootabilnog USB-a pomoću <em>Media Creation Tool</em> (preuzeti sa microsoft.com). ISO se može i direktno montirati u VirtualBox.</li><li><strong>Boot sa medijuma</strong> — podešavanje boot redosleda u BIOS/UEFI; USB mora biti prvi</li><li><strong>Odabir verzije i particije</strong> — Home/Pro/Enterprise; kreiranje, formatiranje ili brisanje particija</li><li><strong>Kopiranje fajlova</strong> — Windows kopira sistemske fajlove (~15–30 min zavisno od medijuma)</li><li><strong>Prva konfiguracija</strong> — podešavanje regiona, tastature, mreže</li><li><strong>OOBE (Out of Box Experience)</strong> — kreiranje korisničkog naloga, lozinka, Microsoft nalog (opciono)</li><li><strong>Drajveri i ažuriranja</strong> — Windows Update automatski preuzima drajvere</li></ul>
-<div class="warn-box"><div class="ib-title">⚠ Formatiranje particije briše SVE podatke</div><p>Uvek napravite rezervnu kopiju pre instalacije. Ako radite dual boot, nikada ne formatirati particiju sa postojećim OS-om. U VirtualBox-u koristite virtuelni disk — host sistem je zaštićen.</p></div>
-</section><section><h2 class="sec" id="s3">3. Boot process — redosled pokretanja</h2>
-<p class="para">Svaki put kada uključite računar, odvija se precizno definisan redosled koraka koji se zove <strong>boot process</strong>. Poznavanje ovog redosleda ključno je za dijagnostiku problema pri pokretanju.</p>
-<div class="table-wrap"><table class="data"><tr><th>Korak</th><th>Ime</th><th>Šta se dešava</th></tr><tr><td>1</td><td>POST</td><td>Power-On Self Test — firmware testira RAM, CPU, matičnu ploču</td></tr><tr><td>2</td><td>BIOS/UEFI</td><td>Pronalazi bootabilni uređaj prema podešenom redosledu</td></tr><tr><td>3</td><td>MBR/EFI Boot</td><td>Čita Master Boot Record ili EFI boot loader</td></tr><tr><td>4</td><td>bootmgr</td><td>Windows Boot Manager — prikazuje meni za odabir OS-a</td></tr><tr><td>5</td><td>winload.exe</td><td>Učitava kernel (ntoskrnl.exe) i HAL (hal.dll) u memoriju</td></tr><tr><td>6</td><td>Kernel init</td><td>Kernel inicijalizuje hardver, pokreće drajvere</td></tr><tr><td>7</td><td>smss.exe</td><td>Session Manager — pokreće podsisteme i kreira sesiju</td></tr><tr><td>8</td><td>winlogon.exe</td><td>Prikazuje ekran za prijavu, čeka korisnikove podatke</td></tr><tr><td>9</td><td>explorer.exe</td><td>Desktop, Taskbar, Shell — korisnik može da radi</td></tr></table></div>
-<div class="info-box"><div class="ib-title">Razlika BIOS vs UEFI</div><p>BIOS (Basic Input/Output System) je stari firmware interfejs (do ~2011) koji podržava samo MBR particije i 32-bit kod. UEFI (Unified Extensible Firmware Interface) podržava GPT, Secure Boot, brži boot, grafički interfejs i 64-bit kod. Moderni računari koriste isključivo UEFI.</p></div>
-</section><section><h2 class="sec" id="s4">4. MBR vs GPT — šeme particija</h2>
-<p class="para">Disk mora imati definisanu <strong>šemu particija</strong> koja opisuje gde se koje particije nalaze. Postoje dve dominantne šeme: stariji MBR i moderan GPT.</p>
-<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>MBR (Master Boot Record)</th><th>GPT (GUID Partition Table)</th></tr><tr><td>Maks. broj particija</td><td>4 primarne (ili 3+1 extended)</td><td>128 particija (Windows limit)</td></tr><tr><td>Maks. veličina diska</td><td>2 TB</td><td>9.4 ZB (praktično neograničeno)</td></tr><tr><td>Kompatibilnost boota</td><td>BIOS i UEFI</td><td>Samo UEFI za boot (BIOS može čitati podatke)</td></tr><tr><td>Redundansa</td><td>Nema — MBR oštećenje = nebootabilno</td><td>Backup GPT header na kraju diska</td></tr><tr><td>Identifikacija particija</td><td>32-bit broj</td><td>128-bit GUID (globalno jedinstven)</td></tr><tr><td>Preporučeno za Win11</td><td>Ne</td><td>Da — obavezno</td></tr></table></div>
-<ul class="list"><li>Za <strong>VirtualBox Windows 7 VM</strong> koristite MBR — stariji, kompatibilniji, dovoljan za vežbe</li><li>Za novi Windows 11 sistem uvek koristite GPT + UEFI</li><li><strong>diskpart komanda</strong> za proveru: <code>diskpart → list disk</code> — u koloni GPT zvezdica znači GPT disk</li></ul>
-</section>`,
-  vezbe:[{title:`Analiza particija na Windows 7 VM`,icon:'💾',steps:[`Win+R → <code>diskmgmt.msc</code> — otvorite Disk Management`,`Identifikujte tip šeme: desni klik na "Disk 0" — da li piše MBR ili GPT?`,`Zapišite sve particije: slovo, oznaka, veličina, tip fajl sistema, status`,`CMD (admin): <code>diskpart</code> → <code>list disk</code> → <code>select disk 0</code> → <code>list partition</code>`,`Pronađite System Reserved particiju — čemu služi i kolika je?`,`Nacrtajte dijagram rasporeda particija na disku`]}],
-  pitanja:[{q:`Koji program učitava Windows kernel tokom boot procesa?`,opts:[`smss.exe`,`winlogon.exe`,`winload.exe`,`explorer.exe`],ans:2},{q:`Koliki je maksimalni kapacitet diska koji MBR može adresirati?`,opts:[`1 TB`,`2 TB`,`4 TB`,`16 TB`],ans:1},{q:`Šta je POST?`,opts:[`Program za upravljanje particijama`,`Samotestiranje hardvera pri uključivanju računara`,`Vrsta fajl sistema`,`Alat za instalaciju drajvera`],ans:1},{q:`Koji je maksimalni broj particija na GPT disku u Windowsu?`,opts:[`4`,`64`,`128`,`256`],ans:2},{q:`Šta je OOBE?`,opts:[`Out of Box Experience — početno podešavanje sistema posle instalacije`,`Online Operating Boot Environment`,`Offline OS Backup Engine`,`Open Object Based Environment`],ans:0},{q:`Koji firmware standard je zamenio BIOS i podržava Secure Boot?`,opts:[`EFI 1.0`,`UEFI`,`CMOS`,`ACPI`],ans:1},{q:`Šta je prednost GPT nad MBR šemom?`,opts:[`GPT je brži za čitanje`,`GPT podržava diskove veće od 2 TB i ima redundansu`,`GPT radi sa BIOS-om, MBR ne`,`GPT automatski defragmentira disk`],ans:1},{q:`U kom redosledu se odvija boot process?`,opts:[`winload → BIOS → POST → smss`,`POST → BIOS/UEFI → bootmgr → winload → smss → winlogon`,`BIOS → POST → winlogon → bootmgr → smss`,`smss → POST → BIOS → winload → bootmgr`],ans:1},{q:`Koji Windows alat se koristi za kreiranje bootabilnog USB-a za instalaciju?`,opts:[`Rufus (treće lice)`,`Media Creation Tool (Microsoft)`,`diskpart`,`WinPE`],ans:1},{q:`Šta se dešava sa podacima na particiji ako je formatiramo tokom instalacije?`,opts:[`Podaci se čuvaju u backup folderu`,`Podaci se premeste u Recycle Bin`,`Podaci se trajno brišu`,`Podaci se kompresuju i arhiviraju`],ans:2}]},
-  {id:'l03',num:'03',title:`Korisnički interfejs`,
-  level:'Osnovno',duration:'45 min',
-  tags:['desktop', 'taskbar', 'start meni', 'file explorer', 'precice', 'virtuelni desktopi'],
-  subsections:[`Desktop i radna površina`,`Taskbar i Start meni`,`File Explorer u detalje`,`Ključne prečice`],
-  content:`<section><h2 class="sec" id="s1">1. Desktop — radna površina</h2>
-<p class="para">Desktop je osnovna radna površina Windowsa. Sve što korisnik vidi posle prijave — ikone, tapeta, Taskbar — čini desktop okruženje kojim upravlja <strong>Windows Shell (explorer.exe)</strong>. Ako explorer.exe prestane da radi, desktop nestaje (može se ponovo pokrenuti iz Task Managera).</p>
-<h3 class="subsec">Elementi desktopa</h3>
-<ul class="list"><li><strong>Ikone prečica</strong> — .lnk fajlovi koji ukazuju na programe, fajlove ili foldere; brisanje ikone ne briše original</li><li><strong>Tapeta (Wallpaper)</strong> — pozadinska slika ili boja; desni klik → Personalize</li><li><strong>Virtuelni desktopi</strong> — Win+Tab → New Desktop; organizujte rad po temama (posao / lično / muzika)</li><li><strong>Widgets (Win 11)</strong> — mini aplikacije za vreme, vesti, kalendar pri levom uglu</li><li><strong>Snap Layouts (Win 11)</strong> — lebdite mišem nad dugmetom maximize za brzo raspoređivanje prozora</li></ul>
-<div class="info-box"><div class="ib-title">Shell = Explorer.exe</div><p>explorer.exe nije samo File Explorer — to je ceo Windows Shell. Pokreće Taskbar, Start meni, Desktop ikone i File Explorer prozore. Restart explorer.exe: Task Manager → Details → explorer.exe → End Task → File → Run new task → explorer.exe</p></div>
-</section><section><h2 class="sec" id="s2">2. Taskbar i Start meni</h2>
-<p class="para">Taskbar je horizontalna traka pri dnu ekrana koja pruža brz pristup svemu što je aktivno ili zakačeno. Podešavanja: desni klik na prazno mesto na Taskbaru.</p>
-<h3 class="subsec">Delovi Taskbara</h3>
-<div class="table-wrap"><table class="data"><tr><th>Deo Taskbara</th><th>Lokacija</th><th>Funkcija</th></tr><tr><td>Start dugme</td><td>Levo</td><td>Otvara Start meni sa svim programima i pretraživanjem</td></tr><tr><td>Search bar</td><td>Pored Start</td><td>Pretraga programa, fajlova, postavki, interneta</td></tr><tr><td>Task View</td><td>Pored Search</td><td>Prikaz svih otvorenih prozora i virtuelni desktopi</td></tr><tr><td>Zakačene aplikacije</td><td>Sredina</td><td>Brzo pokretanje čestih programa</td></tr><tr><td>Otvorene aplikacije</td><td>Sredina</td><td>Aktivni prozori sa pregledom na hover</td></tr><tr><td>System Tray</td><td>Desno</td><td>Sat, mreža, zvuk, baterija, pozadinski programi</td></tr><tr><td>Action Center / Notifikacije</td><td>Krajnje desno</td><td>Obaveštenja i brza podešavanja (Wi-Fi, Bluetooth...)</td></tr></table></div>
-<h3 class="subsec">Start meni — Windows 7 vs Windows 10/11</h3>
-<p class="para">U <strong>Windows 7</strong> Start meni je klasičan: dve kolone, lista programa levo, brze stavke desno (Documents, Pictures, Control Panel). U <strong>Windows 10/11</strong> Start meni je modernizovan sa Live Tiles (Win10) ili zakačenim app ikonama (Win11).</p>
-</section><section><h2 class="sec" id="s3">3. File Explorer u detalje</h2>
-<p class="para"><strong>File Explorer</strong> (ranije Windows Explorer) je glavni alat za upravljanje fajlovima i folderima. Pokreće se prečicom <code>Win + E</code> ili iz Start menija.</p>
-<h3 class="subsec">Delovi File Explorer prozora</h3>
-<ul class="list"><li><strong>Address bar</strong> (adresna traka) — prikazuje trenutnu putanju; kliknite da unesete putanju direktno; strelice za navigaciju</li><li><strong>Navigation pane</strong> (levo stablo) — Quick Access, Desktop, This PC, Network, OneDrive — za brzu navigaciju</li><li><strong>Ribbon toolbar</strong> — kontekstualni meni alata: Home, Share, View; sadrži Cut/Copy/Paste, New folder, Properties</li><li><strong>Main pane</strong> (centralni prikaz) — sadržaj foldera; desni klik za kontekstualni meni</li><li><strong>Status bar</strong> (dno) — broj stavki, veličina selekcije, prikaz ikonica/detalja</li></ul>
-<h3 class="subsec">Prikazi sadržaja (View)</h3>
-<div class="table-wrap"><table class="data"><tr><th>Prikaz</th><th>Ikonica</th><th>Kada koristiti</th></tr><tr><td>Details</td><td>☰</td><td>Tabela sa svim metapodacima: datum, veličina, tip — najinformativniji</td></tr><tr><td>List</td><td>≡</td><td>Kompaktna lista za foldere sa mnogo stavki</td></tr><tr><td>Large/Medium Icons</td><td>⊞</td><td>Vizuelni prikaz za slike i medije</td></tr><tr><td>Tiles</td><td>▦</td><td>Naziv + tip + veličina u pločicama</td></tr></table></div>
-<div class="info-box"><div class="ib-title">Skriveni fajlovi i ekstenzije</div><p>Podrazumevano Windows skriva sistemske fajlove i ekstenzije. Za prikaz: View → Options → View → uključi "Show hidden files" i isključi "Hide extensions for known file types". Ovo je obavezno podešavanje za administraciju sistema.</p></div>
-</section><section><h2 class="sec" id="s4">4. Ključne prečice sa tastature</h2>
-<p class="para">Poznavanje prečica drastično ubrzava rad. Evo najvažnijih, grupisanih po kategorijama:</p>
-<div class="table-wrap"><table class="data"><tr><th>Prečica</th><th>Funkcija</th><th>Kategorija</th></tr><tr><td>Win+E</td><td>Otvori File Explorer</td><td>Navigacija</td></tr><tr><td>Win+D</td><td>Prikaži/sakrij Desktop</td><td>Navigacija</td></tr><tr><td>Win+L</td><td>Zaključaj računar</td><td>Bezbednost</td></tr><tr><td>Win+R</td><td>Run dijalog (pokretanje programa)</td><td>Sistem</td></tr><tr><td>Win+I</td><td>Settings / Control Panel (Win10+)</td><td>Sistem</td></tr><tr><td>Win+Tab</td><td>Task View — prozori i virtuelni desktopi</td><td>Produktivnost</td></tr><tr><td>Win+← / →</td><td>Snap prozora na levu/desnu stranu</td><td>Produktivnost</td></tr><tr><td>Win+↑ / ↓</td><td>Maximize / Restore / Minimize</td><td>Produktivnost</td></tr><tr><td>Ctrl+Shift+Esc</td><td>Direktno otvori Task Manager</td><td>Dijagnostika</td></tr><tr><td>Win+Shift+S</td><td>Snipping Tool — iseci ekran</td><td>Alati</td></tr><tr><td>Alt+F4</td><td>Zatvori aktivni prozor</td><td>Opšte</td></tr><tr><td>F2</td><td>Preimenuj selektovanu stavku</td><td>File Explorer</td></tr><tr><td>Ctrl+Z / Y</td><td>Undo / Redo</td><td>Opšte</td></tr><tr><td>Win+X</td><td>Power menu — Device Mgr, Disk Mgmt...</td><td>Sistem (Win10+)</td></tr></table></div>
-</section>`,
-  vezbe:[{title:`Prilagođavanje i savladavanje interfejsa`,icon:'🎨',steps:[`Kreirajte 2 virtuelna desktopa (Win+Tab → New Desktop)`,`Desktop 1: Notepad + File Explorer; Desktop 2: Calculator + Paint`,`Prebacujte se između desktopa: Win+Ctrl+← / →`,`Zakačite 3 aplikacije na Taskbar (desni klik → Pin)`,`U File Explorer: uključite prikaz skrivenih fajlova i ekstenzija (View → Options)`,`Pronađite i zapišite punu putanju do pagefile.sys na C: disku`,`Demonstrirajte 8 prečica sa tastature nastavniku`]}],
-  pitanja:[{q:`Koja prečica direktno otvara File Explorer?`,opts:[`Win+R`,`Win+E`,`Win+F`,`Ctrl+E`],ans:1},{q:`Koji proces je odgovoran za ceo Windows Shell (Desktop, Taskbar, File Explorer)?`,opts:[`winlogon.exe`,`smss.exe`,`explorer.exe`,`shell32.dll`],ans:2},{q:`Kojom prečicom zakačite prozor na levu stranu ekrana?`,opts:[`Win+↑`,`Win+←`,`Alt+←`,`Ctrl+←`],ans:1},{q:`Koja prečica direktno otvara Task Manager bez Ctrl+Alt+Del?`,opts:[`Win+T`,`Alt+T`,`Ctrl+Shift+Esc`,`Win+Shift+T`],ans:2},{q:`Šta radi Win+D?`,opts:[`Otvara Desktop Settings`,`Minimizuje sve prozore i prikazuje Desktop`,`Briše Desktop ikone`,`Otvara Disk Management`],ans:1},{q:`Gde se u File Explorer podešava prikaz skrivenih fajlova?`,opts:[`Home → Options`,`View → Options → View tab`,`Tools → Folder Options`,`File → Properties`],ans:1},{q:`Šta je System Tray (Notification Area)?`,opts:[`Oblast sa zakačenim aplikacijama`,`Oblast sa satom, ikonama za mrežu/zvuk i pozadinskim programima`,`Deo Start menija`,`Alatna traka za File Explorer`],ans:1},{q:`Koja prečica u Windows 11 otvara Power menu sa alatima (Device Manager, Disk Mgmt)?`,opts:[`Win+P`,`Win+X`,`Win+A`,`Win+S`],ans:1},{q:`Ako explorer.exe prestane da radi, šta se dešava?`,opts:[`Samo File Explorer se zatvara`,`Ceo Desktop, Taskbar i Start meni nestaju`,`Računar se automatski restartuje`,`Windows Update se pauzira`],ans:1},{q:`Šta je Snap Layout u Windows 11?`,opts:[`Alat za backup fajlova`,`Funkcija za brzo raspoređivanje prozora na ekranu`,`Prikaz prozora u Task View`,`Mini aplikacije na Taskbaru`],ans:1}]},
-  {id:'l04',num:'04',title:`Upravljanje datotekama`,
-  level:'Srednje',duration:'45 min',
-  tags:['ntfs', 'fat32', 'exfat', 'datoteke', 'folderi', 'atributi', 'putanja', 'efs', 'kompresija', 'icacls'],
-  subsections:[`Fajl sistemi (NTFS, FAT32, exFAT)`,`Putanje, atributi i metapodaci`,`CMD operacije sa fajlovima`,`NTFS kompresija i EFS`],
-  content:`<section><h2 class="sec" id="s1">1. Fajl sistemi — NTFS, FAT32, exFAT</h2>
-<p class="para">Fajl sistem definiše kako operativni sistem organizuje, čuva i pristupa podacima na disku. Izbor fajl sistema utiče na performanse, maksimalnu veličinu fajla, sigurnost i kompatibilnost.</p>
-<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>NTFS</th><th>FAT32</th><th>exFAT</th><th>ReFS</th></tr><tr><td>Maks. veličina fajla</td><td>16 EB</td><td>4 GB</td><td>16 EB</td><td>18.4 EB</td></tr><tr><td>Maks. veličina particije</td><td>256 TB</td><td>2 TB</td><td>128 PB</td><td>1 YB</td></tr><tr><td>NTFS dozvole</td><td>Da</td><td>Ne</td><td>Ne</td><td>Da</td></tr><tr><td>Kompresija fajlova</td><td>Da</td><td>Ne</td><td>Ne</td><td>Ne</td></tr><tr><td>Šifrovanje (EFS)</td><td>Da</td><td>Ne</td><td>Ne</td><td>Ne</td></tr><tr><td>Journaling</td><td>Da</td><td>Ne</td><td>Ne</td><td>Da (mirror log)</td></tr><tr><td>Kompatibilnost</td><td>Windows, Linux (čitanje)</td><td>Svi OS</td><td>Windows, macOS, Linux</td><td>Samo Windows Server</td></tr><tr><td>Namena</td><td>Sistemski drajv</td><td>USB, stari uređaji</td><td>USB, SD kartice (>4GB fajlovi)</td><td>Storage Spaces, serveri</td></tr></table></div>
-<p class="para">Za <strong>sistemsku particiju</strong> Windows uvek zahteva NTFS. FAT32 je i dalje koristan za USB medije zbog univerzalne kompatibilnosti, ali nosi ograničenje od 4 GB po fajlu — problem pri kopiranju velikih video fajlova.</p>
-<div class="info-box"><div class="ib-title">Šta je journaling?</div><p>Journaling (dnevnik transakcija) je mehanizam gde NTFS pre svake operacije zapisuje šta namerava da uradi. U slučaju nestanka struje, OS može pročitati journal i dovesti disk u konzistentno stanje. FAT32 nema ovu zaštitu — otud "disk errors" posle naglog isključivanja.</p></div>
-</section><section><h2 class="sec" id="s2">2. Putanje, atributi i metapodaci</h2>
-<h3 class="subsec">Apsolutna vs relativna putanja</h3>
-<p class="para">Svaki fajl i folder u Windowsu ima <strong>putanju (path)</strong> koja opisuje gde se nalazi u hijerarhiji fajl sistema. Putanja može biti apsolutna (od korena diska) ili relativna (od trenutnog foldera).</p>
-<div class="table-wrap"><table class="data"><tr><th>Tip</th><th>Format</th><th>Primer</th></tr><tr><td>Apsolutna</td><td>Počinje slovom diska</td><td><code>C:\Users\Marko\Desktop\rad.docx</code></td></tr><tr><td>Relativna</td><td>Odnosi se na tekući folder</td><td><code>..\Downloads\fajl.txt</code></td></tr><tr><td>UNC (mrežna)</td><td>\\server\share\...</td><td><code>\\PC01\Deljeni\dokument.txt</code></td></tr></table></div>
-<p class="para"><code>..</code> označava roditeljski folder; <code>.</code> označava tekući folder. Maksimalna dužina putanje u starij Windows verzijama je 260 karaktera (MAX_PATH) — ovo može izazvati probleme sa dubokim strukturama foldera.</p>
-<h3 class="subsec">Atributi fajlova</h3>
-<div class="table-wrap"><table class="data"><tr><th>Atribut</th><th>Slovo/Flag</th><th>Opis</th><th>Postavljanje</th></tr><tr><td>Read-only</td><td>R</td><td>Fajl se ne može menjati ni brisati bez promene atributa</td><td>attrib +r ili Properties</td></tr><tr><td>Hidden</td><td>H</td><td>Nije vidljiv bez opcije Show hidden files</td><td>attrib +h</td></tr><tr><td>System</td><td>S</td><td>Sistemski fajl — zaštićen od slučajnog brisanja</td><td>attrib +s</td></tr><tr><td>Archive</td><td>A</td><td>Označava da fajl čeka backup (backup softver ga bira)</td><td>automatski pri izmeni</td></tr><tr><td>Compressed</td><td>C</td><td>NTFS kompresija aktivna na fajlu/folderu</td><td>Properties → Advanced</td></tr><tr><td>Encrypted</td><td>E</td><td>EFS šifrovanje aktivno</td><td>Properties → Advanced</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – atrib komanda</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Prikaz atributa</span>
-<span class="cmd">attrib</span> C:\Vezba\*
-<span class="comment">:: Postavljanje hidden i read-only</span>
+  {id:'l01',num:'01',title:'Uvod u Windows',tags:['uvod','istorijat','arhitektura','kernel','hal','verzije'],duration:'45 min',level:'Osnovno',
+   subsections:['Istorijat i verzije','Arhitektura OS-a','Kernel i HAL','Poređenje OS-a'],
+   content:`<section><h2 class="sec" id="s1">1. Istorijat i verzije Windowsa</h2>
+<p class="para">Windows je familija operativnih sistema koje razvija Microsoft Corporation. Nastao je 1985. kao grafička nadgradnja za MS-DOS, a tokom decenija razvio se u najrasprostranjeniji desktop operativni sistem na svetu.</p>
+<div class="table-wrap"><table class="data"><tr><th>Verzija</th><th>Godina</th><th>Ključne novosti</th></tr>
+<tr><td>Windows 95</td><td>1995</td><td>Start meni, taskbar, Plug and Play</td></tr>
+<tr><td>Windows XP</td><td>2001</td><td>Stabilnost, NT kernel za sve korisnike</td></tr>
+<tr><td>Windows 7</td><td>2009</td><td>Superbar, biblioteke, poboljšan UAC</td></tr>
+<tr><td>Windows 10</td><td>2015</td><td>Cortana, WSL, servisni model ažuriranja</td></tr>
+<tr><td>Windows 11</td><td>2021</td><td>Novi dizajn, TPM 2.0, Android podrška</td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Arhitektura Windows OS-a</h2>
+<p class="para">Windows koristi slojevitu arhitekturu podeljenu na <strong>korisnički</strong> i <strong>kernel</strong> mode.</p>
+<h3 class="subsec">Kernel mode</h3>
+<ul class="list"><li><strong>HAL (Hardware Abstraction Layer)</strong> – skriva razlike između hardvera</li>
+<li><strong>Windows Kernel</strong> – upravljanje procesima, memorijom, I/O</li>
+<li><strong>Executive</strong> – I/O Manager, Memory Manager, Process Manager</li>
+<li><strong>Drajveri uređaja</strong> – upravljački programi koji komuniciraju s hardverom</li></ul>
+<div class="info-box"><div class="ib-title">Zašto je važna razlika Kernel / User mode?</div>
+<p>Greška u kernel modu može srušiti ceo sistem (BSOD). Greška u user modu izoluje samo tu aplikaciju.</p></div></section>
+<section><h2 class="sec" id="s3">3. Poređenje sa Linux i macOS</h2>
+<div class="table-wrap"><table class="data"><tr><th>Karakteristika</th><th>Windows</th><th>Linux</th><th>macOS</th></tr>
+<tr><td>Kernel tip</td><td>Hybrid kernel</td><td>Monolithic kernel</td><td>Hybrid (XNU)</td></tr>
+<tr><td>Otvoreni kod</td><td>Ne</td><td>Da</td><td>Delimično</td></tr>
+<tr><td>Fajl sistem</td><td>NTFS</td><td>ext4, btrfs</td><td>APFS</td></tr>
+<tr><td>Tržišno učešće</td><td>~72%</td><td>~4%</td><td>~15%</td></tr></table></div></section>`,
+   vezbe:[{title:'Istraži verziju Windowsa na VM',icon:'🖥️',steps:['Pritisnite Win+R i ukucajte winver – zapišite verziju i build broj','Otvorite Sistem → O računaru i pronađite model procesora i RAM','Pokrenite CMD: systeminfo | find "OS"','Uporedite Build broj sa susedovim računarom']}],
+   pitanja:[
+     {q:'Koji sloj arhitekture direktno komunicira sa hardverom?',opts:['Win32 API','HAL (Hardware Abstraction Layer)','User mode aplikacije','Control Panel'],ans:1},
+     {q:'Šta se dešava kada dođe do greške u kernel modu?',opts:['Samo ta aplikacija se zatvara','Pojavljuje se BSOD (plavi ekran)','Sistem nastavlja normalno','Pokreće se System Restore'],ans:1},
+     {q:'Koja verzija Windowsa je uvela Start meni i Taskbar?',opts:['Windows 3.1','Windows 98','Windows 95','Windows NT'],ans:2},
+     {q:'Koji tip kernela koristi Windows?',opts:['Monolithic kernel','Hybrid kernel','Micro kernel','Nano kernel'],ans:1},
+     {q:'Šta je BSOD?',opts:['Blue Screen of Death – prikazuje se pri grešci u kernel modu','Program za analizu diskova','Vrsta kompresije fajlova','Sigurnosni protokol'],ans:0}
+   ]},
+
+  {id:'l02',num:'02',title:'Instalacija i pokretanje sistema',tags:['instalacija','boot','bios','uefi','particije','mbr','gpt'],duration:'45 min',level:'Osnovno',
+   subsections:['Sistemski zahtevi','Proces instalacije','Boot process','MBR vs GPT'],
+   content:`<section><h2 class="sec" id="s1">1. Sistemski zahtevi za Windows 11</h2>
+<div class="table-wrap"><table class="data"><tr><th>Komponenta</th><th>Minimalni</th><th>Preporučeno</th></tr>
+<tr><td>Procesor</td><td>1 GHz, 2 jezgra, 64-bit</td><td>2+ GHz, višejezgarni</td></tr>
+<tr><td>RAM</td><td>4 GB</td><td>8–16 GB</td></tr>
+<tr><td>Disk</td><td>64 GB slobodnih</td><td>256 GB SSD</td></tr>
+<tr><td>Firmware</td><td>UEFI, Secure Boot</td><td>Isto</td></tr>
+<tr><td>TPM</td><td>TPM 2.0</td><td>Isto</td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Proces instalacije</h2>
+<ul class="list"><li><strong>Priprema medijuma</strong> – kreiranje bootabilnog USB-a pomoću Media Creation Tool</li>
+<li><strong>Boot redosled</strong> – podešavanja u BIOS/UEFI</li>
+<li><strong>Odabir particije</strong> – formatiranje ili instalacija pored postojećeg OS-a</li>
+<li><strong>OOBE</strong> – podešavanje korisničkog naloga, regiona, lozinke</li></ul>
+<div class="warn-box"><div class="ib-title">⚠ Pažnja pri odabiru particije</div><p>Formatiranjem particije brišu se SVI podaci. Uvek napravite rezervnu kopiju pre instalacije.</p></div></section>
+<section><h2 class="sec" id="s3">3. Boot process</h2>
+<ul class="list"><li><strong>POST</strong> – firmware proverava RAM, CPU, hardver</li>
+<li><strong>BIOS/UEFI</strong> – pronalazi bootabilni uređaj</li>
+<li><strong>bootmgr</strong> – Windows Boot Manager</li>
+<li><strong>winload.exe</strong> – učitava kernel i HAL</li>
+<li><strong>smss.exe</strong> – Session Manager, priprema korisnički prostor</li></ul></section>
+<section><h2 class="sec" id="s4">4. MBR vs GPT</h2>
+<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>MBR</th><th>GPT</th></tr>
+<tr><td>Maks. particija</td><td>4 primarne</td><td>128</td></tr>
+<tr><td>Maks. disk</td><td>2 TB</td><td>9.4 ZB</td></tr>
+<tr><td>Kompatibilnost</td><td>BIOS i UEFI</td><td>Samo UEFI za boot</td></tr>
+<tr><td>Preporučeno Win11</td><td>Ne</td><td>Da</td></tr></table></div></section>`,
+   vezbe:[{title:'Analiza particija na VM',icon:'💾',steps:['Otvorite Disk Management: Win+X → Disk Management','Identifikujte tip šeme (MBR ili GPT) – desni klik na Disk 0','Zapišite sve particije: slovo, naziv, veličinu, fajl sistem','Pronađite EFI System Partition i objasnite čemu služi']}],
+   pitanja:[
+     {q:'Koji program pokreće Windows kernel tokom boot procesa?',opts:['smss.exe','winlogon.exe','winload.exe','explorer.exe'],ans:2},
+     {q:'Koliki je maksimalni kapacitet diska uz MBR?',opts:['1 TB','2 TB','4 TB','8 TB'],ans:1},
+     {q:'Šta je POST?',opts:['Program za upravljanje particijama','Samotestiranje hardvera pri uključivanju','Vrsta fajl sistema','Alat za instalaciju drajvera'],ans:1},
+     {q:'Koji je maksimalni broj particija na GPT disku u Windowsu?',opts:['4','32','128','256'],ans:2},
+     {q:'Šta je OOBE?',opts:['Out of Box Experience – početno podešavanje sistema','Online Operating Boot Environment','Offline OS Backup Engine','Open Object Based Environment'],ans:0}
+   ]},
+
+  {id:'l03',num:'03',title:'Korisnički interfejs',tags:['desktop','taskbar','start meni','file explorer','precice'],duration:'45 min',level:'Osnovno',
+   subsections:['Desktop i radna površina','Taskbar i Start meni','File Explorer','Korisne prečice'],
+   content:`<section><h2 class="sec" id="s1">1. Desktop</h2>
+<ul class="list"><li><strong>Ikone</strong> – prečice do programa, fajlova i foldera</li>
+<li><strong>Tapeta</strong> – pozadinska slika, Settings → Personalization</li>
+<li><strong>Virtuelni desktopi</strong> – Win+Tab za kreiranje više radnih površina</li></ul></section>
+<section><h2 class="sec" id="s2">2. Taskbar i Start meni</h2>
+<ul class="list"><li>System Tray: sat, mreža, zvuk, baterija, Action Center</li>
+<li>Start meni: instaliran softver, pretraga, gašenje/restart</li>
+<li>Zakačene aplikacije na Taskbar-u</li></ul></section>
+<section><h2 class="sec" id="s3">3. File Explorer</h2>
+<ul class="list"><li>Pokretanje: <code>Win + E</code></li>
+<li>Address bar – direktan unos putanje</li>
+<li>Quick Access – česti folderi i skorašnji fajlovi</li></ul></section>
+<section><h2 class="sec" id="s4">4. Korisne prečice</h2>
+<div class="table-wrap"><table class="data"><tr><th>Prečica</th><th>Funkcija</th></tr>
+<tr><td><code>Win + E</code></td><td>Otvori File Explorer</td></tr>
+<tr><td><code>Win + D</code></td><td>Prikaži Desktop</td></tr>
+<tr><td><code>Win + L</code></td><td>Zaključaj računar</td></tr>
+<tr><td><code>Win + R</code></td><td>Run dijalog</td></tr>
+<tr><td><code>Win + I</code></td><td>Settings</td></tr>
+<tr><td><code>Ctrl+Shift+Esc</code></td><td>Task Manager</td></tr>
+<tr><td><code>Win+Shift+S</code></td><td>Snipping Tool</td></tr></table></div></section>`,
+   vezbe:[{title:'Prilagođavanje radnog okruženja',icon:'🎨',steps:['Kreirajte dva virtuelna desktopa (Win+Tab → New Desktop)','Na Desktop 1: Notepad i Browser; na Desktop 2: Explorer i Calculator','Zakačite 3 aplikacije na Taskbar','Promenite tapetu: desni klik → Personalize','Demonstrirajte 5 prečica nastavniku']}],
+   pitanja:[
+     {q:'Koja prečica direktno otvara File Explorer?',opts:['Win+R','Win+E','Win+F','Ctrl+E'],ans:1},
+     {q:'Šta se nalazi u System Tray oblasti?',opts:['Otvorene aplikacije','Ikone pozadinskih programa, sat, mreža, zvuk','Virtuelni desktopi','Start meni'],ans:1},
+     {q:'Kojom prečicom zakačite prozor na levu stranu?',opts:['Win+↑','Win+←','Alt+←','Ctrl+←'],ans:1},
+     {q:'Kako se pokreće Task Manager direktno?',opts:['Win+T','Alt+T','Ctrl+Shift+Esc','Win+Shift+T'],ans:2},
+     {q:'Šta radi Win+D?',opts:['Otvara Desktop Settings','Minimizuje sve prozore i prikazuje Desktop','Briše Desktop ikone','Otvara Disk Management'],ans:1}
+   ]},
+
+  {id:'l04',num:'04',title:'Upravljanje datotekama',tags:['ntfs','fat32','exfat','datoteke','folderi','atributi','putanja','efs'],duration:'45 min',level:'Srednje',
+   subsections:['Fajl sistemi','Putanje i atributi','CMD operacije','EFS kompresija'],
+   content:`<section><h2 class="sec" id="s1">1. Fajl sistemi</h2>
+<div class="table-wrap"><table class="data"><tr><th>Fajl sistem</th><th>Maks. fajl</th><th>Karakteristike</th></tr>
+<tr><td><strong>NTFS</strong></td><td>16 EB</td><td>Permisije, kompresija, šifrovanje, journaling</td></tr>
+<tr><td><strong>FAT32</strong></td><td>4 GB</td><td>Kompatibilno sa svim OS, bez permisija</td></tr>
+<tr><td><strong>exFAT</strong></td><td>16 EB</td><td>Za USB/SD kartice, kompatibilno s macOS</td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Atributi fajlova</h2>
+<div class="table-wrap"><table class="data"><tr><th>Atribut</th><th>Slovo</th><th>Opis</th></tr>
+<tr><td>Read-only</td><td>R</td><td>Fajl se ne može menjati</td></tr>
+<tr><td>Hidden</td><td>H</td><td>Nije vidljiv u Explorer-u po defaultu</td></tr>
+<tr><td>System</td><td>S</td><td>Sistemski fajl – zaštićen</td></tr>
+<tr><td>Archive</td><td>A</td><td>Čeka backup</td></tr></table></div></section>
+<section><h2 class="sec" id="s3">3. CMD komande za fajlove</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">cmd.exe</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="comment">:: Kreiranje foldera i fajla</span>
+<span class="cmd">mkdir</span> C:\Vezba\Podaci
+<span class="cmd">echo</span> <span class="string">Test</span> > C:\Vezba\test.txt
+<span class="comment">:: Kopiranje i premeštanje</span>
+<span class="cmd">copy</span> test.txt kopija.txt
+<span class="cmd">move</span> kopija.txt C:\Arhiva\
+<span class="comment">:: Atributi</span>
 <span class="cmd">attrib</span> +h +r tajni.txt
-<span class="comment">:: Uklanjanje hidden atributa</span>
 <span class="cmd">attrib</span> -h tajni.txt
-<span class="comment">:: Rekurzivno za ceo folder</span>
-<span class="cmd">attrib</span> +h +r C:\Folder\* /S /D</code></pre></div>
-</section><section><h2 class="sec" id="s3">3. CMD operacije sa fajlovima</h2>
-<p class="para">Komandna linija omogućava brze operacije sa fajlovima i folderima, posebno korisne za automatizaciju i rad sa velikim brojem fajlova. Ove komande rade direktno bez grafičkog interfejsa.</p>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – osnove upravljanja fajlovima</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Kreiranje foldera (rekurzivno)</span>
-<span class="cmd">mkdir</span> C:\Vezba\Podaci\Arhiva
-<span class="comment">:: Kreiranje tekstualnog fajla</span>
-<span class="cmd">echo</span> <span class="string">Sadrzaj fajla</span> > C:\Vezba\test.txt
-<span class="comment">:: Prikaz sadrzaja</span>
-<span class="cmd">type</span> C:\Vezba\test.txt
-<span class="comment">:: Kopiranje (xcopy je mocaniji od copy)</span>
-<span class="cmd">xcopy</span> C:\Vezba D:\Backup\Vezba /E /Y /C
-<span class="comment">:: Premetanje</span>
-<span class="cmd">move</span> C:\Vezba\test.txt C:\Arhiva\
-<span class="comment">:: Brisanje bez pitanja</span>
-<span class="cmd">del</span> /f /q C:\Vezba\test.txt
-<span class="comment">:: Brisanje foldera sa sadrzajem</span>
-<span class="cmd">rmdir</span> /s /q C:\Vezba
-<span class="comment">:: Pretraga fajlova</span>
-<span class="cmd">dir</span> C:\Windows\*.exe /a /s | <span class="cmd">find</span> <span class="string">"notepad"</span></code></pre></div>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – icacls za NTFS dozvole</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Prikaz dozvola</span>
-<span class="cmd">icacls</span> C:\Vezba
-<span class="comment">:: Dodaj Read korisniku</span>
-<span class="cmd">icacls</span> C:\Vezba /grant Marko:(R)
-<span class="comment">:: Dodaj Modify korisniku</span>
-<span class="cmd">icacls</span> C:\Vezba /grant Marko:(M)
-<span class="comment">:: Postavi Deny za Write</span>
-<span class="cmd">icacls</span> C:\Vezba /deny Marko:(W)
-<span class="comment">:: Ukloni sve dozvole korisnika</span>
-<span class="cmd">icacls</span> C:\Vezba /remove Marko
-<span class="comment">:: Obnovi podrazumevane dozvole</span>
-<span class="cmd">icacls</span> C:\Vezba /reset</code></pre></div>
-</section><section><h2 class="sec" id="s4">4. NTFS kompresija i EFS šifrovanje</h2>
-<h3 class="subsec">NTFS kompresija</h3>
-<p class="para"><strong>NTFS kompresija</strong> smanjuje veličinu fajlova i foldera na disku bez intervencije korisnika. Fajlovi se automatski kompresuju pri pisanju i dekompresuju pri čitanju. Kompresovani fajlovi prikazuju se <strong>plavim slovima</strong> u File Explorer-u.</p>
-<ul class="list"><li>Aktivacija: desni klik → Properties → Advanced → "Compress contents to save disk space"</li><li>Kompresija je transparentna — aplikacije ne znaju da je fajl kompresovan</li><li>Utiče na CPU performanse (mali overhead pri čitanju/pisanju)</li><li>Nije preporučljivo na sistemskoj particiji zbog performansi</li></ul>
-<h3 class="subsec">EFS — Encrypting File System</h3>
-<p class="para"><strong>EFS</strong> šifruje sadržaj fajlova koristeći korisnički sertifikat. Samo vlasnik fajla može ga otvoriti. Šifrovani fajlovi prikazuju se <strong>zelenim slovima</strong>. EFS je dostupan samo na NTFS particijama.</p>
-<ul class="list"><li>Aktivacija: Properties → Advanced → "Encrypt contents to secure data"</li><li><strong>Obavezno exportovati EFS sertifikat!</strong> Bez njega, pri reinstalaciji sistema ili gubitku naloga, podaci su nepovratno izgubljeni</li><li>EFS radi na nivou fajla/foldera — razlikuje se od BitLockera koji radi na nivou celog diska</li><li>Kopirani EFS fajl na FAT32 USB gubi šifrovanje automatski</li></ul>
-<div class="warn-box"><div class="ib-title">⚠ EFS vs BitLocker</div><p>EFS štiti od administratora koji želi da pristupi tuđim fajlovima. BitLocker štiti od fizičke krađe diska. Za sveobuhvatnu zaštitu koristite oba.</p></div>
-</section>`,
-  vezbe:[{title:`Rad sa fajlovima, atributima i NTFS`,icon:'📂',steps:[`CMD (admin): Kreirati <code>C:\Vezba\Podaci\Tajni</code>`,`Napraviti 3 fajla: <code>echo Test1 > C:\Vezba\Podaci\a.txt</code> (i b.txt, c.txt)`,`Kompresovati folder Podaci: Properties → Advanced → Compress`,`Postaviti hidden+readonly na a.txt: <code>attrib +h +r C:\Vezba\Podaci\a.txt</code>`,`Proveriti u File Explorer (opcija View → Show hidden items)`,`Pokušati obrisati a.txt direktno — šta se dešava?`,`CMD: <code>icacls C:\Vezba\Podaci</code> — koje dozvole postoje?`,`Obrisati celo: <code>rmdir /s /q C:\Vezba</code>`]}],
-  pitanja:[{q:`Koji fajl sistem podržava dozvole, kompresiju, šifrovanje i journaling?`,opts:[`FAT32`,`exFAT`,`NTFS`,`ReFS`],ans:2},{q:`Koja je maksimalna veličina fajla na FAT32?`,opts:[`2 GB`,`4 GB`,`8 GB`,`16 GB`],ans:1},{q:`Šta znači atribut H kod fajlova?`,opts:[`High priority — visok prioritet`,`Hidden — skriven od prikaza u Explorer-u`,`Hard link — tvrda veza`,`Hardware zaštita`],ans:1},{q:`Koja komanda prikazuje NTFS dozvole na folderu iz komandne linije?`,opts:[`dir /p`,`attrib`,`icacls`,`cacls (zastarela)`],ans:2},{q:`Šta je NTFS journaling?`,opts:[`Dnevnik korisničkih aktivnosti`,`Log sistemskih grešaka`,`Evidencija transakcija za oporavak fajl sistema posle greške`,`Backup fajlova na mreži`],ans:2},{q:`Kojom bojom File Explorer prikazuje EFS-šifrovane fajlove?`,opts:[`Plavom`,`Crvenom`,`Zelenom`,`Narandžastom`],ans:2},{q:`Šta označava <code>..</code> u putanji?`,opts:[`Tekući folder`,`Roditeljski folder (jedan nivo gore)`,`Koren diska`,`Skriveni folder`],ans:1},{q:`Na koji fajl sistem moraju biti formatirani USB diskovi da bi radili na macOS i Windows bez drajvera?`,opts:[`NTFS`,`FAT32`,`exFAT`,`ReFS`],ans:2},{q:`Šta se dešava sa EFS šifrovanim fajlom kada ga kopirate na FAT32 USB disk?`,opts:[`Fajl ostaje šifrovan`,`Fajl gubi šifrovanje jer FAT32 ne podržava EFS`,`Kopiranje nije moguće`,`Fajl se automatski konvertuje u ZIP`],ans:1},{q:`Šta radi xcopy u odnosu na copy?`,opts:[`xcopy je zastarela verzija copy`,`xcopy može kopirati foldere rekurzivno sa opcijama /E /Y /C`,`xcopy je brži samo za male fajlove`,`Nema razlike`],ans:1}]},
-  {id:'l05',num:'05',title:`Upravljanje procesima`,
-  level:'Srednje',duration:'45 min',
-  tags:['procesi', 'niti', 'threads', 'task manager', 'prioritet', 'servisi', 'pid', 'multithreading'],
-  subsections:[`Procesi i niti — osnove`,`Task Manager u detalje`,`Prioriteti i planiranje`,`Windows servisi`],
-  content:`<section><h2 class="sec" id="s1">1. Procesi i niti — osnove</h2>
-<p class="para">Svaki pokrenuti program u Windows-u postoji kao jedan ili više <strong>procesa</strong>. Proces je izolovan kontejner sa sopstvenim virtualnim adresnim prostorom, skupom drajvera, ručicama (handles) i resursima. Unutar procesa postoje <strong>niti (threads)</strong> — najmanje jedinice koje CPU zaista izvršava.</p>
-<div class="table-wrap"><table class="data"><tr><th>Pojam</th><th>Opis</th><th>Primer</th></tr><tr><td>Proces (Process)</td><td>Pokrenuta instanca programa; ima vlastitu memoriju</td><td>chrome.exe, notepad.exe</td></tr><tr><td>PID (Process ID)</td><td>Jedinstven 32-bitni broj koji identifikuje svaki proces</td><td>PID 4 = System, PID 1 = smss.exe</td></tr><tr><td>Nit (Thread)</td><td>Tok izvršavanja unutar procesa; deli memoriju sa drugim nitima</td><td>Main thread + background threads</td></tr><tr><td>Handle</td><td>Referenca na sistemski resurs (fajl, socket, mutex, event)</td><td>Process otvori fajl → dobija handle</td></tr><tr><td>Working Set</td><td>Skup fizičkih stranica koje proces trenutno koristi</td><td>Vidljivo u Task Manager-u</td></tr><tr><td>Virtual Memory</td><td>Ukupan virtuelni adresni prostor procesa (može biti veći od RAM-a)</td><td>32-bit: max 4 GB; 64-bit: max 128 TB</td></tr></table></div>
-<p class="para"><strong>Multithreading</strong> omogućava jednom procesu da obavlja više zadataka paralelno. Na primer, Chrome ima odvojen thread za svaku karticu — UI thread ostaje responzivan dok background threads učitavaju sadržaj.</p>
-<div class="info-box"><div class="ib-title">Zašto Chrome kreira toliko procesa?</div><p>Chrome koristi multi-process arhitekturu: svaka kartica i svaki ekstenzion su poseban proces. Razlog: izolacija — pad jedne kartice ne ruši ostale. U Task Manageru možete videti 10–30 Chrome procesa istovremeno — to je namerno.</p></div>
-</section><section><h2 class="sec" id="s2">2. Task Manager u detalje</h2>
-<p class="para"><strong>Task Manager</strong> je primarni alat za monitoring i upravljanje procesima. Pokreće se prečicom <code>Ctrl+Shift+Esc</code> ili desnim klikom na Taskbar. U Windows 7 je jednostavniji; u Win 10/11 znatno unapređen.</p>
-<div class="table-wrap"><table class="data"><tr><th>Kartica</th><th>Šta prikazuje</th><th>Ključna akcija</th></tr><tr><td>Processes</td><td>Lista svih procesa sa CPU/RAM/disk/mrežom</td><td>End Task za nezavisne procese</td></tr><tr><td>Performance</td><td>Grafovi CPU, RAM, disk, mreža, GPU u realnom vremenu</td><td>Pregled ukupnog opterećenja</td></tr><tr><td>App history</td><td>Istorija potrošnje resursa po aplikacijama</td><td>Identifikacija "teških" programa</td></tr><tr><td>Startup</td><td>Programi koji se pokreću sa sistemom</td><td>Disable za ubrzanje boota</td></tr><tr><td>Users</td><td>Prijavljeni korisnici i potrošnja po korisniku</td><td>Odjavljivanje korisnika</td></tr><tr><td>Details</td><td>PID, status, broj niti, CPU time, opis</td><td>Promena prioriteta; "Affinity"</td></tr><tr><td>Services</td><td>Windows servisi sa statusom</td><td>Start/Stop bez services.msc</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – upravljanje procesima</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Lista svih procesa</span>
-<span class="cmd">tasklist</span>
-<span class="comment">:: Filtriraj po imenu</span>
+<span class="comment">:: NTFS dozvole</span>
+<span class="cmd">icacls</span> C:\Vezba</code></pre></div></section>`,
+   vezbe:[{title:'Rad sa fajlovima i atributima',icon:'📂',steps:['Otvorite CMD kao administrator','Kreirajte strukturu: mkdir C:\\Vezba\\Podaci\\Tajni','Napravite fajl: echo Ovo je test > C:\\Vezba\\test.txt','Postavite hidden+read-only: attrib +h +r','Proverite u File Explorer (opcija Show hidden items)','Obrišite sve: rmdir /s /q C:\\Vezba']}],
+   pitanja:[
+     {q:'Koji fajl sistem podržava permisije, kompresiju i šifrovanje?',opts:['FAT32','exFAT','NTFS','ReFS'],ans:2},
+     {q:'Šta znači atribut H?',opts:['High priority','Hidden – skriven','Hard link','Hardware zaštita'],ans:1},
+     {q:'Koja komanda prikazuje skrivene fajlove u CMD-u?',opts:['dir /h','dir /s','dir /a','ls -a'],ans:2},
+     {q:'Koja je maksimalna veličina fajla na FAT32?',opts:['2 GB','4 GB','8 GB','16 GB'],ans:1},
+     {q:'Šta je NTFS journaling?',opts:['Dnevnik korisničkih aktivnosti','Log sistemskih grešaka','Evidencija operacija za oporavak diska','Backup fajlova'],ans:2}
+   ]},
+
+  {id:'l05',num:'05',title:'Upravljanje procesima',tags:['procesi','niti','threads','task manager','prioritet','servisi','pid'],duration:'45 min',level:'Srednje',
+   subsections:['Procesi i niti','Task Manager','Prioriteti','Windows servisi'],
+   content:`<section><h2 class="sec" id="s1">1. Procesi i niti</h2>
+<ul class="list"><li><strong>PID</strong> – Process ID, jedinstveni broj svakog procesa</li>
+<li><strong>Niti (threads)</strong> – najmanji delovi koji se paralelno izvršavaju unutar procesa</li>
+<li><strong>Multithreading</strong> – jedan proces koristi više niti za paralelne zadatke</li></ul></section>
+<section><h2 class="sec" id="s2">2. Task Manager kartice</h2>
+<div class="table-wrap"><table class="data"><tr><th>Kartica</th><th>Šta prikazuje</th></tr>
+<tr><td>Processes</td><td>Lista sa CPU/RAM/disk/mrežom</td></tr>
+<tr><td>Performance</td><td>Grafovi resursa u realnom vremenu</td></tr>
+<tr><td>Startup</td><td>Programi koji se pokreću sa sistemom</td></tr>
+<tr><td>Details</td><td>PID, status, broj niti</td></tr>
+<tr><td>Services</td><td>Windows servisi</td></tr></table></div>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – procesi</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">tasklist</span>
 <span class="cmd">tasklist</span> /fi <span class="string">"imagename eq notepad.exe"</span>
-<span class="comment">:: Ubij po imenu</span>
 <span class="cmd">taskkill</span> /IM notepad.exe /F
-<span class="comment">:: Ubij po PID-u</span>
-<span class="cmd">taskkill</span> /PID <span class="num">4512</span> /F
-<span class="comment">:: PowerShell alternativa</span>
-<span class="cmd">Get-Process</span> | Sort-Object CPU -Descending | Select-Object -First <span class="num">5</span></code></pre></div>
-</section><section><h2 class="sec" id="s3">3. Prioriteti procesa i planiranje</h2>
-<p class="para">Windows Task Scheduler dodeljuje CPU vreme procesima na osnovu njihovog <strong>prioriteta</strong>. Viši prioritet znači da proces dobija CPU vreme pre ostalih, ali nije garancija ekskluzivnog pristupa.</p>
-<div class="table-wrap"><table class="data"><tr><th>Prioritet</th><th>Numerička vrednost</th><th>Opis</th><th>Tipična primena</th></tr><tr><td>Real-time</td><td>24</td><td>Najviši — može blokirati sve ostale</td><td>Sistemski drajveri, audio servisi</td></tr><tr><td>High</td><td>13</td><td>Visok — ima prednost nad normalnim</td><td>Task Manager sam sebe, antivirusni sken</td></tr><tr><td>Above Normal</td><td>10</td><td>Iznad normalnog</td><td>Video editing, render programi</td></tr><tr><td>Normal</td><td>8</td><td>Podrazumevano za sve aplikacije</td><td>Sve korisničke aplikacije</td></tr><tr><td>Below Normal</td><td>6</td><td>Ispod normalnog</td><td>Sinhronizacija u pozadini</td></tr><tr><td>Idle / Low</td><td>4</td><td>Izvršava se samo kada CPU nema drugog posla</td><td>Defragmentacija, Windows Search indeksiranje</td></tr></table></div>
-<div class="warn-box"><div class="ib-title">⚠ Opasnost od Real-time prioriteta</div><p>Postavljanje procesa na Real-time može uzrokovati da sistem prestane da reaguje jer OS i drajveri ne mogu dobiti CPU vreme. Nikada ne postavljajte korisničke aplikacije na Real-time.</p></div>
-<h3 class="subsec">CPU Affinity</h3>
-<p class="para"><strong>CPU Affinity</strong> određuje na kojim jezgrama sme da se izvršava određeni proces. Korisno za: izolovano testiranje performansi, zaštitu jednog jezgra za kritičan real-time proces. Podešava se u Task Manager → Details → desni klik → Set Affinity.</p>
-</section><section><h2 class="sec" id="s4">4. Windows servisi</h2>
-<p class="para"><strong>Servisi (Services)</strong> su procesi koji rade u pozadini bez korisničkog interfejsa. Pokreću se automatski sa sistemom i pružaju infrastrukturnu funkcionalnost: mreža, štampanje, bezbednost, Windows Update.</p>
-<h3 class="subsec">Upravljanje servisima</h3>
-<ul class="list"><li>GUI: Win+R → <code>services.msc</code> ili Task Manager → Services kartica</li><li>CMD: <code>net start ImeServisa</code> / <code>net stop ImeServisa</code></li><li>PowerShell: <code>Get-Service</code>, <code>Start-Service</code>, <code>Stop-Service</code></li></ul>
-<div class="table-wrap"><table class="data"><tr><th>Startup tip</th><th>Opis</th><th>Primeri servisa</th></tr><tr><td>Automatic</td><td>Startuje se automatski sa Windowsom</td><td>Windows Update, DHCP Client, Print Spooler</td></tr><tr><td>Automatic (Delayed)</td><td>Startuje se 2 min posle boota (ubrzava startup)</td><td>Windows Defender, SuperFetch</td></tr><tr><td>Manual</td><td>Startuje se samo na zahtev (aplikacije ili ručno)</td><td>Bluetooth Support Service, Remote Registry</td></tr><tr><td>Disabled</td><td>Onemogućen — ne može se pokrenuti</td><td>Fax (uglavnom nepotreban)</td></tr><tr><td>Trigger Start</td><td>Startuje se kada se detektuje određeni uslov</td><td>Network List Service</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – servisi</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment"># Prikaz svih servisa</span>
-<span class="cmd">Get-Service</span>
-<span class="comment"># Samo pokrenuti servisi</span>
-<span class="cmd">Get-Service</span> | Where-Object { $_.Status -eq <span class="string">"Running"</span> }
-<span class="comment"># Pokretanje i zaustavljanje</span>
-<span class="cmd">Start-Service</span> -Name Spooler
-<span class="cmd">Stop-Service</span> -Name Spooler -Force
-<span class="comment"># Promena startup tipa</span>
-<span class="cmd">Set-Service</span> -Name wuauserv -StartupType Disabled</code></pre></div>
-</section>`,
-  vezbe:[{title:`Analiza procesa i upravljanje servisima`,icon:'⚙️',steps:[`Task Manager (Ctrl+Shift+Esc) → sortirajte procese po CPU potrošnji`,`Pronađite PID procesa explorer.exe (kartica Details)`,`CMD: <code>tasklist | find "explorer"</code> — potvrda PID-a`,`Pokrenite Notepad, pronađite ga u listi, promenite prioritet na High (desni klik → Set Priority)`,`services.msc → pronađite Windows Update servis → Properties → zapišite Startup type`,`Promenite Windows Update Startup type na Manual, restart, proverite status`,`PowerShell: <code>Get-Service | Sort-Object Status | Format-Table -AutoSize</code>`]}],
-  pitanja:[{q:`Šta je PID?`,opts:[`Program Install Directory`,`Process Identifier — jedinstven broj koji identifikuje svaki aktivni proces`,`Primary Input Device`,`Processor Interrupt Descriptor`],ans:1},{q:`Koja prečica direktno otvara Task Manager?`,opts:[`Ctrl+Alt+Del`,`Ctrl+Shift+Esc`,`Win+X`,`Alt+F4`],ans:1},{q:`Koji prioritet koriste pozadinski backup programi koji smeju da koriste CPU samo kad je slobodan?`,opts:[`Real-time`,`High`,`Normal`,`Idle / Low`],ans:3},{q:`Šta je multithreading?`,opts:[`Pokretanje više programa istovremeno`,`Više niti unutar jednog procesa koje dele njegovu memoriju`,`Deljenje CPU-a između korisnika`,`Brže učitavanje programa sa SSD-a`],ans:1},{q:`Koji alat koristi se za grafičko upravljanje Windows servisima?`,opts:[`taskman.exe`,`devmgmt.msc`,`services.msc`,`msconfig.exe`],ans:2},{q:`Šta je Working Set procesa?`,opts:[`Ukupna virtualna memorija procesa`,`Skup fizičkih stranica u RAM-u koje proces trenutno koristi`,`Prostor na disku za pagefile`,`Veličina izvršnog fajla`],ans:1},{q:`Koji startup tip servisa znači da se servis neće pokrenuti čak ni ručno?`,opts:[`Manual`,`Automatic (Delayed)`,`Disabled`,`Trigger Start`],ans:2},{q:`Zašto je opasno postaviti korisnički program na Real-time prioritet?`,opts:[`Troši više RAM-a`,`Može blokirati OS i drajvere od dobijanja CPU vremena`,`Automatski briše temp fajlove`,`Onemogućava hibernaciju`],ans:1},{q:`Šta je CPU Affinity?`,opts:[`Temperatura procesora pri visokom opterećenju`,`Određuje na kojim jezgrama sme da se izvršava određeni proces`,`Maksimalna frekvencija procesora`,`Podela RAM-a između procesa`],ans:1},{q:`Koja PowerShell komanda prikazuje samo pokrenute servise?`,opts:[`Get-Service -Status Running`,`Get-Service | Where-Object { $_.Status -eq "Running" }`,`Start-Service -All`,`tasklist /fi "status eq running"`],ans:1}]},
-  {id:'l06',num:'06',title:`Upravljanje memorijom`,
-  level:'Srednje',duration:'45 min',
-  tags:['ram', 'virtuelna memorija', 'paging', 'swap', 'pagefile', 'memorija', 'stranicenje', 'address space'],
-  subsections:[`Fizička memorija i RAM`,`Virtuelna memorija i adresni prostor`,`Straničenje (Paging) i pagefile`,`Monitorisanje i optimizacija`],
-  content:`<section><h2 class="sec" id="s1">1. Fizička memorija i RAM</h2>
-<p class="para"><strong>RAM (Random Access Memory)</strong> je brza, isparljiva memorija u kojoj se čuvaju instrukcije i podaci aktivnih programa. CPU može čitati podatke iz RAM-a u nanosekundama, što je nekoliko hiljada puta brže od čitanja sa HDD-a.</p>
-<p class="para">Kada pokrenete program, Windows kopira njegov kod i podatke sa diska u RAM. Svi aktivni procesi dijele fizički RAM, a Windows Memory Manager odlučuje ko dobija koliko.</p>
-<div class="table-wrap"><table class="data"><tr><th>Aspekt</th><th>Detalji</th></tr><tr><td>Tipovi RAM-a</td><td>DDR4 (2133–3200 MHz), DDR5 (4800+ MHz) — generacija utiče na propusni opseg</td></tr><tr><td>Dual channel</td><td>Dva identična modula u paru dupliraju propusni opseg memorijskog kontrolera</td></tr><tr><td>ECC memorija</td><td>Error Correcting Code — serveri; popravlja jednobitne greške automatski</td></tr><tr><td>Win 7 minimum</td><td>1 GB (32-bit) / 2 GB (64-bit); preporučeno 4–8 GB za normalan rad</td></tr><tr><td>Win 11 minimum</td><td>4 GB; preporučeno 8–16 GB</td></tr><tr><td>Limit 32-bit</td><td>Maksimalno 4 GB adresibilne memorije (2^32); Win 7 Home 32-bit max ~3.4 GB</td></tr><tr><td>Limit 64-bit</td><td>Teorijski 16 EB; Windows 10/11 Home max 128 GB; Pro/Enterprise do 2 TB</td></tr></table></div>
-</section><section><h2 class="sec" id="s2">2. Virtuelna memorija i adresni prostor</h2>
-<p class="para">Svaki Windows proces dobija vlastiti <strong>virtuelni adresni prostor</strong> — iluziju da ima celu memoriju za sebe. Na 32-bit sistemima to je 4 GB (2 GB za program, 2 GB za OS). Na 64-bit to je 128 TB.</p>
-<p class="para">Virtuelne adrese se prevode u fizičke adrese pomoću <strong>Page Table</strong> — mape koju vodi Memory Manager. Aplikacija "vidi" kontinuiran adresni prostor čak i kada su njeni podaci raspršeni po fizičkom RAM-u ili čak na disku.</p>
-<ul class="list"><li><strong>Izolacija:</strong> proces A ne može čitati memoriju procesa B — virtuelni prostori su odvojeni</li><li><strong>Zaštita:</strong> pokušaj pristupa tudoj memoriji izaziva Access Violation grešku</li><li><strong>Transparentnost:</strong> program ne zna da li su njegovi podaci u RAM-u ili na disku</li><li><strong>Copy-on-Write:</strong> deljene DLL biblioteke se kopiraju samo kada ih program želi menjati</li></ul>
-</section><section><h2 class="sec" id="s3">3. Straničenje (Paging) i pagefile</h2>
-<p class="para">Kada ukupna potražnja za memorijom premaši fizički RAM, Windows koristi deo diska kao <strong>proširenje RAM-a</strong>. Ovaj fajl se zove <strong>pagefile.sys</strong> i nalazi se na korenu sistemskog diska (C:\).</p>
-<div class="table-wrap"><table class="data"><tr><th>Pojam</th><th>Objašnjenje</th></tr><tr><td>Stranica (Page)</td><td>Fiksna blok memorije — 4 KB u x86 arhitekturi</td></tr><tr><td>Page fault</td><td>CPU traži stranicu koje nema u RAM-u → OS je mora učitati sa diska</td></tr><tr><td>Hard page fault</td><td>Stranica je u pagefile-u → čitanje sa diska (sporo, milisekunde)</td></tr><tr><td>Soft page fault</td><td>Stranica postoji u memoriji ali nije mapirana → samo ažuriranje Page Table (brzo)</td></tr><tr><td>Thrashing</td><td>Sistem toliko paginuje (swap in/out) da gotovo ne radi ništa korisno</td></tr><tr><td>Standby lista</td><td>RAM stranice koje više nisu aktivne ali još nisu vraćene na disk — mogu se brzo iskoristiti</td></tr></table></div>
-<h3 class="subsec">Podešavanje virtualnog memorije</h3>
-<p class="para">Podešava se u: System → Advanced → Performance Settings → Advanced → Virtual Memory → Change.</p>
-<ul class="list"><li><strong>System managed (preporučeno):</strong> Windows automatski menja veličinu</li><li><strong>Custom size:</strong> početna i maksimalna veličina; preporučeno min = 1.5× RAM, max = 3× RAM</li><li><strong>No paging file:</strong> samo za sisteme sa ogromnom količinom RAM-a (64+ GB)</li></ul>
-<div class="warn-box"><div class="ib-title">⚠ Pagefile na SSD</div><p>SSD je znatno brži od HDD-a za paging, ali ima ograničen broj ciklusa pisanja. Na sistemima sa malim SSD-om (128 GB), razmislite o smanjenju pagefile-a ili premeštanju na sekundarni HDD.</p></div>
-</section><section><h2 class="sec" id="s4">4. Monitorisanje i optimizacija</h2>
-<p class="para">Praćenje korišćenja memorije ključno je za dijagnostiku problema s performansama. Windows nudi više alata za ovu namenu.</p>
-<ul class="list"><li><strong>Task Manager → Performance → Memory:</strong> ukupno, u upotrebi, dostupno, u Standby listi, grafovi</li><li><strong>Resource Monitor (resmon.exe):</strong> detaljniji prikaz — koja aplikacija koristi koliko, straničenje po procesu</li><li><strong>Performance Monitor (perfmon.exe):</strong> napredni monitoring sa logiranjem i upozorenjima</li></ul>
-<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – memorija</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment"># Ukupna i slobodna fizicka memorija (u MB)</span>
-<span class="cmd">Get-WmiObject</span> Win32_OperatingSystem | Select-Object @{n='Ukupno MB';e={[math]::Round($_.TotalVisibleMemorySize/1KB)}}, @{n='Slobodno MB';e={[math]::Round($_.FreePhysicalMemory/1KB)}}
-<span class="comment"># Top 10 procesa po RAM potrosnji</span>
-<span class="cmd">Get-Process</span> | Sort-Object WorkingSet -Descending | Select-Object -First <span class="num">10</span> Name, @{n='RAM MB';e={[math]::Round($_.WorkingSet/1MB,1)}}
-<span class="comment"># Informacije o RAM modulima</span>
-<span class="cmd">Get-WmiObject</span> Win32_PhysicalMemory | Select-Object Capacity, Speed, Manufacturer</code></pre></div>
-</section>`,
-  vezbe:[{title:`Analiza memorije i pagefile`,icon:'🧠',steps:[`Task Manager → Performance → Memory — zapišite: ukupno, u upotrebi, dostupno`,`resmon.exe → Memory kartica — koja aplikacija najviše troši?`,`PowerShell: Top 5 procesa po RAM-u (naredba sa teorije)`,`File Explorer → C:\ → View: Show hidden items → pronađi pagefile.sys, zapiši veličinu`,`System → Advanced → Performance → Virtual Memory → Change — snimajte screenshot podešavanja`,`Pokrenite Chrome sa 10 kartica, ponovo proverite Task Manager — koliko RAM-a troši?`]}],
-  pitanja:[{q:`Šta je pagefile.sys?`,opts:[`Sistemski log grešaka`,`Fajl koji Windows koristi kao proširenje RAM-a (virtuelna memorija)`,`Konfiguracioni fajl kernela`,`Backup kopija sistema`],ans:1},{q:`Šta se dešava tokom hard page fault?`,opts:[`Sistem se ruši`,`Proces se automatski gasi`,`OS mora učitati traženu stranicu sa diska u RAM`,`RAM se defragmentira`],ans:2},{q:`Kolika je veličina memorijske stranice u x86 arhitekturi?`,opts:[`1 KB`,`4 KB`,`8 KB`,`64 KB`],ans:1},{q:`Šta je thrashing?`,opts:[`Prekoračenje RAM kapaciteta`,`Prekomerno straničenje (swap) koje sistem čini skoro neupotrebljivim`,`Curenje memorije (memory leak)`,`Greška u virtuelnoj memoriji`],ans:1},{q:`Koliko virtuelne memorije dobija svaki 32-bit proces u Windowsu?`,opts:[`512 MB`,`2 GB`,`4 GB`,`8 GB`],ans:2},{q:`Koja je preporučena minimalna veličina pagefile-a prema Microsoft-u?`,opts:[`Isto kao RAM`,`1.5× veličina RAM-a`,`512 MB bez obzira na RAM`,`Uvek 0 — pagefile nije potreban`],ans:1},{q:`Šta je razlika između soft i hard page fault?`,opts:[`Soft je sporiji od hard`,`Soft je samo ažuriranje Page Table (brzo); hard zahteva čitanje sa diska (sporo)`,`Hard fault ruši sistem`,`Nema razlike u performansama`],ans:1},{q:`Koji alat daje detaljniji prikaz memorije po procesima od Task Managera?`,opts:[`msinfo32.exe`,`Resource Monitor (resmon.exe)`,`Event Viewer`,`Disk Management`],ans:1},{q:`Šta je Copy-on-Write mehanizam?`,opts:[`Automatsko pravljenje rezervnih kopija`,`DLL se kopira samo kada je program želi menjati — čuva se memorija`,`Metoda kompresije fajlova`,`Tehnika za ubrzanje pagefile-a`],ans:1},{q:`Koji je maksimalni RAM koji Windows 11 Home može koristiti?`,opts:[`4 GB`,`32 GB`,`128 GB`,`512 GB`],ans:2}]},
-  {id:'l07',num:'07',title:`Korisnici i prava pristupa`,
-  level:'Srednje',duration:'45 min',
-  tags:['korisnici', 'grupe', 'administrator', 'uac', 'ntfs dozvole', 'permissions', 'share', 'icacls', 'acl'],
-  subsections:[`Lokalni korisnici i grupe`,`Administrator vs standardni korisnik`,`UAC mehanizam`,`NTFS i Share dozvole`],
-  content:`<section><h2 class="sec" id="s1">1. Lokalni korisnici i grupe</h2>
-<p class="para">Windows koristi sistem <strong>korisničkih naloga</strong> za kontrolu pristupa resursima. Svaki nalog ima identitet, lozinku i skup prava. Korisnici se organizuju u <strong>grupe</strong> — dodela prava grupi automatski važi za sve njene članove.</p>
-<h3 class="subsec">Ugrađeni nalozi i grupe</h3>
-<div class="table-wrap"><table class="data"><tr><th>Nalog / Grupa</th><th>Tip</th><th>Privilegije</th></tr><tr><td>Administrator</td><td>Nalog</td><td>Puna kontrola sistema — podrazumevano onemogućen u Win7 zbog sigurnosti</td></tr><tr><td>Guest</td><td>Nalog</td><td>Minimalne privilegije — onemogućen po defaultu</td></tr><tr><td>SYSTEM</td><td>Interni</td><td>Najviše privilegije — koristi se za interne Windows procese</td></tr><tr><td>Administrators</td><td>Grupa</td><td>Svi članovi imaju Admin prava</td></tr><tr><td>Users</td><td>Grupa</td><td>Standardni korisnici — novokreirani nalog ovde dolazi automatski</td></tr><tr><td>Power Users</td><td>Grupa</td><td>Srednji nivo — legacy, retko se koristi u modernom Windowsu</td></tr><tr><td>Backup Operators</td><td>Grupa</td><td>Mogu backup/restore bez Admin prava — za backup servere</td></tr><tr><td>Remote Desktop Users</td><td>Grupa</td><td>Mogu se prijaviti putem RDP — ne nužno Admin</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – upravljanje korisnicima i grupama</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Lista svih korisnika</span>
-<span class="cmd">net user</span>
-<span class="comment">:: Kreiranje korisnika</span>
+<span class="cmd">taskkill</span> /PID <span class="num">4512</span> /F</code></pre></div></section>
+<section><h2 class="sec" id="s3">3. Prioriteti procesa</h2>
+<div class="table-wrap"><table class="data"><tr><th>Prioritet</th><th>Primena</th></tr>
+<tr><td>Real-time</td><td>Sistemski drajveri</td></tr>
+<tr><td>High</td><td>Task Manager, antivirusni sken</td></tr>
+<tr><td>Normal</td><td>Sve korisničke aplikacije</td></tr>
+<tr><td>Idle</td><td>Defragmentacija, backup</td></tr></table></div></section>`,
+   vezbe:[{title:'Analiza procesa i servisa',icon:'⚙️',steps:['Otvorite Task Manager i sortirajte po CPU','Pronađite PID procesa explorer.exe (kartica Details)','CMD: tasklist | find "explorer"','Otvorite services.msc i pronađite Windows Update','Promenite startup tip na Manual pa ručno pokrenite']}],
+   pitanja:[
+     {q:'Šta je PID?',opts:['Program Install Directory','Process Identifier – jedinstveni ID','Primary Input Device','Processor Interrupt'],ans:1},
+     {q:'Koja prečica direktno otvara Task Manager?',opts:['Ctrl+Alt+Del','Ctrl+Shift+Esc','Win+X','Alt+F4'],ans:1},
+     {q:'Koji prioritet koriste backup programi u pozadini?',opts:['Real-time','High','Normal','Idle'],ans:3},
+     {q:'Šta je multithreading?',opts:['Pokretanje više programa istovremeno','Korišćenje više niti unutar jednog procesa','Deljenje procesora između korisnika','Brže učitavanje programa'],ans:1},
+     {q:'Koji alat prikazuje listu svih Windows servisa?',opts:['taskman.exe','devmgmt.msc','services.msc','sysmon.exe'],ans:2}
+   ]},
+
+  {id:'l06',num:'06',title:'Upravljanje memorijom',tags:['ram','virtuelna memorija','paging','swap','pagefile'],duration:'45 min',level:'Srednje',
+   subsections:['Fizička memorija','Virtuelna memorija','Straničenje','Monitorisanje'],
+   content:`<section><h2 class="sec" id="s1">1. Fizička memorija</h2>
+<ul class="list"><li>RAM je brza, privremena memorija aktivnih programa</li>
+<li>Windows 11 minimum 4 GB; preporučeno 8–16 GB</li>
+<li>Svaki proces dobija vlastiti virtuelni adresni prostor</li></ul></section>
+<section><h2 class="sec" id="s2">2. Virtuelna memorija i Paging</h2>
+<ul class="list"><li><strong>Pagefile.sys</strong> – deo diska koji Windows koristi kao proširenje RAM-a</li>
+<li><strong>Page fault</strong> – tražena stranica nije u RAM-u, OS je mora učitati sa diska</li>
+<li><strong>Thrashing</strong> – sistem toliko paginuje da je sporiji od normalnog rada</li></ul>
+<div class="warn-box"><div class="ib-title">⚠ Pagefile na SSD</div><p>SSD ima ograničen broj ciklusa pisanja. Razmotriti smanjivanje pagefile-a ako je SSD mali.</p></div></section>
+<section><h2 class="sec" id="s3">3. PowerShell – memorija</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="comment"># Ukupna i slobodna memorija</span>
+<span class="cmd">Get-WmiObject</span> Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory
+<span class="comment"># Top 10 po RAM-u</span>
+<span class="cmd">Get-Process</span> | Sort-Object WorkingSet -Descending | Select-Object -First <span class="num">10</span></code></pre></div></section>`,
+   vezbe:[{title:'Analiza memorije',icon:'🧠',steps:['Task Manager → Performance → Memory – zapišite ukupan/slobodan RAM','Otvorite resmon.exe i pogledajte grafički prikaz','PowerShell komanda za prikaz po procesima','Pronađite pagefile.sys na C: (Show hidden items)','Otvorite podešavanja virtuelne memorije']}],
+   pitanja:[
+     {q:'Šta je pagefile.sys?',opts:['Sistemski log','Proširenje RAM-a na disku','Fajl za oporavak','Konfiguracioni fajl'],ans:1},
+     {q:'Šta je page fault?',opts:['Sistem se ruši','OS učitava stranicu sa diska u RAM','RAM se puni maksimalno','Proces se završava'],ans:1},
+     {q:'Kolika je veličina memorijske stranice u x86?',opts:['1 KB','4 KB','8 KB','64 KB'],ans:1},
+     {q:'Šta je thrashing?',opts:['Prekoračenje RAM kapaciteta','Prekomerno paginovanje koje usporava sistem','Greška u virtualizaciji','Curenje memorije'],ans:1},
+     {q:'Gde se podešava virtuelna memorija?',opts:['Task Manager → Memory','Control Panel → System → Advanced → Performance','Device Manager','Resource Monitor'],ans:1}
+   ]},
+
+  {id:'l07',num:'07',title:'Korisnici i prava pristupa',tags:['korisnici','grupe','administrator','uac','ntfs dozvole','permissions','share'],duration:'45 min',level:'Srednje',
+   subsections:['Lokalni korisnici i grupe','Admin vs Standard','UAC','NTFS i Share dozvole'],
+   content:`<section><h2 class="sec" id="s1">1. Lokalni korisnici i grupe</h2>
+<ul class="list"><li>Upravljanje: Computer Management → Local Users and Groups</li>
+<li>Ugrađene grupe: Administrators, Users, Guests, Power Users</li>
+<li>Novokreirani korisnik automatski ulazi u grupu Users</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">cmd.exe</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">net user</span>
 <span class="cmd">net user</span> Marko Sifra123! /add
-<span class="comment">:: Dodavanje u grupu Administrators</span>
 <span class="cmd">net localgroup</span> Administrators Marko /add
-<span class="comment">:: Lista clanova grupe</span>
-<span class="cmd">net localgroup</span> Administrators
-<span class="comment">:: Promena lozinke</span>
-<span class="cmd">net user</span> Marko NovaLozinka!
-<span class="comment">:: Onemogucavanje naloga (bez brisanja)</span>
-<span class="cmd">net user</span> Marko /active:no
-<span class="comment">:: Brisanje korisnika</span>
-<span class="cmd">net user</span> Marko /delete</code></pre></div>
-</section><section><h2 class="sec" id="s2">2. Administrator vs standardni korisnik</h2>
-<div class="table-wrap"><table class="data"><tr><th>Akcija</th><th>Administrator</th><th>Standardni korisnik</th></tr><tr><td>Instalacija softvera</td><td>Da</td><td>Ne — traži Admin lozinku</td></tr><tr><td>Promena sistemskog sata</td><td>Da</td><td>Ne</td></tr><tr><td>Kreiranje/brisanje korisnika</td><td>Da</td><td>Ne</td></tr><tr><td>Izmena Registry-a (HKLM)</td><td>Da</td><td>Ne</td></tr><tr><td>Instalacija drajvera</td><td>Da</td><td>Ne</td></tr><tr><td>Pristup C:\Windows\System32</td><td>Da (puna kontrola)</td><td>Čitanje (ograničeno)</td></tr><tr><td>Promena sopstvene lozinke</td><td>Da</td><td>Da</td></tr><tr><td>Pokretanje instaliranih programa</td><td>Da</td><td>Da (ako nisu zaštićeni)</td></tr><tr><td>Promena desktop pozadine</td><td>Da</td><td>Da</td></tr><tr><td>Štampanje dokumenata</td><td>Da</td><td>Da</td></tr></table></div>
-<div class="warn-box"><div class="ib-title">⚠ Princip najmanjih privilegija</div><p>Svakodnevni rad obavljajte sa standardnim nalogom. Administrator koristite samo kada je neophodno. Ovo sprečava malver da automatski dobije sistemska prava — ako malver pokrene standardni korisnik, ograničen je na user mode bez Admin privilegija.</p></div>
-</section><section><h2 class="sec" id="s3">3. UAC — User Account Control</h2>
-<p class="para"><strong>UAC</strong> je bezbednosna funkcija uvedena u Windows Vista (poboljšana u Windows 7) koja zahteva eksplicitnu potvrdu korisnika pre izvršavanja radnji koje menjaju sistem. Čak i Administratori rade u ograničenom token-u dok ne potvrde UAC.</p>
-<p class="para">Tehnički: svaki korisnik (čak i Admin) dobija dva tokena — <strong>standardni token</strong> (za normalan rad) i <strong>elevated token</strong> (za admin operacije). UAC je mehanizam koji traži saglasnost za upotrebu elevated tokena.</p>
-<div class="table-wrap"><table class="data"><tr><th>Nivo UAC</th><th>Ponašanje</th><th>Bezbednost</th></tr><tr><td>Uvek obaveštavaj</td><td>Pita za SVAKU sistemsku promenu, čak i Windows Settings</td><td>Najbezbednije</td></tr><tr><td>Obaveštavaj za programe (Default)</td><td>Pita samo kada aplikacija želi promenu — ne za Windows Settings</td><td>Balans</td></tr><tr><td>Bez tamnjenja ekrana</td><td>Isti kao Default, ali bez Secure Desktop (lakše za lažiranje)</td><td>Niže</td></tr><tr><td>Nikada</td><td>UAC potpuno isključen — OPASNO</td><td>Nema zaštite</td></tr></table></div>
-<div class="info-box"><div class="ib-title">Šta je Secure Desktop?</div><p>Kada UAC dijaloški okvir iskači, ekran potamni — to je Secure Desktop. Samo kernel mode procesi mogu prikazivati sadržaj na Secure Desktopu, što sprečava malver da lažira UAC dijalog i "ukrade" klik.</p></div>
-</section><section><h2 class="sec" id="s4">4. NTFS i Share dozvole</h2>
-<h3 class="subsec">NTFS dozvole</h3>
-<div class="table-wrap"><table class="data"><tr><th>NTFS dozvola</th><th>Oznaka</th><th>Šta dopušta na fajlu</th><th>Šta dopušta na folderu</th></tr><tr><td>Read</td><td>R</td><td>Čitanje sadržaja i atributa</td><td>Listanje sadržaja, čitanje fajlova</td></tr><tr><td>Write</td><td>W</td><td>Izmena sadržaja, dodavanje</td><td>Kreiranje novih fajlova i podfoldera</td></tr><tr><td>Read & Execute</td><td>RX</td><td>Čitanje + pokretanje .exe</td><td>Prolaz kroz folder + RX na sadržaju</td></tr><tr><td>Modify</td><td>M</td><td>R+W+X+brisanje fajla</td><td>Sve gore + brisanje fajlova u folderu</td></tr><tr><td>Full Control</td><td>F</td><td>M + promena dozvola + vlasništvo</td><td>M + promena dozvola + vlasništvo</td></tr></table></div>
-<p class="para"><strong>Deny uvek ima prednost nad Allow</strong>, bez izuzetaka. Ako je korisnik u grupi koja ima Allow:Write, ali direktno ima Deny:Write — Write je zabranjen.</p>
-<h3 class="subsec">Share dozvole i pravilo "restriktivniji pobedi"</h3>
-<p class="para">Kada pristupate folderu <strong>putem mreže</strong>, Windows proverava i NTFS i Share dozvole i primenjuje onu koja je restriktivnija. <strong>Lokalni pristup</strong> ne prolazi kroz Share dozvole — samo NTFS važi.</p>
-<div class="code-block"><div class="code-header"><span class="code-label">icacls – NTFS dozvole iz CMD-a</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Prikaz dozvola</span>
-<span class="cmd">icacls</span> C:\Vezba\Tajni
-<span class="comment">:: Dodaj Read (R) korisniku</span>
+<span class="cmd">net user</span> Marko /delete</code></pre></div></section>
+<section><h2 class="sec" id="s2">2. UAC – User Account Control</h2>
+<ul class="list"><li>Prikazuje dijalog pri sistemskim promenama</li>
+<li>Administrator: "Allow/Cancel" – standardni korisnik: traži Admin lozinku</li>
+<li>4 nivoa zaštite u Control Panel → Action Center</li></ul></section>
+<section><h2 class="sec" id="s3">3. NTFS dozvole</h2>
+<div class="table-wrap"><table class="data"><tr><th>Dozvola</th><th>Fajl</th><th>Folder</th></tr>
+<tr><td>Read (R)</td><td>Čitanje sadržaja</td><td>Listanje</td></tr>
+<tr><td>Write (W)</td><td>Izmena</td><td>Kreiranje fajlova</td></tr>
+<tr><td>Modify (M)</td><td>R+W+X+brisanje</td><td>Sve+brisanje</td></tr>
+<tr><td>Full Control (F)</td><td>M+promena dozvola</td><td>M+promena dozvola</td></tr></table></div>
+<div class="info-box"><div class="ib-title">NTFS + Share = restriktivniji pobedi</div>
+<p>Pristup putem mreže: Windows primenjuje obe dozvole i uzima restriktivniju. Lokalan pristup: samo NTFS.</p></div>
+<div class="code-block"><div class="code-header"><span class="code-label">icacls komanda</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">icacls</span> C:\Vezba\Tajni
 <span class="cmd">icacls</span> C:\Vezba\Tajni /grant Marko:(R)
-<span class="comment">:: Dodaj Modify (M)</span>
 <span class="cmd">icacls</span> C:\Vezba\Tajni /grant Marko:(M)
-<span class="comment">:: Deny za Write - ima prednost nad Allow</span>
 <span class="cmd">icacls</span> C:\Vezba\Tajni /deny Marko:(W)
-<span class="comment">:: Ukloni sve dozvole</span>
-<span class="cmd">icacls</span> C:\Vezba\Tajni /remove Marko
-<span class="comment">:: Share folder iz CMD-a</span>
-<span class="cmd">net share</span> Deljeni=C:\Deljeni /GRANT:Marko,READ /GRANT:Administrator,FULL</code></pre></div>
-</section>`,
-  vezbe:[{title:`Korisnici, UAC i NTFS dozvole`,icon:'👤',steps:[`Computer Management → Local Users and Groups → kreirati Marko (Users) i Admin2 (Administrators)`,`CMD: <code>net user</code> i <code>net localgroup Administrators</code> — potvrditi kreiranje`,`Odjaviti se, prijaviti kao Marko, pokušati instalirati program — posmatrati UAC`,`Prijaviti se kao Administrator, kreirati <code>C:\Vezba\Tajni</code>, dodati txt fajl`,`Security → Edit: Marko = Read; ukloniti Users grupu sa Tajni foldera`,`Prijaviti se kao Marko: otvoriti ✓, izmeniti ?, kreirati novi fajl ?`,`Admin: dodati Deny:Write za Marko → prijaviti se i testirati — Deny pobedi Modify?`]}],
-  pitanja:[{q:`U kojoj grupi se automatski nalazi novokreirani lokalni korisnik?`,opts:[`Administrators`,`Users`,`Power Users`,`Guests`],ans:1},{q:`Šta ima prednost: Allow:Write ili Deny:Write NTFS dozvola?`,opts:[`Allow uvek pobedi`,`Deny uvek pobedi`,`Pobedi ona koja je novija`,`Pobedi ona koja potiče od grupe`],ans:1},{q:`NTFS=Full Control, Share=Read, korisnik pristupa PUTEM MREŽE. Efektivna dozvola?`,opts:[`Full Control (NTFS ima prednost)`,`Read (restriktivnija od dve pobedi)`,`Modify`,`Nema pristupa`],ans:1},{q:`Šta je Secure Desktop pri UAC dijalogu?`,opts:[`Ekran za Admin prijavu`,`Potamnjeni ekran na kome samo kernel može prikazivati sadržaj — sprečava lažiranje UAC`,`Ekran za unos PIN-a`,`Backup ekran sistema`],ans:1},{q:`Koja CMD komanda kreira lokalnog korisnika Ana sa lozinkom Test123!?`,opts:[`user add Ana Test123!`,`net user Ana Test123! /add`,`adduser /name Ana`,`create user Ana Test123!`],ans:1},{q:`Šta znači Modify NTFS dozvola?`,opts:[`Samo izmena fajla`,`Read + Write + Execute + brisanje fajla`,`Full Control bez promene dozvola`,`Isto što i Full Control`],ans:1},{q:`Koji ugrađeni nalog je podrazumevano ONEMOGUĆEN u Windows 7?`,opts:[`Guest`,`User`,`Administrator`,`System`],ans:2},{q:`Šta je principp najmanjih privilegija?`,opts:[`Dodati što više prava svim korisnicima`,`Korisnik dobija samo prava neophodna za obavljanje zadatka`,`Admin uvek radi kao standardni`,`Zabrana korisnicima pristupa internetu`],ans:1},{q:`Korisnik Marko je u grupama Users (Read) i Projektni (Write) na isti folder. Efektivna dozvola?`,opts:[`Samo Read (restriktivnija)`,`Samo Write`,`Read i Write (kumulacija Allow dozvola)`,`Full Control`],ans:2},{q:`Šta je elevated token u kontekstu UAC-a?`,opts:[`Administratorski nalog`,`Privremeni token sa Admin privilegijama koji UAC dozvoljava za specifičnu radnju`,`Lozinka za sudo mode`,`Korisnički sertifikat`],ans:1}]},
-  {id:'l08',num:'08',title:`Registar sistema`,
-  level:'Napredno',duration:'45 min',
-  tags:['registry', 'registar', 'regedit', 'hkey', 'kljucevi', 'vrednosti', 'backup', 'hive', 'reg'],
-  subsections:[`Šta je Windows Registry`,`Hijerarhija HKEY korena`,`regedit i reg komande`,`Bezbednost i backup`],
-  content:`<section><h2 class="sec" id="s1">1. Šta je Windows Registry?</h2>
-<p class="para"><strong>Windows Registry</strong> je centralna hijerarhijska baza podataka koja čuva konfiguracionu informaciju za ceo operativni sistem, instalirani hardver i aplikacije. Svaka promena podešavanja u Control Panel-u, svaka instalacija softvera i svaki priključeni hardverski uređaj upisuje informacije u Registry.</p>
-<p class="para">Registry je evoluirao iz sistema <strong>.ini konfiguracionih fajlova</strong> koji je koristio Windows 3.x. Problem sa .ini fajlovima bio je raspršenost, nedostatak standardizacije i ograničena veličina. Registry rešava sve ove probleme u jednoj centralizovanoj, hijerarhijskoj bazi.</p>
-<h3 class="subsec">Fizička lokacija Registry fajlova (Hive fajlovi)</h3>
-<div class="table-wrap"><table class="data"><tr><th>Hive naziv</th><th>Fizički fajl</th><th>Šta čuva</th></tr><tr><td>HKLM\SYSTEM</td><td>C:\Windows\System32\config\SYSTEM</td><td>Drajveri, servisne konfiguracije, kontrolni skup</td></tr><tr><td>HKLM\SOFTWARE</td><td>C:\Windows\System32\config\SOFTWARE</td><td>Instalirani softveri, sistemska podešavanja</td></tr><tr><td>HKLM\SAM</td><td>C:\Windows\System32\config\SAM</td><td>Security Account Manager — lokalni korisnici i lozinke (hash)</td></tr><tr><td>HKLM\SECURITY</td><td>C:\Windows\System32\config\SECURITY</td><td>Bezbednosna politika, LSA podaci</td></tr><tr><td>HKCU</td><td>C:\Users\[korisnik]\NTUSER.DAT</td><td>Korisnička podešavanja — učitava se pri prijavi</td></tr></table></div>
-<div class="warn-box"><div class="ib-title">⚠ SAM fajl i lozinke</div><p>SAM fajl čuva hash vrednosti lozinki. Fizički zaštićen od čitanja dok je Windows pokrenut. Svaki pokušaj direktnog kopiranja SAM fajla biće odbijen. Upravo zato napadači koriste offline alate (bootabilni USB) za napad na lozinke.</p></div>
-</section><section><h2 class="sec" id="s2">2. Hijerarhija — 5 HKEY korena</h2>
-<p class="para">Registry je organizovan kao stablo sa 5 glavnih korena (roots). Svaki koren ima specifičnu namenu i sadrži podstabla ključeva i vrednosti.</p>
-<div class="table-wrap"><table class="data"><tr><th>HKEY koren</th><th>Skraćenica</th><th>Sadržaj</th><th>Fizički hive</th></tr><tr><td>HKEY_LOCAL_MACHINE</td><td>HKLM</td><td>Podešavanja za ceo sistem: hardver, servisi, instalirani softveri</td><td>SYSTEM, SOFTWARE, SAM, SECURITY</td></tr><tr><td>HKEY_CURRENT_USER</td><td>HKCU</td><td>Podešavanja prijavljenog korisnika: pozadina, boje, app prefs</td><td>NTUSER.DAT (kopija iz HKU)</td></tr><tr><td>HKEY_CLASSES_ROOT</td><td>HKCR</td><td>Asocijacije ekstenzija (.pdf→Adobe), COM/OLE registracija</td><td>Merge HKLM\Software + HKCU\Software\Classes</td></tr><tr><td>HKEY_USERS</td><td>HKU</td><td>Profili svih učitanih korisnika; HKCU je alias za aktivnog</td><td>Svi NTUSER.DAT fajlovi</td></tr><tr><td>HKEY_CURRENT_CONFIG</td><td>HKCC</td><td>Hardverski profil tekuće sesije (Display, Network)</td><td>Podskup HKLM\SYSTEM</td></tr></table></div>
-<h3 class="subsec">Tipovi vrednosti u Registry-u</h3>
-<div class="table-wrap"><table class="data"><tr><th>Tip</th><th>Opis</th><th>Primer sadržaja</th></tr><tr><td>REG_SZ</td><td>Običan tekstualni string</td><td>C:\Windows\notepad.exe</td></tr><tr><td>REG_EXPAND_SZ</td><td>String sa promenljivama okruženja — proširuje se pri čitanju</td><td>%SystemRoot%\notepad.exe</td></tr><tr><td>REG_MULTI_SZ</td><td>Lista stringova odvojena null karakterima</td><td>Service1\0Service2\0</td></tr><tr><td>REG_DWORD</td><td>32-bitni ceo broj (prikazuje se u hex)</td><td>0x00000001 = 1</td></tr><tr><td>REG_QWORD</td><td>64-bitni ceo broj</td><td>0x0000000000000001</td></tr><tr><td>REG_BINARY</td><td>Sirovi binarni podaci u hex obliku</td><td>F3 A1 00 2B ...</td></tr></table></div>
-</section><section><h2 class="sec" id="s3">3. regedit i reg komande</h2>
-<h3 class="subsec">Navigacija u regedit-u</h3>
-<ul class="list"><li>Pokretanje: Win+R → <code>regedit</code> (potvrda UAC za HKLM izmene)</li><li>Levo stablo = ključevi (kao folderi); desni panel = vrednosti (kao fajlovi)</li><li>Kreiranje vrednosti: desni klik u desnom panelu → New → izaberite tip</li><li>Pretraga: Edit → Find (Ctrl+F) — pretražuje po imenu ključa, vrednosti ili podacima</li><li>Favorites: možete bookmarkovati česte lokacije</li></ul>
-<h3 class="subsec">Važni Registry ključevi</h3>
-<div class="code-block"><div class="code-header"><span class="code-label">Korisni ključevi za administraciju</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">-- Autostart programi za tekuceg korisnika</span>
-HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+<span class="cmd">icacls</span> C:\Vezba\Tajni /remove Marko</code></pre></div></section>`,
+   vezbe:[{title:'Kreiranje korisnika i NTFS dozvole',icon:'👤',steps:['Kreirati Marko (standardni) i Admin2 (administrator)','Prijaviti se kao Marko i pokušati sistemsku radnju','Kreirati C:\\Vezba\\Tajni i podesiti Read-only za Marko','Test: otvori, izmeni, kreiraj fajl – šta uspeva?','Dodati Deny:Write i posmatrati prioritet Deny nad Allow']}],
+   pitanja:[
+     {q:'U kojoj grupi je automatski novokreirani korisnik?',opts:['Administrators','Users','Power Users','Guests'],ans:1},
+     {q:'Šta ima prednost: Allow ili Deny NTFS dozvola?',opts:['Allow uvek pobedi','Deny uvek pobedi','Zavisi od redosleda','Pobedi ona koja je novija'],ans:1},
+     {q:'NTFS=Full Control, Share=Read, pristup putem mreže. Efektivna dozvola?',opts:['Full Control','Read','Modify','Nema pristupa'],ans:1},
+     {q:'Šta UAC traži od standardnog korisnika?',opts:['Samo potvrdu klikom','Admin lozinku','PIN kod','Biometrijsku potvrdu'],ans:1},
+     {q:'Koja komanda prikazuje NTFS dozvole na folderu?',opts:['dir /p','icacls','attrib','net share'],ans:1}
+   ]},
 
-<span class="comment">-- Autostart programi za SVE korisnike</span>
-HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+  {id:'l08',num:'08',title:'Registar sistema',tags:['registry','registar','regedit','hkey','kljucevi','vrednosti','backup'],duration:'45 min',level:'Napredno',
+   subsections:['Šta je Registry','HKEY struktura','regedit i reg komande','Bezbednost'],
+   content:`<section><h2 class="sec" id="s1">1. Šta je Windows Registry?</h2>
+<p class="para">Centralna hijerarhijska baza konfiguracionih podataka. Fizički smeštena u C:\\Windows\\System32\\config\\ (SAM, SYSTEM, SOFTWARE) i C:\\Users\\[user]\\NTUSER.DAT.</p>
+<div class="warn-box"><div class="ib-title">⚠ Uvek pravljiti backup pre izmena</div><p>Oštećen Registry može sprečiti pokretanje Windowsa.</p></div></section>
+<section><h2 class="sec" id="s2">2. Hijerarhija – 5 HKEY korena</h2>
+<div class="table-wrap"><table class="data"><tr><th>Koren</th><th>Skraćenica</th><th>Sadržaj</th></tr>
+<tr><td>HKEY_LOCAL_MACHINE</td><td>HKLM</td><td>Podešavanja za ceo sistem</td></tr>
+<tr><td>HKEY_CURRENT_USER</td><td>HKCU</td><td>Podešavanja prijavljenog korisnika</td></tr>
+<tr><td>HKEY_CLASSES_ROOT</td><td>HKCR</td><td>Asocijacije ekstenzija (.pdf → Acrobat)</td></tr>
+<tr><td>HKEY_USERS</td><td>HKU</td><td>Profili svih korisnika</td></tr>
+<tr><td>HKEY_CURRENT_CONFIG</td><td>HKCC</td><td>Hardverski profil tekuće sesije</td></tr></table></div></section>
+<section><h2 class="sec" id="s3">3. reg komande</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – reg</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">reg query</span> HKLM\Software\Microsoft\Windows\CurrentVersion /v ProgramFilesDir
+<span class="cmd">reg export</span> HKCU\Software\MojaApp C:\backup.reg
+<span class="cmd">reg import</span> C:\backup.reg
+<span class="cmd">reg add</span> HKCU\Software\Test /v Jezik /t REG_SZ /d <span class="string">"srpski"</span>
+<span class="cmd">reg delete</span> HKCU\Software\Test /f</code></pre></div></section>`,
+   vezbe:[{title:'Istraživanje Registry-a i backup',icon:'🔑',steps:['Win+R → regedit (UAC potvrda)','Navigiraj do HKCU\\...\\CurrentVersion\\Run','File → Export → backup_run.reg na Desktop','Otvori .reg u Notepad-u i analizuj strukturu','CMD: reg query HKCU\\...\\Run']}],
+   pitanja:[
+     {q:'Koji HKEY čuva podešavanja za ceo sistem?',opts:['HKCU','HKCR','HKLM','HKU'],ans:2},
+     {q:'Koji fajl odgovara HKEY_CURRENT_USER?',opts:['C:\\Windows\\System32\\config\\SOFTWARE','C:\\Users\\[user]\\NTUSER.DAT','C:\\Windows\\System32\\config\\SAM','C:\\Windows\\Registry.dat'],ans:1},
+     {q:'Koji tip vrednosti čuva 32-bitni broj?',opts:['REG_SZ','REG_BINARY','REG_DWORD','REG_MULTI_SZ'],ans:2},
+     {q:'Gde su programi koji startuju sa sistemom za SVE korisnike?',opts:['HKCU\\...\\Run','HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run','HKCR\\Autorun','HKCC\\Startup'],ans:1},
+     {q:'Šta radi RunOnce ključ?',opts:['Pokreće program jedanput dnevno','Pokreće jednom pa briše unos','Pokreće samo pri prvoj prijavi','Pokreće sa admin pravima'],ans:1}
+   ]},
 
-<span class="comment">-- Autostart jedanput pa se brise (instalacije)</span>
-HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce
-
-<span class="comment">-- Instalirani softveri (Uninstall lista)</span>
-HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall
-
-<span class="comment">-- Asocijacija ekstenzija (npr. .txt)</span>
-HKCR\.txt
-
-<span class="comment">-- Ime racunara</span>
-HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName</code></pre></div>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – reg komande</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Citanje vrednosti</span>
-<span class="cmd">reg query</span> HKLM\Software\Microsoft\Windows\CurrentVersion /v ProgramFilesDir
-<span class="comment">:: Export (backup) kljuca</span>
-<span class="cmd">reg export</span> HKCU\Software\MojaApp C:\backup_app.reg
-<span class="comment">:: Import iz backup-a</span>
-<span class="cmd">reg import</span> C:\backup_app.reg
-<span class="comment">:: Dodavanje novog kljuca</span>
-<span class="cmd">reg add</span> HKCU\Software\VezbaSkola
-<span class="comment">:: Dodavanje vrednosti (REG_SZ)</span>
-<span class="cmd">reg add</span> HKCU\Software\VezbaSkola /v Predmet /t REG_SZ /d <span class="string">"Operativni sistemi"</span>
-<span class="comment">:: Dodavanje vrednosti (REG_DWORD)</span>
-<span class="cmd">reg add</span> HKCU\Software\VezbaSkola /v Sati /t REG_DWORD /d <span class="num">4</span>
-<span class="comment">:: Brisanje celog kljuca</span>
-<span class="cmd">reg delete</span> HKCU\Software\VezbaSkola /f</code></pre></div>
-</section><section><h2 class="sec" id="s4">4. Bezbednost i backup</h2>
-<p class="para">Registry je kritična komponenta sistema — greška može uzrokovati nebootabilnost. Bezbednost u radu sa Registry-em je apsolutni prioritet.</p>
-<h3 class="subsec">Pravila bezbednog rada</h3>
-<ul class="list"><li><strong>Uvek export pre izmene:</strong> File → Export u regedit ili <code>reg export</code> iz CMD-a</li><li><strong>Backup celog hive-a:</strong> System Restore automatski pravi checkpoint Registry-a</li><li><strong>Ne menjati HKLM\SYSTEM bez razloga</strong> — greška = nebootabilnost</li><li><strong>Nikada ne uvoziti .reg fajlove sa nepoznatih sajtova</strong> — mogu sadržati maliciozne ključeve</li><li><strong>Registry dozvole:</strong> desni klik na ključ → Permissions — iste kao NTFS dozvole</li></ul>
-<div class="info-box"><div class="ib-title">System Restore i Registry</div><p>Svaki System Restore checkpoint čuva kopiju svih Registry hive fajlova. Ovo je prva linija odbrane pri problemima. Pre SVAKE eksperimentalne izmene Registry-a, ručno kreirajte Restore Point.</p></div>
-</section>`,
-  vezbe:[{title:`Istraživanje Registry-a i backup`,icon:'🔑',steps:[`Win+R → regedit → UAC potvrda`,`Navigirajte do HKCU\Software\Microsoft\Windows\CurrentVersion\Run`,`Zapišite sve vrednosti (ime, tip, sadržaj) u tabelu`,`File → Export → sačuvajte kao backup_run.reg na Desktop`,`Otvorite .reg u Notepad-u — analizirajte strukturu (zaglavlje, ključ, tip, vrednost)`,`CMD: reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Run`,`Kreirati: reg add HKCU\Software\VezbaSkola /v Razred /t REG_SZ /d "II-3"`,`Export → Delete → Import → proveriti obnovu`]}],
-  pitanja:[{q:`Koji HKEY koren čuva podešavanja za ceo sistem (hardver, servisi, softver)?`,opts:[`HKEY_CURRENT_USER`,`HKEY_LOCAL_MACHINE`,`HKEY_CLASSES_ROOT`,`HKEY_USERS`],ans:1},{q:`U kom fizičkom fajlu se čuva HKEY_CURRENT_USER?`,opts:[`C:\Windows\System32\config\SOFTWARE`,`C:\Users\[korisnik]\NTUSER.DAT`,`C:\Windows\System32\config\SAM`,`C:\Windows\Registry.dat`],ans:1},{q:`Koji tip Registry vrednosti čuva 32-bitni ceo broj?`,opts:[`REG_SZ`,`REG_BINARY`,`REG_DWORD`,`REG_MULTI_SZ`],ans:2},{q:`Gde se nalaze autostart programi za SVE korisnike (ne samo tekućeg)?`,opts:[`HKCU\...\Run`,`HKLM\Software\Microsoft\Windows\CurrentVersion\Run`,`HKCR\Autorun`,`HKCC\Startup`],ans:1},{q:`Koja komanda izvozi Registry ključ u .reg fajl?`,opts:[`reg export HKCU\Test C:\backup.reg`,`reg backup HKCU\Test C:\backup.reg`,`regedit /export C:\backup.reg`,`copy HKCU C:\backup.reg`],ans:0},{q:`Šta radi RunOnce ključ (za razliku od Run)?`,opts:[`Pokreće program jedanput dnevno`,`Pokreće jednom pri sledećem startu, pa se unos automatski briše`,`Pokreće samo pri prvoj prijavi`,`Pokreće sa Admin pravima`],ans:1},{q:`Koji HKEY čuva asocijacije fajl ekstenzija (npr. .pdf → Acrobat)?`,opts:[`HKEY_LOCAL_MACHINE`,`HKEY_CURRENT_USER`,`HKEY_CLASSES_ROOT`,`HKEY_CURRENT_CONFIG`],ans:2},{q:`Zašto je SAM hive fajl zaštićen od čitanja dok Windows radi?`,opts:[`Jer je prevelik`,`Jer čuva hash vrednosti lozinki lokalnih korisnika`,`Jer je u upotrebi od kernel procesa`,`Jer je šifrovan BitLockerom`],ans:1},{q:`Šta je REG_EXPAND_SZ tip vrednosti?`,opts:[`String koji ne može da se menja`,`String koji sadrži promenljive okruženja i proširuje se pri čitanju`,`Lista stringova`,`Binarni string`],ans:1},{q:`Šta se preporučuje pre svake izmene Registry-a?`,opts:[`Restart računara`,`Export (backup) ključa koji se menja`,`Isključivanje Windows Update`,`Odjava korisnika`],ans:1}]},
-  {id:'l09',num:'09',title:`Komandna linija i PowerShell`,
-  level:'Napredno',duration:'60 min',
-  tags:['cmd', 'komandna linija', 'powershell', 'bat', 'skripta', 'wmic', 'schtasks', 'pipe', 'redirect'],
-  subsections:[`CMD — navigacija i osnove`,`Batch skripte (.bat)`,`PowerShell — objektni shell`,`WMIC i Scheduled Tasks (9.4)`],
-  content:`<section><h2 class="sec" id="s1">1. CMD — navigacija, pipe i redirect</h2>
-<p class="para"><strong>Command Prompt (cmd.exe)</strong> je tekstualni interpreter komandi koji postoji od MS-DOS vremena. Iako je PowerShell moćniji, CMD je brži za jednostavne zadatke i uvek dostupan. Pokretanje: Win+R → cmd (ili "Run as administrator" za sistemske radnje).</p>
-<div class="table-wrap"><table class="data"><tr><th>Komanda</th><th>Opis</th><th>Primer</th></tr><tr><td>dir</td><td>Listanje sadržaja foldera</td><td>dir /a /o:n C:\Windows</td></tr><tr><td>cd</td><td>Promena tekućeg foldera</td><td>cd %USERPROFILE%\Desktop</td></tr><tr><td>mkdir / md</td><td>Kreiranje foldera</td><td>md C:\Vezba\Podaci\Arhiva</td></tr><tr><td>rmdir / rd</td><td>Brisanje foldera</td><td>rd /s /q C:\Vezba</td></tr><tr><td>copy / xcopy</td><td>Kopiranje fajlova</td><td>xcopy C:\Src D:\Dst /E /Y /C</td></tr><tr><td>move</td><td>Premeštanje fajlova</td><td>move *.txt C:\Arhiva</td></tr><tr><td>del</td><td>Brisanje fajlova</td><td>del /f /q *.tmp</td></tr><tr><td>type</td><td>Prikaz sadržaja fajla</td><td>type C:\log.txt</td></tr><tr><td>find</td><td>Pretraga teksta u outputu</td><td>dir | find ".exe"</td></tr><tr><td>tasklist</td><td>Lista procesa</td><td>tasklist /fi "status eq running"</td></tr><tr><td>taskkill</td><td>Završavanje procesa</td><td>taskkill /IM notepad.exe /F</td></tr><tr><td>systeminfo</td><td>Sistemske informacije</td><td>systeminfo | find /i "os"</td></tr><tr><td>echo</td><td>Ispis teksta</td><td>echo %USERNAME% na %COMPUTERNAME%</td></tr><tr><td>set</td><td>Promenljive okruženja</td><td>set MOJA=vrednost</td></tr><tr><td>cls</td><td>Brisanje ekrana</td><td>cls</td></tr></table></div>
-<h3 class="subsec">Pipe i preusmeravanje — kombinovanje komandi</h3>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – pipe i redirect</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Preusmeravanje outputa u fajl (overwrite)</span>
-<span class="cmd">dir</span> > lista.txt
-<span class="comment">:: Dodavanje na kraj fajla (append)</span>
-<span class="cmd">dir</span> >> lista.txt
-<span class="comment">:: Pipe: output jedne komande ide kao input druge</span>
-<span class="cmd">dir</span> | <span class="cmd">find</span> <span class="string">".txt"</span>
-<span class="cmd">tasklist</span> | <span class="cmd">sort</span> > procesi_sortirani.txt
-<span class="cmd">dir</span> | <span class="cmd">find</span> /c /v <span class="string">""</span>  <span class="comment">(broji redove)</span>
-<span class="comment">:: Pretraga fajlova u podfolderima</span>
-<span class="cmd">dir</span> C:\Windows\*.exe /s | <span class="cmd">find</span> <span class="string">"notepad"</span></code></pre></div>
-</section><section><h2 class="sec" id="s2">2. Batch skripte (.bat)</h2>
-<p class="para">Batch skripta je tekstualni fajl sa ekstenzijom <strong>.bat</strong> (ili .cmd) koji sadrži niz CMD komandi izvršenih sekvencijalno. Omogućava automatizaciju repetitivnih zadataka.</p>
-<h3 class="subsec">Ključne batch direktive</h3>
-<div class="table-wrap"><table class="data"><tr><th>Direktiva</th><th>Funkcija</th><th>Primer</th></tr><tr><td>@echo off</td><td>Sakriva prikaz komandi tokom izvršavanja</td><td>Prva linija skoro svake skripte</td></tr><tr><td>set</td><td>Deklariše promenljivu</td><td>set IZVOR=C:\Dokumenti</td></tr><tr><td>%promenljiva%</td><td>Pristup vrednosti promenljive</td><td>xcopy %IZVOR% %ODREDISTE%</td></tr><tr><td>if / if not</td><td>Uslovni blok</td><td>if not exist %FOLDER% mkdir %FOLDER%</td></tr><tr><td>for</td><td>Petlja — za fajlove, linije, brojeve</td><td>for %%f in (*.txt) do copy %%f D:\</td></tr><tr><td>goto :LABELA</td><td>Skok na oznaku u skripti</td><td>goto :KRAJ</td></tr><tr><td>pause</td><td>Čeka Enter pre zatvaranja</td><td>pause</td></tr><tr><td>%date% %time%</td><td>Sistemski datum i vreme</td><td>echo %date% %time% >> log.txt</td></tr><tr><td>exit /b 0</td><td>Izlaz sa kodom uspjeha</td><td>exit /b 0</td></tr><tr><td>call</td><td>Poziv druge skripte</td><td>call C:\utils.bat</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">backup.bat – kompletan primer</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="kw">@echo off</span>
-<span class="kw">title</span> Automatski Backup v1.0
-<span class="cmd">echo</span> ===========================
-<span class="cmd">echo</span>  BACKUP SKRIPT
-<span class="cmd">echo</span> ===========================
-
+  {id:'l09',num:'09',title:'Komandna linija i PowerShell',tags:['cmd','komandna linija','powershell','bat','skripta','wmic','schtasks'],duration:'60 min',level:'Napredno',
+   subsections:['CMD komande','Batch skripte','PowerShell cmdlet-i','WMIC i schtasks'],
+   content:`<section><h2 class="sec" id="s1">1. CMD – referentne komande</h2>
+<div class="table-wrap"><table class="data"><tr><th>Komanda</th><th>Opis</th><th>Primer</th></tr>
+<tr><td><code>dir</code></td><td>Listanje</td><td><code>dir /a /o:n</code></td></tr>
+<tr><td><code>cd</code></td><td>Promena foldera</td><td><code>cd %USERPROFILE%</code></td></tr>
+<tr><td><code>xcopy</code></td><td>Kopiranje sa opcijama</td><td><code>xcopy C:\Src D:\Dst /E /Y</code></td></tr>
+<tr><td><code>tasklist</code></td><td>Lista procesa</td><td><code>tasklist /fi "status eq running"</code></td></tr>
+<tr><td><code>systeminfo</code></td><td>Sistemske info</td><td><code>systeminfo | find "OS"</code></td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Batch skripta</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">backup.bat</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="kw">@echo off</span>
 <span class="kw">set</span> IZVOR=C:\Dokumenti
-<span class="kw">set</span> ODREDISTE=C:\Backup\%date:~6,4%-%date:~3,2%-%date:~0,2%
-
-<span class="kw">if not exist</span> %ODREDISTE% (
-    <span class="cmd">mkdir</span> %ODREDISTE%
-    <span class="cmd">echo</span> Kreiran folder: %ODREDISTE%
-) <span class="kw">else</span> (
-    <span class="cmd">echo</span> Folder vec postoji.
-)
-
-<span class="comment">:: Kopiranje samo .docx fajlova</span>
-<span class="kw">for</span> %%f <span class="kw">in</span> (%IZVOR%\*.docx) <span class="kw">do</span> (
-    <span class="cmd">copy</span> "%%f" %ODREDISTE%
-    <span class="cmd">echo</span> Kopiran: %%f
-)
-
-<span class="cmd">echo</span> Backup: %date% %time% >> C:\Backup\log.txt
-<span class="cmd">echo</span> Backup uspesno zavrsen!
-<span class="kw">pause</span></code></pre></div>
-</section><section><h2 class="sec" id="s3">3. PowerShell — objektni shell</h2>
-<p class="para"><strong>PowerShell</strong> je napredniji shell i skriptni jezik razvijen od Microsoft-a. Za razliku od CMD koji radi sa tekstom, PowerShell radi sa <strong>.NET objektima</strong>. Ovo znači da možete filtrirati, sortirati i manipulisati strukturiranim podacima bez parsiranja teksta.</p>
-<h3 class="subsec">Cmdlet-i — format Verb-Noun</h3>
-<p class="para">Svaka PowerShell komanda se zove <strong>cmdlet</strong> i prati format <code>Glagol-Imenica</code>. Glagoli su standardizovani: Get (čitanje), Set (postavljanje), New (kreiranje), Remove (brisanje), Start/Stop (kontrola).</p>
-<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – referentni cmdlet-i</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment"># Procesi po RAM potrosnji (top 10)</span>
-<span class="cmd">Get-Process</span> | Sort-Object WorkingSet -Descending | Select-Object -First <span class="num">10</span> Name, @{n='MB';e={[math]::Round($_.WorkingSet/1MB,1)}}
-
-<span class="comment"># Servisi koji rade</span>
-<span class="cmd">Get-Service</span> | Where-Object { $_.Status -eq <span class="string">"Running"</span> } | Sort-Object Name
-
-<span class="comment"># OS informacije</span>
-<span class="cmd">Get-WmiObject</span> Win32_OperatingSystem | Select-Object Caption, Version, LastBootUpTime
-
-<span class="comment"># Lista .txt fajlova na Desktop-u</span>
-<span class="cmd">Get-ChildItem</span> "$env:USERPROFILE\Desktop" -Filter *.txt -Recurse
-
-<span class="comment"># Kreiranje fajla sa sadrzajem</span>
-<span class="cmd">Set-Content</span> C:\Test\info.txt <span class="string">"Generisano: $(Get-Date)"</span>
-
-<span class="comment"># Poslednih 5 instaliranih hotfix-eva</span>
-<span class="cmd">Get-HotFix</span> | Sort-Object InstalledOn -Descending | Select-Object -First <span class="num">5</span></code></pre></div>
-<div class="info-box"><div class="ib-title">PowerShell Pipeline vs CMD Pipe</div><p>U CMD-u pipe | prosleđuje tekst. U PowerShell-u pipeline prosleđuje objekte sa svim svojstvima. Ovo znači: Get-Process | Sort-Object WorkingSet radi jer WorkingSet JE numeričko svojstvo objekta Process — ne morate parsirati tekst.</p></div>
-</section><section><h2 class="sec" id="s4">4. WMIC i Scheduled Tasks (9.4 Administracija putem CLI)</h2>
-<p class="para"><strong>WMIC (Windows Management Instrumentation Command)</strong> je CLI interfejs ka WMI — ogromnoj bazi podataka o stanju sistema. Omogućava upite o hardveru, softveru, mrežnim adapterima i procesima.</p>
-<div class="code-block"><div class="code-header"><span class="code-label">WMIC – sistemska administracija</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Informacije o procesoru</span>
-<span class="cmd">wmic</span> cpu get Name, MaxClockSpeed, NumberOfCores /format:list
-
-<span class="comment">:: RAM moduli</span>
-<span class="cmd">wmic</span> memorychip get Capacity, Speed, Manufacturer
-
-<span class="comment">:: Lista procesa sa putanjama</span>
+<span class="kw">set</span> ODREDISTE=C:\Backup
+<span class="kw">if not exist</span> %ODREDISTE% <span class="cmd">mkdir</span> %ODREDISTE%
+<span class="cmd">xcopy</span> %IZVOR% %ODREDISTE% /E /Y /C
+<span class="cmd">echo</span> Backup: %date% %time% >> %ODREDISTE%\log.txt
+<span class="kw">pause</span></code></pre></div></section>
+<section><h2 class="sec" id="s3">3. PowerShell cmdlet-i</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">Get-Process</span> | Sort-Object WorkingSet -Descending | Select-Object -First <span class="num">5</span>
+<span class="cmd">Get-Service</span> | Where-Object { $_.Status -eq <span class="string">"Running"</span> }
+<span class="cmd">Get-WmiObject</span> Win32_OperatingSystem | Select-Object Caption, Version
+<span class="cmd">Get-HotFix</span> | Sort-Object InstalledOn -Descending | Select-Object -First <span class="num">5</span></code></pre></div></section>
+<section><h2 class="sec" id="s4">4. WMIC i Scheduled Tasks</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">WMIC + schtasks</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="comment">:: WMIC – informacije o sistemu</span>
+<span class="cmd">wmic</span> cpu get Name, NumberOfCores
+<span class="cmd">wmic</span> memorychip get Capacity, Speed
 <span class="cmd">wmic</span> process get Name, ProcessId, ExecutablePath
-
-<span class="comment">:: Informacije o OS</span>
-<span class="cmd">wmic</span> os get Caption, Version, BuildNumber, LastBootUpTime
-
-<span class="comment">:: Instalirani softveri</span>
-<span class="cmd">wmic</span> product get Name, Version | <span class="cmd">sort</span></code></pre></div>
-<h3 class="subsec">schtasks — zakazani zadaci</h3>
-<p class="para"><strong>Scheduled Tasks</strong> omogućavaju automatsko pokretanje programa ili skripte po rasporedu (svaki dan, pri bootu, pri prijavi korisnika...). U Windows 7: Task Scheduler GUI ili schtasks iz CMD-a.</p>
-<div class="code-block"><div class="code-header"><span class="code-label">schtasks – zakazivanje zadataka</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Kreiranje zadatka koji se pokrece svaki dan u 14:00</span>
+<span class="comment">:: Zakazani zadatak – svaki dan u 14:00</span>
 <span class="cmd">schtasks</span> /create /tn <span class="string">"DnevniBackup"</span> /tr C:\backup.bat /sc daily /st <span class="num">14:00</span>
-
-<span class="comment">:: Pokretanje zadatka pri startu sistema</span>
-<span class="cmd">schtasks</span> /create /tn <span class="string">"BootSkript"</span> /tr C:\init.bat /sc onstart /ru SYSTEM
-
-<span class="comment">:: Lista svih zadataka</span>
 <span class="cmd">schtasks</span> /query /fo list /v
+<span class="cmd">schtasks</span> /delete /tn <span class="string">"DnevniBackup"</span> /f</code></pre></div></section>`,
+   vezbe:[{title:'Batch skripta i PowerShell',icon:'💻',steps:['CMD: kreirajte folder strukturu i 3 fajla, sačuvajte dir output','Napišite .bat skriptu sa set, if not exist, xcopy i log','Pokrenite skriptu i proverite rezultat','PowerShell: 5 procesa po RAM-u','WMIC: prikaz CPU info → sačuvati u fajl','schtasks: kreirajte, pokrenite i obrišite zadatak']}],
+   pitanja:[
+     {q:'Kako se zovu komande u PowerShell-u?',opts:['Commands','Functions','Cmdlets','Scripts'],ans:2},
+     {q:'Šta radi | (pipe)?',opts:['Čuva u fajl','Prosleđuje output jedne komande kao input drugoj','Dodaje na kraj fajla','Pokreće kao admin'],ans:1},
+     {q:'Razlika između > i >> u CMD?',opts:['> je brži','> overwrite, >> append','> za tekst, >> za binarne','Nema razlike'],ans:1},
+     {q:'Šta prikazuje wmic cpu get NumberOfCores?',opts:['Potrošnju CPU-a','Temperaturu procesora','Broj jezgara procesora','Lista procesa'],ans:2},
+     {q:'Koja schtasks opcija pokreće zadatak odmah?',opts:['/start','/run','/execute','/now'],ans:1}
+   ]},
 
-<span class="comment">:: Pokretanje zadatka odmah</span>
-<span class="cmd">schtasks</span> /run /tn <span class="string">"DnevniBackup"</span>
-
-<span class="comment">:: Brisanje zadatka</span>
-<span class="cmd">schtasks</span> /delete /tn <span class="string">"DnevniBackup"</span> /f</code></pre></div>
-</section>`,
-  vezbe:[{title:`CMD, bat skripta, PowerShell i schtasks`,icon:'💻',steps:[`CMD: kreirati folder strukturu, 3 fajla, sačuvati dir output sa pipe i redirect`,`Napisati backup.bat u Notepad-u: datumski folder + xcopy + log + if not exist`,`Pokrenuti skriptu i proveriti rezultate (folder sa datumom kreiran?)`,`PowerShell: Top 5 procesa po RAM-u sa MB kolonom`,`WMIC: prikaz CPU info → sačuvati u cpu_info.txt`,`schtasks: kreirajte zadatak koji pokreće Notepad svaki dan u 09:00`,`Proverite zadatak, pokrenite ga ručno, pa obrišite`]}],
-  pitanja:[{q:`Kako se zovu komande u PowerShell-u i koji je ispravan format?`,opts:[`Commands, format: verb_noun`,`Functions, format: noun-verb`,`Cmdlets, format: Verb-Noun (npr. Get-Process)`,`Scripts, format: verb:noun`],ans:2},{q:`Šta radi operator | (pipe) u CMD-u?`,opts:[`Čuva output u fajl`,`Prosleđuje stdout jedne komande kao stdin sledećoj`,`Dodaje na kraj fajla`,`Pokreće komandu kao admin`],ans:1},{q:`Razlika između > i >> u CMD-u?`,opts:[`> je brži`,`> overwrite (briše pa piše); >> append (dodaje na kraj)`,`> za tekst, >> za binarne`,`Nema razlike`],ans:1},{q:`Šta znači @echo off na početku .bat fajla?`,opts:[`Isključuje zvuk`,`Sakriva prikaz svake komande tokom izvršavanja`,`Pokreće skriptu nevidljivo`,`Zabranuje korisnikovim unosom da prekine skriptu`],ans:1},{q:`Koja PowerShell komanda prikazuje samo Running servise?`,opts:[`Get-Service -Status Running`,`Get-Service | Where-Object { $_.Status -eq "Running" }`,`tasklist -running`,`services.exe list`],ans:1},{q:`Koja schtasks komanda kreira zadatak koji se izvršava svaki dan u 10:00?`,opts:[`schtasks /create /tn "Test" /tr C:\b.bat /sc daily /st 10:00`,`schedule /add daily 10:00 C:\b.bat`,`at 10:00 /every C:\b.bat`,`task /create daily C:\b.bat`],ans:0},{q:`Šta prikazuje wmic cpu get NumberOfCores?`,opts:[`Potrošnju CPU po procesima`,`Temperaturu procesora`,`Broj fizičkih jezgara procesora`,`Frekvenciju procesora u MHz`],ans:2},{q:`Koja je ključna razlika PowerShell pipeline-a od CMD pipe-a?`,opts:[`PowerShell je sporiji`,`PowerShell prosleđuje .NET objekte (sa svim svojstvima), CMD samo tekst`,`PowerShell ne podržava filter`,`CMD pipe radi sa više tipova podataka`],ans:1},{q:`Šta radi for %%f in (*.txt) do copy %%f D:\ u batch skripti?`,opts:[`Briše sve txt fajlove`,`Kopira sve .txt fajlove iz tekućeg foldera na D: disk`,`Prebroji txt fajlove`,`Preimenuje sve txt fajlove`],ans:1},{q:`WMIC pripada kom podsistemu Windowsa?`,opts:[`Windows File System`,`Windows Management Instrumentation (WMI)`,`Windows Resource Monitor`,`Windows Task Scheduler`],ans:1}]},
-  {id:'l10',num:'10',title:`Mrežno umrežavanje`,
-  level:'Srednje',duration:'45 min',
-  tags:['mreza', 'ip adresa', 'dns', 'gateway', 'ping', 'ipconfig', 'netstat', 'deljenje', 'workgroup', 'arp', 'tracert', 'subnet'],
-  subsections:[`Mrežni adapteri i konfiguracija`,`IP adresiranje — subnet, gateway, DNS`,`Deljenje resursa i Workgroup`,`Mrežna dijagnostika`],
-  content:`<section><h2 class="sec" id="s1">1. Mrežni adapteri i konfiguracija</h2>
-<p class="para">Mrežni adapter (Network Interface Card — NIC) je hardverska ili virtuelna komponenta koja računar povezuje sa mrežom. Windows automatski prepoznaje adaptere putem Plug and Play i instalira drajvere.</p>
-<h3 class="subsec">Tipovi mrežnih adaptera</h3>
-<div class="table-wrap"><table class="data"><tr><th>Tip</th><th>Opis</th><th>VirtualBox ekvivalent</th></tr><tr><td>Ethernet (LAN)</td><td>Žičana veza; RJ45 konektor; do 10 Gbps</td><td>Bridged ili NAT adapter</td></tr><tr><td>Wi-Fi (WLAN)</td><td>Bežična veza; 802.11a/b/g/n/ac/ax</td><td>Bridged adapter (Wi-Fi kartice hosta)</td></tr><tr><td>Loopback (127.0.0.1)</td><td>Virtuelni adapter za lokalni saobraćaj</td><td>Uvek prisutan na svakom OS-u</td></tr><tr><td>NAT (VirtualBox)</td><td>VM pristupa internetu kroz IP hosta</td><td>Adapter 1 u VirtualBox podešavanjima</td></tr><tr><td>Host-Only (VirtualBox)</td><td>Izolirana mreža između VM-ova i hosta</td><td>Adapter 2 — za međusobnu komunikaciju VM-ova</td></tr></table></div>
-<h3 class="subsec">Podešavanje mrežnog adaptera</h3>
-<p class="para">GUI: Control Panel → Network Connections → desni klik na adapter → Properties → IPv4 Properties. Svaki adapter može dobiti IP automatski (DHCP) ili ručno (statička IP).</p>
-<div class="code-block"><div class="code-header"><span class="code-label">netsh – konfiguracija iz CMD-a</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Prikaz svih adaptera i statusa</span>
-<span class="cmd">netsh</span> interface show interface
-<span class="comment">:: Postavljanje staticke IP</span>
-<span class="cmd">netsh</span> interface ip set address <span class="string">"Local Area Connection 2"</span> static 192.168.56.101 255.255.255.0
-<span class="comment">:: Postavljanje DNS servera</span>
-<span class="cmd">netsh</span> interface ip set dns <span class="string">"Local Area Connection 2"</span> static 8.8.8.8
-<span class="comment">:: Povratak na DHCP</span>
-<span class="cmd">netsh</span> interface ip set address <span class="string">"Local Area Connection 2"</span> dhcp</code></pre></div>
-</section><section><h2 class="sec" id="s2">2. IP adresiranje — subnet, gateway, DNS</h2>
-<p class="para">Svaki uređaj u TCP/IP mreži mora imati <strong>IP adresu</strong> — logičku adresu koja identifikuje uređaj. IPv4 adresa je 32-bitni broj prikazan kao 4 okteta (0–255) odvojena tačkama.</p>
-<div class="table-wrap"><table class="data"><tr><th>Pojam</th><th>Primer vrednosti</th><th>Opis</th></tr><tr><td>IP adresa</td><td>192.168.1.100</td><td>Adresa uređaja — mora biti jedinstena u podmreži</td></tr><tr><td>Subnet maska</td><td>255.255.255.0 (/24)</td><td>Definiše koji deo IP-a je mreža, koji host; /24 = 254 hosta</td></tr><tr><td>Default Gateway</td><td>192.168.1.1</td><td>Adresa rutera — izlaz ka internetu i drugim mrežama</td></tr><tr><td>DNS Server</td><td>8.8.8.8 (Google)</td><td>Prevodi domene u IP adrese; 1.1.1.1 = Cloudflare</td></tr><tr><td>DHCP Server</td><td>Ruter (obično)</td><td>Automatski dodeljuje IP, masku, gateway, DNS</td></tr><tr><td>MAC adresa</td><td>00:0C:29:AB:CD:EF</td><td>Fizička adresa kartice; jedinstvena globalno; 48 bita</td></tr></table></div>
-<h3 class="subsec">Privatni IP opsezi (RFC 1918)</h3>
-<p class="para">Uređaji u kućnoj ili poslovnoj mreži koriste <strong>privatne IP adrese</strong> koje nisu rutirane na internetu. NAT u ruteru prevodi privatnu IP u javnu za odlazni saobraćaj.</p>
-<div class="table-wrap"><table class="data"><tr><th>Klasa</th><th>Opseg</th><th>Podmreža</th><th>Tipična primena</th></tr><tr><td>A</td><td>10.0.0.0 – 10.255.255.255</td><td>10.0.0.0/8</td><td>Velika preduzeća</td></tr><tr><td>B</td><td>172.16.0.0 – 172.31.255.255</td><td>172.16.0.0/12</td><td>Srednja preduzeća</td></tr><tr><td>C</td><td>192.168.0.0 – 192.168.255.255</td><td>192.168.0.0/16</td><td>Kućne i male poslovne mreže</td></tr></table></div>
-<div class="info-box"><div class="ib-title">VirtualBox Host-Only mreža</div><p>Host-Only adapter kreira izoliranu virtualnu mrežu između VM-ova i hosta. Podrazumevani opseg VirtualBox Host-Only je 192.168.56.0/24. VM-ovi u ovoj mreži mogu komunicirati međusobno ali ne mogu direktno pristupiti internetu (za internet koristite NAT adapter).</p></div>
-</section><section><h2 class="sec" id="s3">3. Deljenje resursa, Workgroup i mapiranje</h2>
-<p class="para">Windows omogućava deljenje foldera, štampača i diskova u lokalnoj mreži. Za peer-to-peer mrežu bez servera koristi se <strong>Workgroup</strong> model — svi računari su ravnopravni.</p>
-<h3 class="subsec">Preduslovi za deljenje</h3>
-<ul class="list"><li>Oba računara u istom <strong>Workgroup</strong>-u (Computer → Properties → Change Settings)</li><li><strong>Network Discovery</strong> uključen (Control Panel → Network → Advanced Sharing Settings)</li><li><strong>File and Printer Sharing</strong> uključen</li><li><strong>Firewall</strong> mora imati otvoreno pravilo za File and Printer Sharing</li></ul>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – deljenje foldera i mapiranje</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Deljenje foldera (Everyone = Read)</span>
-<span class="cmd">net share</span> Deljeni=C:\DeljeniFolder /GRANT:Everyone,READ
-<span class="comment">:: Deljenje sa specificnim korisnicima</span>
-<span class="cmd">net share</span> Posao=C:\Posao /GRANT:Marko,CHANGE /GRANT:Admin,FULL
-<span class="comment">:: Lista svih deljenih resursa</span>
+  {id:'l10',num:'10',title:'Mrežno umrežavanje',tags:['mreza','ip adresa','dns','gateway','ping','ipconfig','netstat','deljenje','workgroup'],duration:'45 min',level:'Srednje',
+   subsections:['Mrežni adapteri','IP, DNS, Gateway','Deljenje i mapiranje','Dijagnostika'],
+   content:`<section><h2 class="sec" id="s1">1. Mrežni adapteri</h2>
+<ul class="list"><li>Pregled: Control Panel → Network Connections</li>
+<li><strong>DHCP</strong> – automatska dodela IP od rutera</li>
+<li><strong>Statička IP</strong> – ručna, za servere i štampače</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">netsh – konfiguracija</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">netsh</span> interface ip set address <span class="string">"Local Area Connection"</span> static 192.168.1.100 255.255.255.0
+<span class="cmd">netsh</span> interface ip set dns <span class="string">"Local Area Connection"</span> static 8.8.8.8
+<span class="cmd">netsh</span> interface ip set address <span class="string">"Local Area Connection"</span> dhcp</code></pre></div></section>
+<section><h2 class="sec" id="s2">2. IP adresiranje</h2>
+<div class="table-wrap"><table class="data"><tr><th>Pojam</th><th>Primer</th><th>Opis</th></tr>
+<tr><td>IP adresa</td><td>192.168.1.100</td><td>Adresa uređaja u mreži</td></tr>
+<tr><td>Subnet maska</td><td>255.255.255.0</td><td>Mreža vs. host deo IP-a</td></tr>
+<tr><td>Default Gateway</td><td>192.168.1.1</td><td>Adresa rutera</td></tr>
+<tr><td>DNS Server</td><td>8.8.8.8</td><td>Prevodi domene u IP</td></tr></table></div></section>
+<section><h2 class="sec" id="s3">3. Deljenje foldera i mapiranje</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – mrežno deljenje</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">net share</span> Deljeni=C:\Deljeni /GRANT:Everyone,READ
 <span class="cmd">net share</span>
-<span class="comment">:: Pristup deljenom folderu (UNC putanja)</span>
-<span class="comment">:: Start → Run → \\192.168.56.101\Deljeni</span>
-<span class="comment">:: Mapiranje mrežnog diska Z:</span>
 <span class="cmd">net use</span> Z: \\192.168.56.101\Deljeni
-<span class="comment">:: Mapiranje sa autentifikacijom</span>
-<span class="cmd">net use</span> Z: \\192.168.56.101\Deljeni /user:Marko Sifra!
-<span class="comment">:: Brisanje mape</span>
-<span class="cmd">net use</span> Z: /delete</code></pre></div>
-</section><section><h2 class="sec" id="s4">4. Mrežna dijagnostika</h2>
-<p class="para">Kada mreža ne radi kako treba, sistematska dijagnostika pomoću alata komandne linije brzo identifikuje problem.</p>
-<div class="table-wrap"><table class="data"><tr><th>Komanda</th><th>Šta testira</th><th>Primer</th></tr><tr><td>ipconfig /all</td><td>IP, MAC, DNS, DHCP, gateway svih adaptera</td><td>ipconfig /all</td></tr><tr><td>ipconfig /flushdns</td><td>Briše lokalni DNS keš</td><td>ipconfig /flushdns</td></tr><tr><td>ping IP</td><td>Test ICMP konekcije; latencija; gubitak paketa</td><td>ping -n 10 8.8.8.8</td></tr><tr><td>tracert domen</td><td>Put paketa hop po hop do odredišta</td><td>tracert google.com</td></tr><tr><td>netstat -an</td><td>Sve TCP/UDP veze i otvoreni portovi</td><td>netstat -an | find "ESTAB"</td></tr><tr><td>netstat -b</td><td>Veze sa imenima programa (zahteva admin)</td><td>netstat -b</td></tr><tr><td>nslookup domen</td><td>DNS razrešavanje — ime → IP</td><td>nslookup youtube.com</td></tr><tr><td>arp -a</td><td>ARP keš — IP ↔ MAC za lokalnu mrežu</td><td>arp -a</td></tr><tr><td>pathping</td><td>ping + tracert + statistika gubitka po hopu</td><td>pathping google.com</td></tr></table></div>
-<h3 class="subsec">Dijagnostički workflow</h3>
-<ul class="list"><li><strong>1. ipconfig</strong> — da li adapter ima IP adresu?</li><li><strong>2. ping 127.0.0.1</strong> — radi li TCP/IP stack na lokalnom računaru?</li><li><strong>3. ping Gateway</strong> — da li lokalna mreža funkcioniše?</li><li><strong>4. ping 8.8.8.8</strong> — da li internet konekcija radi (bez DNS)?</li><li><strong>5. ping google.com</strong> — da li DNS razrešavanje radi?</li><li><strong>6. tracert</strong> — gde se paket gubi (na kom hopu)?</li></ul>
-</section>`,
-  vezbe:[{title:`Mrežna konfiguracija i deljenje u VirtualBox-u`,icon:'🌐',steps:[`VM Settings → Network → Adapter 2 → Enable → Host-Only Adapter → OK`,`Windows: Control Panel → IPv4 Properties → uneti statičku IP sa table`,`ipconfig /all — proveriti oba adaptera`,`ping IP_para → ako ne radi: Firewall → Allow File and Printer Sharing`,`VM1: kreirati C:\DeljeniKlas sa 3 fajla; net share DeljeniKlas=C:\DeljeniKlas /GRANT:Everyone,READ`,`VM2: Start → Run → \\IP_VM1\DeljeniKlas — videti fajlove?`,`VM2: net use Z: \\IP_VM1\DeljeniKlas → proveriti disk Z: u Explorer-u`,`Dijagnostika: ipconfig /all, ping gateway, ping 8.8.8.8, tracert 8.8.8.8`]}],
-  pitanja:[{q:`Šta radi ipconfig /flushdns?`,opts:[`Resetuje mrežni adapter`,`Briše lokalni DNS keš razrešavanja`,`Zahteva novu IP od DHCP-a`,`Prikazuje DNS servere`],ans:1},{q:`Računar ima IP 192.168.1.50, subnet 255.255.255.0. Koji je opseg validnih hosta u podmreži?`,opts:[`192.168.1.1–192.168.1.50`,`192.168.1.1–192.168.1.254`,`192.168.0.1–192.168.255.254`,`192.168.1.50–192.168.1.254`],ans:1},{q:`Kako izgleda UNC putanja za pristup folderu Skola na PC01?`,opts:[`http://PC01/Skola`,`\\PC01\Skola`,`ftp://PC01/Skola`,`PC01://Skola`],ans:1},{q:`Tracert pokazuje * * * za hop broj 5. Šta to znači?`,opts:[`Veza je prekinuta`,`Router na hopu 5 ne odgovara na ICMP (firewall ili TTL exceeded)`,`Sve je u redu — normalan odgovor`,`Hop 5 nema IP adresu`],ans:1},{q:`Ping do 8.8.8.8 radi, ping do google.com ne. Koji je uzrok?`,opts:[`Firewall blokira HTTP`,`Google je van mreže`,`DNS razrešavanje ne radi (DNS server nije dostupan ili nije podešen)`,`Pogrešna subnet maska`],ans:2},{q:`Koja komanda mapira mrežni deljeni folder kao disk Z:?`,opts:[`net use Z: \\Server\Posao`,`map Z: \\Server\Posao`,`net share Z: \\Server\Posao`,`mount Z: \\Server\Posao`],ans:0},{q:`Šta prikazuje arp -a?`,opts:[`Tabelu rutiranja`,`ARP keš — IP ↔ MAC adrese u lokalnoj podmreži`,`DNS keš`,`Listu mrežnih adaptera`],ans:1},{q:`Koji privatni IP opseg se koristi u kućnim mrežama (klasa C)?`,opts:[`10.0.0.0/8`,`172.16.0.0/12`,`192.168.0.0/16`,`169.254.0.0/16`],ans:2},{q:`Šta je Workgroup u Windows umrežavanju?`,opts:[`Domenski kontroler za malu mrežu`,`Peer-to-peer logička grupacija računara bez centralnog servera`,`VPN konfiguracija`,`Tip WiFi mreže`],ans:1},{q:`Koji VirtualBox mrežni tip daje VM-u pristup internetu kroz IP adresu hosta?`,opts:[`Host-Only`,`Internal Network`,`NAT`,`Bridged`],ans:2}]},
-  {id:'l11',num:'11',title:`Bezbednost sistema`,
-  level:'Srednje',duration:'45 min',
-  tags:['bezbednost', 'windows defender', 'antivirus', 'firewall', 'windows update', 'bitlocker', 'zakrpe', 'ransomware'],
-  subsections:[`Windows Defender i antimalver zaštita`,`Windows Firewall`,`Windows Update i zakrpe`,`BitLocker enkripcija`],
-  content:`<section><h2 class="sec" id="s1">1. Windows Defender i antimalver zaštita</h2>
-<p class="para"><strong>Windows Defender</strong> (od Windows 10 nazvan Microsoft Defender Antivirus) je ugrađeni antivirusni i antimalver program. Aktivan je automatski ako nema instaliranog trećeg antivirusa i nudi višeslojnu zaštitu.</p>
-<div class="table-wrap"><table class="data"><tr><th>Komponenta Defendera</th><th>Opis</th></tr><tr><td>Real-time protection</td><td>Skenira fajlove pri otvaranju, kreiranju i modifikaciji</td></tr><tr><td>Cloud-delivered protection</td><td>Koristi Microsoft cloud za instant detekciju novih pretnji</td></tr><tr><td>Automatic sample submission</td><td>Šalje uzorke sumnjivih fajlova Microsoftu za analizu</td></tr><tr><td>Controlled folder access</td><td>Štiti označene foldere od ransomvera — neovlašćeni programi ne mogu pisati</td></tr><tr><td>Network protection</td><td>Blokira maliciozne domene i IP adrese na nivou mreže</td></tr><tr><td>Exploit protection</td><td>Štiti od tehnika eksploatacije ranjivosti (ASLR, DEP, CFG)</td></tr><tr><td>Quarantine</td><td>Izolovani malver — može se pregledati, obnoviti ili trajno obrisati</td></tr></table></div>
-<h3 class="subsec">Tipovi malvera</h3>
-<ul class="list"><li><strong>Virus:</strong> program koji se prilaže uz legitimne fajlove i širi kopiranjem</li><li><strong>Trojan:</strong> maskiran kao legitiman program; otvara backdoor ili krade podatke</li><li><strong>Ransomware:</strong> šifruje fajlove i traži otkupninu; Controlled Folder Access je zaštita</li><li><strong>Spyware:</strong> prikuplja korisničke podatke bez znanja (keylogger, screen capture)</li><li><strong>Worm:</strong> širi se mrežom bez interakcije korisnika; iskorišćava ranjivosti servisa</li></ul>
-</section><section><h2 class="sec" id="s2">2. Windows Firewall</h2>
-<p class="para"><strong>Windows Firewall</strong> filtrira mrežni saobraćaj na osnovu pravila. Kontroliše koji programi i servisi mogu primati i slati mrežne pakete. Upravljanje: Win+R → <code>wf.msc</code> za napredni prikaz.</p>
-<div class="table-wrap"><table class="data"><tr><th>Profil</th><th>Kada se koristi</th><th>Podrazumevano ponašanje</th></tr><tr><td>Domain</td><td>Računar u poslovnoj mreži sa domenskim kontrolerom</td><td>Liberalniji — IT odeljenje kontroliše pravila GPO-om</td></tr><tr><td>Private</td><td>Kućna ili poznata mreža</td><td>Umeren — dozvoljeno deljenje i mrežno otkrivanje</td></tr><tr><td>Public</td><td>Javna Wi-Fi mreža, kafić, aerodrom</td><td>Restriktivan — blokirano deljenje, minimalna izloženost</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – Firewall pravila</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment"># Prikaz svih inbound pravila</span>
-<span class="cmd">Get-NetFirewallRule</span> | Where-Object Direction -eq Inbound | Select-Object Name, Enabled, Action
-<span class="comment"># Dodaj pravilo - blokira odlazni port 80</span>
-<span class="cmd">New-NetFirewallRule</span> -DisplayName <span class="string">"Blokiraj HTTP izlaz"</span> -Direction Outbound -Protocol TCP -RemotePort <span class="num">80</span> -Action Block
-<span class="comment"># Obrisi pravilo</span>
-<span class="cmd">Remove-NetFirewallRule</span> -DisplayName <span class="string">"Blokiraj HTTP izlaz"</span>
-<span class="comment"># Provjera statusa Firewall-a za sve profile</span>
-<span class="cmd">Get-NetFirewallProfile</span> | Select-Object Name, Enabled</code></pre></div>
-</section><section><h2 class="sec" id="s3">3. Windows Update i zakrpe</h2>
-<p class="para">Redovno ažuriranje je jedan od najvažnijih sigurnosnih koraka. Većina uspešnih napada iskorišćava <strong>poznate ranjivosti</strong> za koje zakrpe već postoje, ali koje korisnici nisu instalirali.</p>
-<ul class="list"><li><strong>Patch Tuesday:</strong> Microsoft objavljuje zakrpe drugi utorak u mesecu — sistematičan raspored</li><li><strong>Kritične zakrpe (Critical):</strong> moraju se instalirati odmah — eksploatacija je aktivna ili moguća bez korisničke interakcije</li><li><strong>Važne zakrpe (Important):</strong> instalirati u kratkom roku — utiču na bezbednost ali zahtevaju interakciju</li><li><strong>Feature updates:</strong> veće verzije OS-a (godišnje za Win 10/11)</li><li><strong>Definition updates:</strong> svakodnevne zakrpe za Defender antivirus definicije</li><li>Odgađanje zakrpa moguće do 35 dana za Pro/Enterprise — duže odlaganje povećava rizik</li></ul>
-<div class="info-box"><div class="ib-title">WannaCry ransomware — pouka</div><p>WannaCry (2017) zarazio je 200.000+ računara koristeći EternalBlue ranjivost SMB protokola. Zakrpa MS17-010 bila je dostupna 2 meseca pre napada. Svi nezakrpljeni sistemi bili su ranjivi. Ovaj primer pokazuje zašto su ažuriranja kritična.</p></div>
-</section><section><h2 class="sec" id="s4">4. BitLocker enkripcija</h2>
-<p class="para"><strong>BitLocker Drive Encryption</strong> šifruje ceo disk koristeći AES-128 ili AES-256 algoritam. Bez ispravnog ključa, podaci na disku su nečitljivi čak i ako se disk fizički vadi iz računara.</p>
-<ul class="list"><li>Zahteva <strong>TPM 2.0 čip</strong> (Trusted Platform Module) ili USB ključ pri bootu</li><li>Aktivacija: Control Panel → BitLocker Drive Encryption</li><li><strong>Recovery key:</strong> 48-cifreni ključ — obavezno sačuvati na sigurno mesto (Microsoft nalog, USB, papir)</li><li>Dostupan u Windows Pro, Enterprise i Education (nije u Home)</li><li><strong>BitLocker to Go:</strong> šifrovanje prenosivih diskova (USB, HDD)</li><li>Transparentan za korisnika — nema uticaja na svakodnevan rad osim pri bootu</li></ul>
-<div class="warn-box"><div class="ib-title">⚠ Recovery Key je apsolutna obaveza</div><p>Ako izgubite Recovery Key i dođe do problema sa TPM-om ili systemskim diskom, podaci su ZAUVEK izgubljeni. Nema bajpasa, nema telefona podrške koji može pomoći. Recovery Key čuvajte na 3 mesta.</p></div>
-</section>`,
-  vezbe:[{title:`Bezbednosni pregled sistema`,icon:'🛡️',steps:[`Windows Security (Start → search "Security") — proveriti zelenu ikonu za sve komponente`,`Pokrenuti Quick Scan Defenderom i sačekati rezultat`,`wf.msc → Inbound Rules — pregledati aktivna pravila, identifikovati File and Printer Sharing`,`Dodati Outbound pravilo koje blokira Notepad.exe: New Rule → Program → notepad.exe → Block`,`Testirati: otvoriti Notepad, pokušati pristupiti internetu (trebalo bi biti blokirano)`,`Obrisati pravilo`,`Windows Update (Control Panel → Windows Update) — provjeriti status i čekajuća ažuriranja`]}],
-  pitanja:[{q:`Šta je Controlled Folder Access u Windows Defenderu?`,opts:[`Ograničava pristup internetu`,`Štiti označene foldere od neovlašćenog pisanja — zaštita od ransomvera`,`Kontroliše deljene foldere u mreži`,`Upravljanje NTFS dozvolama`],ans:1},{q:`Koji Firewall profil je restriktivniji i koristi se u javnim mrežama?`,opts:[`Domain`,`Private`,`Public`,`Corporate`],ans:2},{q:`Šta je Patch Tuesday?`,opts:[`Automatski restart sistema`,`Dan (2. utorak u mesecu) kada Microsoft objavljuje bezbednosne zakrpe`,`Test procedura za ažuriranja`,`Backup procedura`],ans:1},{q:`Šta zahteva BitLocker za rad bez USB ključa?`,opts:[`SSD disk`,`TPM 2.0 čip`,`Windows Pro licencu`,`Grafičku karticu`],ans:1},{q:`Šta je Recovery Key u BitLocker-u?`,opts:[`Lozinka za Windows nalog`,`48-cifreni ključ za dekripciju diska ako TPM zataji ili sistem promeni`,`PIN za BIOS`,`Backup lozinka za mrežu`],ans:1},{q:`Koji tip malvera šifruje fajlove i traži otkupninu?`,opts:[`Spyware`,`Worm`,`Ransomware`,`Trojan`],ans:2},{q:`Šta se dešava ako korisnik nema instaliranu zakrpu za poznatu ranjivost?`,opts:[`Ništa — Windows automatski blokira napade`,`Sistem je ranjiv čak i ako nema instaliran malver`,`Defender automatski štiti bez zakrpe`,`Firewall kompenzuje nedostajuću zakrpu`],ans:1},{q:`Koji Windows alat za naprednu konfiguraciju Firewalla koristite?`,opts:[`firewall.cpl`,`wf.msc (Windows Firewall with Advanced Security)`,`netsh firewall`,`defender.exe`],ans:1},{q:`BitLocker šifruje podatke primenom kog algoritma?`,opts:[`RSA-2048`,`AES-128 ili AES-256`,`SHA-256`,`MD5`],ans:1},{q:`Šta je WannaCry i zašto je važan kao primer?`,opts:[`Antivirusni program`,`Ransomware koji je zarazio 200K+ računara iskorišćavajući nezakrpljenu SMB ranjivost`,`Firewall pravilo`,`Windows Update greška`],ans:1}]},
-  {id:'l12',num:'12',title:`Upravljanje uređajima i drajverima`,
-  level:'Osnovno',duration:'45 min',
-  tags:['device manager', 'drajveri', 'plug and play', 'hardver', 'sfc', 'dism', 'upravljaci', 'digitalni potpis'],
-  subsections:[`Device Manager — pregled i dijagnostika`,`Drajveri — instalacija i problemi`,`Plug and Play mehanizam`,`SFC i DISM — popravka sistema`],
-  content:`<section><h2 class="sec" id="s1">1. Device Manager — pregled i dijagnostika</h2>
-<p class="para"><strong>Device Manager</strong> (Upravljač uređajima) prikazuje sve hardverske komponente sistema i status njihovih drajvera. Pokreće se sa <code>devmgmt.msc</code> ili desnim klikom na "This PC → Manage → Device Manager".</p>
-<h3 class="subsec">Statusne ikone u Device Manager-u</h3>
-<div class="table-wrap"><table class="data"><tr><th>Ikona</th><th>Značenje</th><th>Akcija</th></tr><tr><td>Zelena kvačica / nema ikone</td><td>Uređaj radi ispravno</td><td>Ništa — sve OK</td></tr><tr><td>Žuti uzvik (!)</td><td>Uređaj ima problem — drajver nije instaliran, nekompatibilan ili ima grešku</td><td>Update Driver ili Uninstall pa ponovo instaliraj</td></tr><tr><td>Crveni X</td><td>Uređaj je ručno onemogućen</td><td>Desni klik → Enable device</td></tr><tr><td>Strelica nadole (↓)</td><td>Uređaj je softverski isključen (disabled)</td><td>Desni klik → Enable</td></tr><tr><td>Pitanje (?)</td><td>Neprepoznat uređaj bez drajvera</td><td>Instalirati odgovarajući drajver</td></tr></table></div>
-<h3 class="subsec">Akcije u Device Manager-u</h3>
-<ul class="list"><li><strong>Update Driver:</strong> pretraži Windows Update ili navedenu lokaciju za noviji drajver</li><li><strong>Roll Back Driver:</strong> vraća na prethodnu verziju ako nova pravi probleme</li><li><strong>Uninstall Device:</strong> uklanja drajver; pri sledećem bootu PnP ga ponovo detektuje</li><li><strong>Disable:</strong> softverski isključuje uređaj bez fizičkog vađenja</li><li><strong>Scan for hardware changes:</strong> primorava PnP da ponovo skenira hardver</li></ul>
-</section><section><h2 class="sec" id="s2">2. Drajveri — instalacija i problemi</h2>
-<p class="para">Drajver je softver koji omogućava Windowsu da komunicira sa hardverskim uređajem. Svaki uređaj zahteva odgovarajući drajver za svoju verziju Windowsa i arhitekturu (32/64-bit).</p>
-<h3 class="subsec">Načini instalacije drajvera</h3>
-<ul class="list"><li><strong>Windows Update (automatski):</strong> Windows Update preuzima i instalira drajvere za prepoznate uređaje — najlakše, ali ponekad zaostaje za najnovijim verzijama</li><li><strong>Sa sajta proizvođača (preporučeno za grafičke kartice, štampače):</strong> uvek najnovija verzija; NVIDIA, AMD, HP, Canon...</li><li><strong>INF fajl instalacija:</strong> desni klik na .inf fajl → Install</li><li><strong>Wizard iz Device Manager-a:</strong> specificirana lokacija (CD, USB, folder)</li></ul>
-<h3 class="subsec">Digitalni potpisi drajvera</h3>
-<p class="para">Windows Vista+ zahteva da su drajveri <strong>digitalno potpisani</strong> od strane Microsoft-a ili overenog sertifikacionog tela. Nepotpisani drajveri prikazuju upozorenje i ne mogu se instalirati na 64-bit sistemima (bez specijalnog moda).</p>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – drajveri i dijagnostika</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Lista svih instaliranih drajvera</span>
-<span class="cmd">driverquery</span>
-<span class="comment">:: Detaljno sa putanjama</span>
-<span class="cmd">driverquery</span> /v /fo csv > C:\drajveri.csv
-<span class="comment">:: PnP skeniranje novog hardvera</span>
-<span class="cmd">pnputil</span> /scan-devices
-<span class="comment">:: Lista driver store-a</span>
-<span class="cmd">pnputil</span> /enum-drivers</code></pre></div>
-</section><section><h2 class="sec" id="s3">3. Plug and Play mehanizam</h2>
-<p class="para"><strong>Plug and Play (PnP)</strong> je mehanizam koji automatski otkriva i konfiguriše novi hardver bez ručne intervencije. Kada priključite USB uređaj, odvija se sledeći redosled:</p>
-<div class="table-wrap"><table class="data"><tr><th>Korak</th><th>Šta se dešava</th></tr><tr><td>1. Detekcija</td><td>PnP Manager detektuje novi uređaj na magistrali (USB, PCI, SATA...)</td></tr><tr><td>2. Identifikacija</td><td>Uređaj šalje Hardware ID (VendorID:ProductID) — npr. USB\VID_046D&PID_C077</td></tr><tr><td>3. Traženje drajvera</td><td>Windows pretražuje lokalni Driver Store (C:\Windows\System32\DriverStore)</td></tr><tr><td>4. Windows Update</td><td>Ako nije nađen lokalno, kontaktira Windows Update za drajver</td></tr><tr><td>5. Instalacija</td><td>Drajver se kopira u Driver Store i učitava</td></tr><tr><td>6. Konfiguracija</td><td>Dodeljivanje resursa: IRQ, DMA, I/O adrese, memorija</td></tr><tr><td>7. Notifikacija</td><td>Sistem tray prikazuje "Device is ready to use"</td></tr></table></div>
-<p class="para">Driver Store je zaštićena lokacija — drajveri se ne mogu lako obrisati iz nje. Ovo štiti od slučajnog brisanja sistemskih drajvera.</p>
-</section><section><h2 class="sec" id="s4">4. SFC i DISM — popravka sistemskih fajlova</h2>
-<p class="para">Sistemski fajlovi mogu biti oštećeni zbog malvera, naglog isključivanja ili kvarova na disku. Windows ima ugrađene alate za detekciju i popravku.</p>
-<div class="table-wrap"><table class="data"><tr><th>Alat</th><th>Puno ime</th><th>Šta radi</th></tr><tr><td>SFC</td><td>System File Checker</td><td>Proverava integritet zaštićenih sistemskih fajlova i zamenjuje oštećene iz keša</td></tr><tr><td>DISM</td><td>Deployment Image Servicing and Management</td><td>Servisira Windows image; može popraviti SFC keš koristeći Windows Update</td></tr><tr><td>chkdsk</td><td>Check Disk</td><td>Proverava fajl sistem i fizički disk za greške</td></tr><tr><td>sfc /verifyonly</td><td>SFC bez popravke</td><td>Samo izveštaj — ne menja fajlove</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">CMD – popravka sistema (pokrenuti kao Admin)</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: 1. SFC - provjera i popravka sistemskih fajlova</span>
-<span class="cmd">sfc</span> /scannow
-<span class="comment">:: 2. Ako SFC prijavi greske koje ne moze popraviti:</span>
-<span class="cmd">DISM</span> /Online /Cleanup-Image /CheckHealth
-<span class="cmd">DISM</span> /Online /Cleanup-Image /ScanHealth
-<span class="cmd">DISM</span> /Online /Cleanup-Image /RestoreHealth
-<span class="comment">:: 3. Ponovo pokrenuti SFC posle DISM</span>
-<span class="cmd">sfc</span> /scannow
-<span class="comment">:: 4. Provjera diska (zahteva restart za sistemsku particiju)</span>
-<span class="cmd">chkdsk</span> C: /f /r</code></pre></div>
-</section>`,
-  vezbe:[{title:`Drajveri, Device Manager i SFC`,icon:'🔌',steps:[`devmgmt.msc → identifikovati sve kategorije uređaja, zapišite broj uređaja`,`Display Adapter → Properties → Driver tab → zapišite: verziju, datum, digitalni potpis`,`CMD: driverquery | more — pregledati listu drajvera`,`CMD (admin): sfc /scannow — sačekati i dokumentovati rezultat`,`Priključiti USB → posmatranje u Device Manager-u (F5 za refresh)`,`msinfo32.exe → Components → problem uređaji (Problem Devices)`,`Zapišite Hardware ID USB uređaja: Properties → Details → Hardware IDs`]}],
-  pitanja:[{q:`Šta znači žuti uzvik (!) u Device Manager-u?`,opts:[`Uređaj radi ispravno`,`Problem sa drajverom — nije instaliran, nekompatibilan ili ima grešku`,`Uređaj je onemogućen`,`Uređaj se ažurira`],ans:1},{q:`Šta radi sfc /scannow?`,opts:[`Skenira disk za viruse`,`Proverava i popravlja zaštićene sistemske fajlove`,`Ažurira drajvere`,`Proverava mrežne postavke`],ans:1},{q:`Šta je Roll Back Driver funkcija?`,opts:[`Potpuno brisanje drajvera`,`Vraćanje na prethodnu verzu drajvera ako nova pravi probleme`,`Prisilno ažuriranje`,`Eksport drajvera`],ans:1},{q:`Šta je Plug and Play?`,opts:[`USB priključak`,`Mehanizam automatskog otkrivanja i konfiguracije hardvera bez ručne intervencije`,`Tip konektora na matičnoj ploči`,`Aplikacija za upravljanje baterijom`],ans:1},{q:`Gde Windows čuva instalirane drajvere (Driver Store)?`,opts:[`C:\Windows\Drivers`,`C:\Windows\System32\DriverStore\FileRepository`,`C:\Program Files\Drivers`,`C:\Windows\Inf`],ans:1},{q:`Šta radi DISM /RestoreHealth?`,opts:[`Formatira sistem disk`,`Popravlja Windows image koristeći Windows Update — koriguje ono što SFC ne može`,`Reinstalira sve drajvere`,`Proverava disk za fizičke greške`],ans:1},{q:`Koji ID uređaj šalje PnP Manager-u za identifikaciju?`,opts:[`IP adresu`,`Hardware ID (VendorID:ProductID)`,`MAC adresu`,`Serijski broj matične ploče`],ans:1},{q:`Na 64-bit Windows sistemima, nepotpisani drajveri...`,opts:[`Mogu se normalno instalirati`,`Ne mogu se instalirati bez specijalnog Test Signing moda`,`Instaliraju se ali sa upozorenjem`,`Automatski se potpisuju od strane Windowsa`],ans:1},{q:`Koja komanda prikazuje listu svih instaliranih drajvera?`,opts:[`devmgmt.exe list`,`driverquery`,`Get-Driver`,`pnputil /list`],ans:1},{q:`Šta je chkdsk /f /r?`,opts:[`Formatiranje diska`,`Proveravanje fajl sistema i pokušaj popravke fizičkih grešaka na disku`,`Sigurno brisanje diska`,`Defragmentacija diska`],ans:1}]},
-  {id:'l13',num:'13',title:`Sistemski alati`,
-  level:'Srednje',duration:'45 min',
-  tags:['control panel', 'settings', 'disk management', 'event viewer', 'logovi', 'backup', 'system restore', 'diskpart', 'defragmentacija'],
-  subsections:[`Control Panel vs Settings`,`Disk Management i diskpart`,`Event Viewer — sistemski logovi`,`System Restore i backup`],
-  content:`<section><h2 class="sec" id="s1">1. Control Panel vs Settings</h2>
-<p class="para">Windows ima dva paralelna interfejsa za podešavanja: stariji <strong>Control Panel</strong> i moderni <strong>Settings</strong> (Win+I). Microsoft postepeno premešta sve u Settings, ali Control Panel ostaje neophodan za napredna podešavanja.</p>
-<div class="table-wrap"><table class="data"><tr><th>Kategorija</th><th>Control Panel</th><th>Settings (Win+I)</th></tr><tr><td>Mrežne postavke</td><td>Da — detaljno (adapter Properties)</td><td>Da — osnovno</td></tr><tr><td>Korisnici i nalozi</td><td>Da — Local Users and Groups</td><td>Da — Microsoft nalog</td></tr><tr><td>Firewall</td><td>Da — wf.msc za napredno</td><td>Preusmerava na CP</td></tr><tr><td>Hardver i drajveri</td><td>Da — Device Manager</td><td>Opciono — Bluetooth, Printers</td></tr><tr><td>Programs & Features</td><td>Da — instalacija/deinstalacija</td><td>Apps — moderniji prikaz</td></tr><tr><td>Datum i vreme</td><td>Da</td><td>Da</td></tr><tr><td>Administrativni alati</td><td>Da (Computer Mgmt, Services...)</td><td>Ne</td></tr><tr><td>Pristupačnost</td><td>Da — Ease of Access</td><td>Da — moderniji, bogatiji</td></tr></table></div>
-<p class="para">Za pristup administrativnim alatima: Control Panel → Administrative Tools ili Win+X → Computer Management.</p>
-</section><section><h2 class="sec" id="s2">2. Disk Management i diskpart</h2>
-<p class="para"><strong>Disk Management</strong> (diskmgmt.msc) je grafički alat za upravljanje fizičkim diskovima i particijama. <strong>diskpart</strong> je moćnija CLI alternativa koja podržava skriptovanje.</p>
-<h3 class="subsec">Operacije u Disk Management-u</h3>
-<ul class="list"><li><strong>Kreiranje particije:</strong> desni klik na nealociran prostor → New Simple Volume → wizard</li><li><strong>Formatiranje:</strong> desni klik na particiju → Format → odabir fajl sistema i Allocation Unit Size</li><li><strong>Proširivanje (Extend):</strong> može se proširiti samo ako ima nealociranog prostora neposredno desno</li><li><strong>Skupljanje (Shrink):</strong> smanjuje particiju i oslobađa prostor; ograničeno nepojavljivim fajlovima</li><li><strong>Promena slova (Change Drive Letter):</strong> dodeliti drugu slovo disku</li><li><strong>Postavljanje particije kao Active:</strong> potrebno za bootabilnu sistemsku particiju na MBR disku</li></ul>
-<div class="code-block"><div class="code-header"><span class="code-label">diskpart – CLI upravljanje diskovima</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment">:: Ulaz u diskpart</span>
-<span class="cmd">diskpart</span>
+<span class="cmd">net use</span> Z: /delete</code></pre></div></section>
+<section><h2 class="sec" id="s4">4. Dijagnostika</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">Mrežna dijagnostika</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">ipconfig</span> /all
+<span class="cmd">ipconfig</span> /flushdns
+<span class="cmd">ping</span> -n 4 8.8.8.8
+<span class="cmd">tracert</span> google.com
+<span class="cmd">netstat</span> -an | find <span class="string">"ESTABLISHED"</span>
+<span class="cmd">nslookup</span> google.com
+<span class="cmd">arp</span> -a</code></pre></div></section>`,
+   vezbe:[{title:'VirtualBox mrežna konfiguracija i deljenje',icon:'🌐',steps:['Podesiti statičku IP na Host-Only adapteru (IP sa table)','ipconfig /all – proveriti novu adresu','Pingati VM2 iz para – proveriti firewall ako ne radi','Kreirati C:\\DeljeniKlas i deliti ga (net share)','VM2: pristupiti \\\\IP_VM1\\DeljeniKlas','Mapirati kao Z: (net use Z:) i proveriti u Explorer-u']}],
+   pitanja:[
+     {q:'Šta radi ipconfig /flushdns?',opts:['Resetuje adapter','Briše DNS keš','Traži novu IP od DHCP','Prikazuje DNS servere'],ans:1},
+     {q:'Kako se pristupa deljenom folderu Skola na PC01?',opts:['http://PC01/Skola','\\\\PC01\\Skola','ftp://PC01/Skola','PC01://Skola'],ans:1},
+     {q:'Tracert pokazuje 25 hopova. Šta to znači?',opts:['25 sekundi latencije','DNS razrešava 25 adresa','Paket prolazi kroz 25 rutera','25 alternativnih puteva'],ans:2},
+     {q:'Ping do 8.8.8.8 radi, ping do google.com ne. Uzrok?',opts:['Firewall blokira HTTP','Google je van mreže','Problem sa DNS razrešavanjem','Pogrešna subnet maska'],ans:2},
+     {q:'Koja komanda mapira mrežni folder kao disk Z:?',opts:['net use Z: \\\\Server\\Posao','map Z: \\\\Server\\Posao','net share Z: \\\\Server\\Posao','mount Z: \\\\Server\\Posao'],ans:0}
+   ]},
 
-<span class="comment">:: Pregled diskova i particija</span>
+  {id:'l11',num:'11',title:'Bezbednost sistema',tags:['bezbednost','windows defender','antivirus','firewall','windows update','bitlocker'],duration:'45 min',level:'Srednje',
+   subsections:['Windows Defender','Firewall','Windows Update','BitLocker'],
+   content:`<section><h2 class="sec" id="s1">1. Windows Defender</h2>
+<ul class="list"><li>Real-time protection – skenira fajlove u trenutku otvaranja</li>
+<li>Controlled folder access – štiti od ransomvera</li>
+<li>Cloud-delivered protection – detekcija novih pretnji</li></ul></section>
+<section><h2 class="sec" id="s2">2. Windows Firewall</h2>
+<ul class="list"><li>Inbound/Outbound rules – dolazni/odlazni saobraćaj</li>
+<li>Profili: Domain, Private, Public</li>
+<li>Upravljanje: wf.msc</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – Firewall</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">Get-NetFirewallRule</span> | Select-Object Name, Enabled, Direction, Action
+<span class="cmd">New-NetFirewallRule</span> -DisplayName <span class="string">"Blokiraj HTTP"</span> -Direction Outbound -Protocol TCP -LocalPort <span class="num">80</span> -Action Block</code></pre></div></section>
+<section><h2 class="sec" id="s3">3. Windows Update i BitLocker</h2>
+<ul class="list"><li><strong>Patch Tuesday</strong> – drugi utorak meseca</li>
+<li><strong>BitLocker</strong> – enkripcija celog diska, zahteva TPM 2.0</li>
+<li>Recovery key obavezno sačuvati!</li></ul></section>`,
+   vezbe:[{title:'Bezbednosna podešavanja',icon:'🛡️',steps:['Windows Security – proveriti status svih komponenti','Quick Scan Defenderom','wf.msc – pregledati inbound pravila','Dodati pravilo koje blokira Notepad od mreže','Windows Update – proveriti čekajuća ažuriranja']}],
+   pitanja:[
+     {q:'Šta je Controlled Folder Access?',opts:['Ograničava internet','Štiti foldere od ransomvera','Kontroliše mrežno deljenje','Upravljanje NTFS dozvolama'],ans:1},
+     {q:'Koji Firewall profil se koristi u javnim Wi-Fi mrežama?',opts:['Domain','Private','Public','Secure'],ans:2},
+     {q:'Šta je Patch Tuesday?',opts:['Automatski restart','Dan kada Microsoft objavljuje zakrpe','Test ažuriranja','Backup procedura'],ans:1},
+     {q:'Šta zahteva BitLocker?',opts:['SSD disk','TPM 2.0 čip','Windows Pro licencu','Grafičku karticu'],ans:1},
+     {q:'Šta je Recovery Key u BitLocker-u?',opts:['Lozinka za Windows nalog','Ključ za dekripciju diska ako TPM zataji','PIN za BIOS','Backup lozinka za mrežu'],ans:1}
+   ]},
+
+  {id:'l12',num:'12',title:'Upravljanje uređajima',tags:['device manager','drajveri','plug and play','hardver','sfc','dism'],duration:'45 min',level:'Osnovno',
+   subsections:['Device Manager','Drajveri','Plug and Play','Sistemski alati'],
+   content:`<section><h2 class="sec" id="s1">1. Device Manager</h2>
+<ul class="list"><li>Pokretanje: devmgmt.msc</li>
+<li>⚠ Žuti uzvik – problem sa drajverom</li>
+<li>❌ Crveni X – uređaj onemogućen</li></ul></section>
+<section><h2 class="sec" id="s2">2. Drajveri</h2>
+<ul class="list"><li>Rollback Driver – vraća na prethodnu verziju</li>
+<li>Signed drivers – digitalno potpisani, Windows 11 ih zahteva</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – drajveri i sistem</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">driverquery</span> /v /fo csv > drajveri.csv
+<span class="cmd">sfc</span> /scannow
+<span class="cmd">DISM</span> /Online /Cleanup-Image /RestoreHealth</code></pre></div></section>`,
+   vezbe:[{title:'Analiza drajvera i hardvera',icon:'🔌',steps:['Device Manager – kategorije uređaja','Display Adapter → Properties → Driver tab','driverquery /fo table – prebrojati drajvere','sfc /scannow (admin) – čekati rezultat','msinfo32.exe – Components sekcija']}],
+   pitanja:[
+     {q:'Šta znači žuti uzvik u Device Manager-u?',opts:['Radi ispravno','Problem sa drajverom','Onemogućen','Ažurira se'],ans:1},
+     {q:'Šta radi sfc /scannow?',opts:['Skenira viruse','Proverava/popravlja sistemske fajlove','Ažurira drajvere','Skenira disk'],ans:1},
+     {q:'Šta je Rollback Driver?',opts:['Brisanje drajvera','Vraćanje na prethodnu verziju drajvera','Prisilno ažuriranje','Backup drajvera'],ans:1},
+     {q:'Šta je Plug and Play?',opts:['USB priključak','Automatsko prepoznavanje hardvera','App za drajvere','Tip konektora'],ans:1},
+     {q:'Gde se čuvaju drajveri u Windows-u?',opts:['C:\\Windows\\Drivers','C:\\Windows\\System32\\DriverStore','C:\\Program Files\\Drivers','C:\\Windows\\Inf'],ans:1}
+   ]},
+
+  {id:'l13',num:'13',title:'Sistemski alati',tags:['control panel','settings','disk management','event viewer','logovi','backup','system restore','diskpart'],duration:'45 min',level:'Srednje',
+   subsections:['Control Panel vs Settings','Disk Management','Event Viewer','System Restore'],
+   content:`<section><h2 class="sec" id="s1">1. Disk Management i diskpart</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">diskpart</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">diskpart</span>
 <span class="kw">list disk</span>
 <span class="kw">select disk</span> <span class="num">0</span>
 <span class="kw">list partition</span>
-<span class="kw">list volume</span>
+<span class="kw">exit</span></code></pre></div></section>
+<section><h2 class="sec" id="s2">2. Event Viewer</h2>
+<ul class="list"><li>eventvwr.msc – pregled sistemskih, aplikativnih i bezbednosnih logova</li>
+<li>Event ID 41 – neočekivano gašenje</li>
+<li>Event ID 4625 – neuspešna prijava</li></ul></section>
+<section><h2 class="sec" id="s3">3. System Restore</h2>
+<ul class="list"><li>Restore točke automatski pre instalacija i ažuriranja</li>
+<li>Ne menja korisničke fajlove</li>
+<li>Ručno: Control Panel → System → System Protection → Create</li></ul></section>`,
+   vezbe:[{title:'Logovi i restore točke',icon:'🔧',steps:['Event Viewer – pronađi 3 greške u System logu','Za svaku: Event ID, izvor, poruka, vreme','Security log – uspešna prijavljivanja (ID 4624)','System Protection → kreiraj ručno restore točku','Disk Management – skica rasporeda particija']}],
+   pitanja:[
+     {q:'Koji Event ID označava neočekivano gašenje?',opts:['1000','41','7001','4625'],ans:1},
+     {q:'Šta System Restore NE vraća?',opts:['Sistemske fajlove','Registry','Drajvere','Korisnikove dokumente'],ans:3},
+     {q:'Koji alat za CLI upravljanje particijama?',opts:['fdisk','format','diskpart','partmgr'],ans:2},
+     {q:'Koji Event ID je neuspešna prijava?',opts:['4624','4625','4648','4720'],ans:1},
+     {q:'Gde se kreira ručna restore točka?',opts:['Control Panel → System → System Protection','Disk Management → Properties','Event Viewer → Create','Task Scheduler'],ans:0}
+   ]},
 
-<span class="comment">:: Kreiranje particije i formatiranje (OPREZ: brise podatke!)</span>
-<span class="kw">select disk</span> <span class="num">1</span>
-<span class="kw">clean</span>                    <span class="comment">(brise sve particije)</span>
-<span class="kw">create partition primary</span>
-<span class="kw">format fs=ntfs quick</span>
-<span class="kw">assign letter=E</span>
-<span class="kw">exit</span></code></pre></div>
-<div class="warn-box"><div class="ib-title">⚠ diskpart clean briše SVE</div><p>Komanda clean u diskpart-u briše sve particije i podatke na selektovanom disku. Nema oporavka bez forenzičkih alata. Uvek proverite koji disk je selektovan pre clean komande.</p></div>
-</section><section><h2 class="sec" id="s3">3. Event Viewer — sistemski logovi</h2>
-<p class="para"><strong>Event Viewer</strong> (eventvwr.msc) je alat za pregled sistemskih, aplikativnih i bezbednosnih logova. Svaki događaj u sistemu generiše zapis u odgovarajućem logu — ovo je primarni izvor informacija za dijagnostiku.</p>
-<div class="table-wrap"><table class="data"><tr><th>Log</th><th>Sadržaj</th><th>Tipični slučajevi upotrebe</th></tr><tr><td>System</td><td>Kernel, drajveri, hardver, sistemski servisi</td><td>Nestanci struje, BSOD, greške drajvera, kvar hardvera</td></tr><tr><td>Application</td><td>Korisničke aplikacije, baze podataka, mail serveri</td><td>Greške programa, crash-evi, SQL greške</td></tr><tr><td>Security</td><td>Autentifikacija, pristup resursima, promene politike</td><td>Neuspešne prijave, brute force, promene naloga</td></tr><tr><td>Setup</td><td>Instalacija Windowsa i componenti</td><td>Greške pri Windows Update, instalacija fičera</td></tr><tr><td>Forwarded Events</td><td>Logovi sa udaljenih računara (Windows Event Forwarding)</td><td>Centralizovani monitoring</td></tr></table></div>
-<h3 class="subsec">Važni Event ID-evi</h3>
-<div class="table-wrap"><table class="data"><tr><th>Event ID</th><th>Log</th><th>Značenje</th></tr><tr><td>41</td><td>System</td><td>Kernel Power — neočekivano gašenje sistema (nestanak struje, BSOD)</td></tr><tr><td>1074</td><td>System</td><td>Sistem je restartovan/ugašen normalno — ko i zašto</td></tr><tr><td>4624</td><td>Security</td><td>Uspešna prijava korisnika — ko se i kada prijavio</td></tr><tr><td>4625</td><td>Security</td><td>Neuspešna prijava — potencijalni brute force napad</td></tr><tr><td>4720</td><td>Security</td><td>Kreiran novi korisnički nalog</td></tr><tr><td>4732</td><td>Security</td><td>Korisnik dodat u privilegovanu grupu (npr. Administrators</td></tr><tr><td>7034</td><td>System</td><td>Servis se neočekivano zaustavio — problem sa servisom</td></tr><tr><td>1000</td><td>Application</td><td>Application Error — crash programa sa stack trace-om</td></tr></table></div>
-</section><section><h2 class="sec" id="s4">4. System Restore i backup strategija</h2>
-<p class="para"><strong>System Restore</strong> čuva "snimke" (snapshots) sistemskih fajlova i Registry-a u takozvanim <strong>Restore Points</strong>. Ako sistem prestane da radi posle instalacije programa ili drajvera, možete se vratiti na raniji radni stanje.</p>
-<ul class="list"><li>Restore točke se automatski kreiraju: pre instalacije drajvera, Windows Update, instalacije programa</li><li>Ručno kreiranje: Control Panel → System → System Protection → Create</li><li>System Restore <strong>ne menja korisničke fajlove</strong> (dokumente, slike, muziku) — samo sistemske fajlove i Registry</li><li>Pokretanje pri problemu: F8 pri bootu → Safe Mode, ili instalacioni medijum → Repair</li></ul>
-<h3 class="subsec">Backup strategija — 3-2-1 pravilo</h3>
-<p class="para">Profesionalna backup strategija prati <strong>3-2-1 pravilo:</strong></p>
-<ul class="list"><li><strong>3</strong> kopije podataka (original + 2 backup)</li><li><strong>2</strong> različita tipa medijuma (npr. HDD + Cloud)</li><li><strong>1</strong> kopija na drugoj fizičkoj lokaciji (van kuće/kancelarije)</li></ul>
-<div class="info-box"><div class="ib-title">Windows Backup alati</div><p>Windows 7: Backup and Restore (Control Panel); Windows 10/11: File History za korisničke fajlove + System Image Backup za ceo sistem. Treće lice: Macrium Reflect (besplatno), Acronis, Veeam.</p></div>
-</section>`,
-  vezbe:[{title:`Disk Management, Event Viewer i System Restore`,icon:'🔧',steps:[`diskmgmt.msc → skicirati raspored particija, identifikovati System Reserved i EFI`,`Event Viewer → Windows Logs → System → pronađi 3 greške/upozorenja, zapišite Event ID i opis`,`Security log → filtrirajte Event ID 4624 → kada se poslednji put prijavio korisnik?`,`System Protection → kreirajte ručno Restore Point nazvan "Pred vezbu"`,`Proverite koliko prostora Restore Points zauzimaju (Configure → disk space)`,`diskpart (admin) → list disk → select disk 0 → list partition → list volume → exit`,`Dokumentovati strukturu particija iz diskpart-a i uporediti sa Disk Management-om`]}],
-  pitanja:[{q:`Koji Event ID označava neočekivano gašenje/restart sistema (nestanak struje, BSOD)?`,opts:[`Event ID 1000`,`Event ID 41 (Kernel Power)`,`Event ID 7001`,`Event ID 4625`],ans:1},{q:`Šta System Restore NE vraća?`,opts:[`Sistemske fajlove`,`Registry podešavanja`,`Instalirane drajvere`,`Korisnikove dokumente, slike i lične fajlove`],ans:3},{q:`Koji CLI alat se koristi za napredno upravljanje particijama?`,opts:[`fdisk`,`format`,`diskpart`,`partmgr`],ans:2},{q:`Koji Event ID je neuspešna prijava korisnika?`,opts:[`4624`,`4625`,`4648`,`4720`],ans:1},{q:`Šta radi diskpart clean komanda na selektovanom disku?`,opts:[`Defragmentira disk`,`Formatira samo prvu particiju`,`Briše SVE particije i podatke sa diska`,`Proverava integritet diska`],ans:2},{q:`U kom Event log-u se nalaze zapisi o neuspešnim prijavama (brute force)?`,opts:[`System`,`Application`,`Security`,`Setup`],ans:2},{q:`Šta je 3-2-1 backup pravilo?`,opts:[`3 servera, 2 diska, 1 cloud`,`3 kopije podataka, 2 različita medijuma, 1 kopija na drugoj lokaciji`,`Backup 3 puta dnevno, 2 puta sedmično, 1 godišnje`,`3 GB minimalni backup, 2 tipa kompresije, 1 lozinka`],ans:1},{q:`Da li System Restore menja korisničke dokumente i slike?`,opts:[`Da — vraća ih na staro stanje`,`Ne — vraća samo sistemske fajlove i Registry`,`Zavisi od verzije Windowsa`,`Briše ih`],ans:1},{q:`Gde se ručno kreira System Restore Point?`,opts:[`Disk Management`,`Control Panel → System → System Protection → Create`,`Event Viewer → New Restore Point`,`Task Scheduler`],ans:1},{q:`Koji Event ID označava dodavanje korisnika u grupu Administrators?`,opts:[`4624`,`4720`,`4732`,`1074`],ans:2}]},
-  {id:'l14',num:'14',title:`Virtuelizacija i WSL`,
-  level:'Napredno',duration:'45 min',
-  tags:['hyper-v', 'virtuelizacija', 'wsl', 'windows subsystem for linux', 'sandbox', 'vm', 'hypervisor', 'type1', 'type2'],
-  subsections:[`Osnove virtuelizacije`,`Hyper-V — ugrađeni hypervisor`,`WSL — Windows Subsystem for Linux`,`Windows Sandbox`],
-  content:`<section><h2 class="sec" id="s1">1. Osnove virtuelizacije</h2>
-<p class="para"><strong>Virtuelizacija</strong> omogućava pokretanje jednog ili više operativnih sistema unutar drugog, na istom fizičkom hardveru. Fizički računar se naziva <strong>host</strong>, a virtuelni računar <strong>guest</strong> ili <strong>VM (Virtual Machine)</strong>.</p>
-<p class="para">Softver koji upravlja virtuelnim mašinama naziva se <strong>hypervisor</strong>. Hypervisor apstrahuje hardver i prezentuje ga virtuelnim mašinama kao da svaka ima svoj procesor, RAM, disk i mrežnu karticu.</p>
-<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>Type 1 (Bare-metal)</th><th>Type 2 (Hosted)</th></tr><tr><td>Instalacija</td><td>Direktno na hardver — nema host OS-a</td><td>Unutar OS-a kao aplikacija</td></tr><tr><td>Performanse</td><td>Bolje — direktan pristup hardveru</td><td>Lošije — prolazi kroz host OS</td></tr><tr><td>Primena</td><td>Serveri, data centri</td><td>Desktop, razvoj, testiranje</td></tr><tr><td>Primeri</td><td>Hyper-V, VMware ESXi, Xen, KVM</td><td>VirtualBox, VMware Workstation, Parallels</td></tr><tr><td>Windows 11 Hyper-V</td><td>Type 1 (SLAT + UEFI)</td><td>N/A</td></tr></table></div>
-<h3 class="subsec">Prednosti virtuelizacije</h3>
-<ul class="list"><li><strong>Izolacija:</strong> greška ili malver u VM ne utiče na host sistem</li><li><strong>Snapshot:</strong> sačuvajte stanje VM-a u bilo kom trenutku; vratite se u sekundi</li><li><strong>Portabilnost:</strong> VM je fajl koji se može kopirati na drugi računar</li><li><strong>Efikasnost servera:</strong> jedan fizički server pokreće 20+ VM-ova</li><li><strong>Testiranje:</strong> eksperimentišite bez rizika — snapshot → test → revert</li></ul>
-<div class="info-box"><div class="ib-title">VirtualBox vs Hyper-V</div><p>VirtualBox (Oracle, besplatan) i Hyper-V (Microsoft, ugrađen u Win Pro/Enterprise) su najkorišćeniji za desktop virtuelizaciju. VirtualBox je multiplatformski (radi i na Linux, macOS). Hyper-V ima bolje performanse ali radi samo na Windows-u.</p></div>
-</section><section><h2 class="sec" id="s2">2. Hyper-V — ugrađeni hypervisor</h2>
-<p class="para">Hyper-V je Microsoftov Type 1 hypervisor ugrađen u Windows 10/11 Pro, Enterprise i Education. Aktivan je besplatno — nema dodatne licence. Na 64-bit sistemima sa SLAT (Second Level Address Translation) podrškom.</p>
-<h3 class="subsec">Aktivacija Hyper-V</h3>
-<p class="para">Turn Windows Features On/Off → Hyper-V (sve komponente) → OK → Restart. Ili PowerShell: <code>Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All</code></p>
-<h3 class="subsec">Checkpoint (Snapshot)</h3>
-<p class="para">Hyper-V Checkpoint je snimak kompletnog stanja VM-a: RAM, disk, CPU registri. Typlogy:</p>
-<ul class="list"><li><strong>Standard Checkpoint:</strong> uključuje RAM stanje — brz ali može uzrokovati problem sa aktivnim servisima</li><li><strong>Production Checkpoint:</strong> koristi VSS (Volume Shadow Copy) unutar guesta — konzistentno stanje podataka</li></ul>
-<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – Hyper-V upravljanje</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment"># Lista svih VM</span>
-<span class="cmd">Get-VM</span>
-<span class="comment"># Kreiranje nove VM</span>
-<span class="cmd">New-VM</span> -Name <span class="string">"TestVM"</span> -MemoryStartupBytes <span class="num">2GB</span> -NewVHDPath <span class="string">"C:\VMs\test.vhdx"</span> -NewVHDSizeBytes <span class="num">40GB</span>
-<span class="comment"># Pokretanje i zaustavljanje</span>
+  {id:'l14',num:'14',title:'Virtuelizacija i WSL',tags:['hyper-v','virtuelizacija','wsl','windows subsystem for linux','sandbox','vm'],duration:'45 min',level:'Napredno',
+   subsections:['Uvod u virtuelizaciju','Hyper-V','WSL','Windows Sandbox'],
+   content:`<section><h2 class="sec" id="s1">1. Virtuelizacija</h2>
+<ul class="list"><li><strong>Type 1 (bare-metal)</strong> – direktno na hardveru: Hyper-V, VMware ESXi</li>
+<li><strong>Type 2 (hosted)</strong> – unutar OS: VirtualBox, VMware Workstation</li></ul></section>
+<section><h2 class="sec" id="s2">2. Hyper-V</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – Hyper-V</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">Get-VM</span>
+<span class="cmd">New-VM</span> -Name <span class="string">"TestVM"</span> -MemoryStartupBytes <span class="num">2GB</span>
 <span class="cmd">Start-VM</span> -Name <span class="string">"TestVM"</span>
-<span class="cmd">Stop-VM</span> -Name <span class="string">"TestVM"</span> -Force
-<span class="comment"># Kreiranje checkpointa</span>
-<span class="cmd">Checkpoint-VM</span> -Name <span class="string">"TestVM"</span> -SnapshotName <span class="string">"Pre-instalacije"</span>
-<span class="comment"># Lista checkpointa</span>
-<span class="cmd">Get-VMSnapshot</span> -VMName <span class="string">"TestVM"</span></code></pre></div>
-</section><section><h2 class="sec" id="s3">3. WSL — Windows Subsystem for Linux</h2>
-<p class="para"><strong>WSL</strong> omogućava pokretanje Linux okruženja direktno unutar Windowsa, bez VM-a i bez dual boot-a. <strong>WSL 2</strong> koristi pravi Linux kernel koji radi unutar lahke Hyper-V VM — daleko bolje performanse od WSL 1.</p>
-<h3 class="subsec">WSL 1 vs WSL 2</h3>
-<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>WSL 1</th><th>WSL 2</th></tr><tr><td>Linux kernel</td><td>Prevodni sloj (translation layer)</td><td>Pravi Linux kernel u Hyper-V VM</td></tr><tr><td>Performanse fajl sistema</td><td>Bolje za Windows fajlove</td><td>Bolje za Linux-native fajlove</td></tr><tr><td>Kompatibilnost</td><td>Ograničena (nije pravi kernel)</td><td>Puna kompatibilnost — Docker, systemd</td></tr><tr><td>Mrežna integracija</td><td>Bolja (deli IP sa host-om)</td><td>NAT (ima sopstveni virtualni adapter</td></tr></table></div>
-<div class="code-block"><div class="code-header"><span class="code-label">PowerShell / CMD – WSL instalacija i upotreba</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div><pre><code><span class="comment"># Instalacija WSL sa Ubuntu (zahteva restart)</span>
-<span class="cmd">wsl</span> --install
-
-<span class="comment"># Lista dostupnih distribucija</span>
+<span class="cmd">Stop-VM</span> -Name <span class="string">"TestVM"</span> -Force</code></pre></div></section>
+<section><h2 class="sec" id="s3">3. WSL i Sandbox</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – WSL</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">wsl</span> --install
 <span class="cmd">wsl</span> --list --online
-
-<span class="comment"># Instalacija specificne distribucije</span>
 <span class="cmd">wsl</span> --install -d kali-linux
-
-<span class="comment"># Pokretanje podrazumevane distribucije</span>
-<span class="cmd">wsl</span>
-
 <span class="comment"># Pristup Windows fajlovima iz WSL</span>
-ls /mnt/c/Users
-
-<span class="comment"># Pristup WSL fajlovima iz Windows</span>
-<span class="comment"># \\wsl$\Ubuntu\home\korisnik</span>
-
-<span class="comment"># Status i verzija</span>
-<span class="cmd">wsl</span> --status
-<span class="cmd">wsl</span> --list --verbose</code></pre></div>
-<p class="para">WSL je idealan za: web development (Node.js, Python, Ruby), DevOps alate (git, Docker, kubectl), korišćenje Linux alata u Windows okruženju, programiranje bez dual boot-a.</p>
-</section><section><h2 class="sec" id="s4">4. Windows Sandbox</h2>
-<p class="para"><strong>Windows Sandbox</strong> je privremena, izolovana Windows VM koja se pokreće za nekoliko sekundi i automatski briše pri zatvaranju. Idealna za testiranje sumnjivih programa bez rizika po host sistem.</p>
-<ul class="list"><li>Aktivacija: Turn Windows Features → Windows Sandbox (zahteva Win 10/11 Pro+)</li><li>Svaki put startuje sa <strong>čistim Windows-om</strong> — nema ostataka od prethodnih sesija</li><li>Po zatvaranju Sandboxa, sve instalacije i izmene su <strong>nepovratno obrisane</strong></li><li>Koristi isti kernel kao host — efikasniji od pune VM</li><li><strong>Konfiguracija (.wsb fajl):</strong> može se podesiti koji folderi hosta su vidljivi, mrežni pristup, skripte pri pokretanju</li></ul>
-<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>Windows Sandbox</th><th>VirtualBox VM</th><th>Hyper-V VM</th></tr><tr><td>Startup vreme</td><td>~10 sekundi</td><td>~1–3 minuta</td><td>~30 sekundi do nekoliko minuta</td></tr><tr><td>Trajnost</td><td>Privremena — briše se pri zatvaranju</td><td>Trajna — čuva sve izmene</td><td>Trajna</td></tr><tr><td>Priprema</td><td>Nema — uvek čist Windows</td><td>Potrebna instalacija OS-a</td><td>Potrebna instalacija OS-a</td></tr><tr><td>Promena kernel-a</td><td>Ne — deli kernel sa host-om</td><td>Da</td><td>Da</td></tr><tr><td>Idealno za</td><td>Brzo testiranje sumnjivih programa</td><td>Rad sa punom VM dugoročno</td><td>Serverske workload-e</td></tr></table></div>
-</section>`,
-  vezbe:[{title:`Virtuelizacija i WSL instalacija`,icon:'🐧',steps:[`PowerShell: wsl --status — da li je WSL dostupan?`,`Ako nije: wsl --install (zahteva admin, restart)`,`Posle restarta Ubuntu se konfiguriše → kreirati korisnika`,`Unutar Ubuntu: sudo apt update && sudo apt upgrade -y`,`ls /mnt/c/Users — videti Windows korisnike iz Linux-a`,`Kreirati Python skriptu: echo "print('Zdravo iz WSL!')" > hello.py && python3 hello.py`,`Windows Sandbox: Turn Features On/Off → Windows Sandbox → pokrenuti → instalirati program → zatvoriti → program nestao?`]}],
-  pitanja:[{q:`Koja je ključna razlika između Type 1 i Type 2 hypervisora?`,opts:[`Type 1 podržava više VM-ova`,`Type 1 radi direktno na hardveru bez host OS-a; Type 2 radi unutar OS-a`,`Type 2 je brži od Type 1`,`Nema razlike u arhitekturi`],ans:1},{q:`Kako se pristupa Windows C: disku iz WSL terminala?`,opts:[`C:/`,`c:\`,`/mnt/c`,`//windows/c`],ans:2},{q:`Šta se dešava sa instaliranim programima u Windows Sandbox kada ga zatvorite?`,opts:[`Sačuvani su u posebnom folderu`,`Premeštaju se u Windows Temp`,`Automatski se nepovratno brišu`,`Backup-uju se u OneDrive`],ans:2},{q:`Koji Hyper-V PowerShell cmdlet kreira snapshot VM-a?`,opts:[`Save-VM`,`Snapshot-VM`,`Checkpoint-VM`,`Backup-VM`],ans:2},{q:`Šta je WSL 2 u odnosu na WSL 1?`,opts:[`Samo brži download`,`Koristi pravi Linux kernel u laganoj Hyper-V VM — puna kompatibilnost`,`Plaćena verzija`,`Samo za 64-bit`],ans:1},{q:`Koji je primarni cilj Windows Sandbox-a?`,opts:[`Zamena za VirtualBox`,`Brzo testiranje programa bez rizika — automatski brisanje pri zatvaranju`,`Server virtuelizacija`,`Učenje Linux komandi`],ans:1},{q:`Šta je Checkpoint (Snapshot) u Hyper-V?`,opts:[`Kompresovana kopija VHDX diska`,`Kompletni snimak stanja VM-a (RAM, disk, CPU) u određenom trenutku`,`Mrežna konfiguracija VM-a`,`Log VM aktivnosti`],ans:1},{q:`Koji je VirtualBox mrežni tip koji daje VM pristup internetu kroz NAT?`,opts:[`Host-Only`,`Internal Network`,`NAT`,`Bridged`],ans:2},{q:`Šta je prednost virtuelizacije pri testiranju softvera?`,opts:[`Brži program unutar VM-a`,`Snapshot funkcija — test, snapshot, revert ako nešto pođe naopako`,`Bolje grafičke performanse`,`Automatsko ažuriranje programa`],ans:1},{q:`Koji OS zahtevi su potrebni za Windows Sandbox?`,opts:[`Windows 10 Home ili noviji`,`Windows 10/11 Pro, Enterprise ili Education, 64-bit, virtualizacija u BIOS-u`,`Bilo koji Windows 10`,`Windows Server`],ans:1}]}
+ls /mnt/c/Users</code></pre></div>
+<div class="info-box"><div class="ib-title">Windows Sandbox</div>
+<p>Privremena VM koja se briše po zatvaranju. Idealna za testiranje sumnjivih programa. Aktivacija: Turn Windows Features → Windows Sandbox.</p></div></section>`,
+   vezbe:[{title:'WSL instalacija i Hyper-V',icon:'🐧',steps:['wsl --status u PowerShell-u','wsl --install (admin, restart)','Ubuntu: kreirati korisnika, sudo apt update','ls /mnt/c/Users – Windows fajlovi iz Linux-a','Python skripta u WSL: python3 hello.py']}],
+   pitanja:[
+     {q:'Razlika između Type 1 i Type 2?',opts:['Type 1 je sporiji','Type 1 na hardveru, Type 2 unutar OS-a','Type 2 podržava više VM','Nema razlike'],ans:1},
+     {q:'Kako se pristupa Windows C: disku iz WSL?',opts:['/windows/c','/mnt/c','C:\\','//windows/c'],ans:1},
+     {q:'Šta se dešava sa instaliranim programima kad zatvorite Sandbox?',opts:['Čuvaju se na hostu','Prenose se','Automatski se brišu','Čuvaju u backup-u'],ans:2},
+     {q:'Koji Hyper-V cmdlet pokreće VM?',opts:['Run-VM','Launch-VM','Start-VM','Begin-VM'],ans:2},
+     {q:'Šta je WSL 2 u odnosu na WSL 1?',opts:['Brži download','Koristi pravi Linux kernel umesto emulacije','Samo za 64-bit','Plaćena verzija'],ans:1}
+   ]}
 ];
 
 // ════════════════════════════════════════════════════════
