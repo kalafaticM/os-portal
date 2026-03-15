@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows OS – II razred računarski smer</title>
+<style>
+/* ── RESET & VARS ────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14;--bg2:#13161e;--bg3:#1a1e2a;--card:#1e2230;
+  --border:#2a2f40;--accent:#4f8ef7;--accent2:#7dd3fc;
+  --green:#34d399;--amber:#fbbf24;--red:#f87171;--purple:#a78bfa;
+  --text:#e2e8f0;--muted:#8892a4;--mono:'JetBrains Mono',monospace;
+  --sans:'Segoe UI',system-ui,sans-serif;
+  /* teacher panel */
+  --t-bg:#0a0e0a;--t-bg2:#111811;--t-card:#162016;
+  --t-border:#1e3a1e;--t-accent:#4ade80;--t-accent2:#86efac;
+  --t-amber:#fbbf24;--t-red:#f87171;--t-blue:#60a5fa;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── LAYOUT ──────────────────────────────────────────── */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:290px;min-width:290px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.main{flex:1;overflow-y:auto}
+.content{max-width:860px;margin:0 auto;padding:36px 36px 80px}
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+.sidebar-header{padding:18px 16px 12px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:16px;height:16px;fill:white}
+.logo-text{font-size:13px;font-weight:600}
+.logo-sub{font-size:11px;color:var(--muted);font-weight:400}
+.search-wrap{position:relative}
+.search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 10px 7px 30px;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--muted)}
+.nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav::-webkit-scrollbar{width:3px}
+.nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sec-hdr{padding:5px 16px;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;transition:background .15s,color .15s;font-size:13px;color:var(--muted);border-left:2px solid transparent;user-select:none}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(79,142,247,.1);color:var(--accent2);border-left-color:var(--accent)}
+.nav-num{font-family:var(--mono);font-size:10px;color:var(--border);min-width:20px}
+.nav-item.active .nav-num{color:var(--accent)}
+.nav-badge{margin-left:auto;font-size:10px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--muted);font-family:var(--mono)}
+.nav-divider{margin:8px 16px;border-top:1px solid var(--border)}
+
+/* teacher button in sidebar */
+.teacher-btn{margin:10px 12px;padding:8px 12px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);border-radius:7px;cursor:pointer;font-size:12px;color:var(--t-accent);font-weight:600;display:flex;align-items:center;gap:7px;transition:all .2s}
+.teacher-btn:hover{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.5)}
+.teacher-btn svg{width:14px;height:14px;fill:var(--t-accent)}
+
+/* ── LESSON STYLES ───────────────────────────────────── */
+.lesson-num{font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:5px}
+.lesson-title{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:10px}
+.lesson-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 9px;border-radius:20px;border:1px solid}
+.badge-blue{color:var(--accent2);border-color:rgba(79,142,247,.3);background:rgba(79,142,247,.1)}
+.badge-green{color:var(--green);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.1)}
+.badge-amber{color:var(--amber);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.1)}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:24px}
+.toc-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.toc-list{list-style:none}
+.toc-list li{padding:3px 0}
+.toc-list a{color:var(--muted);font-size:13px;text-decoration:none;transition:color .15s}
+.toc-list a:hover{color:var(--accent2)}
+.toc-list .dot{color:var(--accent);margin-right:7px;font-family:var(--mono);font-size:10px}
+.lesson-body section{margin-bottom:32px}
+h2.sec{font-size:18px;font-weight:600;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+h3.subsec{font-size:14px;font-weight:600;margin:16px 0 8px;color:var(--accent2)}
+p.para{font-size:14px;line-height:1.8;color:#c8d0de;margin-bottom:8px}
+ul.list{list-style:none;padding:0;margin:8px 0}
+ul.list li{font-size:14px;color:#c8d0de;padding:4px 0 4px 20px;position:relative;line-height:1.7}
+ul.list li::before{content:'›';position:absolute;left:4px;color:var(--accent);font-size:15px;line-height:1.5}
+.info-box{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.25);border-radius:9px;padding:12px 15px;margin:12px 0}
+.info-box .ib-title{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.info-box p{font-size:13px;color:#b0b8cc;line-height:1.7}
+.warn-box{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:9px;padding:12px 15px;margin:12px 0}
+.warn-box .ib-title{font-size:11px;font-weight:600;color:var(--amber);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.warn-box p{font-size:13px;color:#b0b8cc;line-height:1.7}
+.code-block{background:#0a0c12;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin:12px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.code-label{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.copy-btn{font-family:var(--mono);font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:4px;padding:2px 7px;cursor:pointer;transition:all .2s}
+.copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+.code-block pre{padding:12px;overflow-x:auto}
+.code-block code{font-family:var(--mono);font-size:12px;line-height:1.8;color:#a8b4cc}
+.code-block code .cmd{color:#7dd3fc}
+.code-block code .comment{color:#4b5563;font-style:italic}
+.code-block code .string{color:#86efac}
+.code-block code .kw{color:#c084fc}
+.code-block code .num{color:#fb923c}
+.table-wrap{overflow-x:auto;margin:12px 0}
+table.data{width:100%;border-collapse:collapse;font-size:13px}
+table.data th{background:var(--bg3);color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+table.data td{padding:8px 12px;border-bottom:1px solid rgba(42,47,64,.6);color:#c8d0de;line-height:1.6}
+table.data tr:hover td{background:rgba(255,255,255,.02)}
+table.data td code{font-family:var(--mono);font-size:12px;color:var(--accent2);background:var(--bg3);padding:1px 4px;border-radius:3px}
+.vezba-card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--green);border-radius:12px;padding:20px 22px;margin:18px 0}
+.vezba-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.vezba-icon{width:34px;height:34px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.vezba-tag{font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.vezba-title{font-size:15px;font-weight:600}
+.vezba-steps{counter-reset:step;padding:0;list-style:none}
+.vezba-steps li{counter-increment:step;padding:7px 0 7px 34px;position:relative;font-size:13px;color:#b8c4d4;line-height:1.7;border-bottom:1px solid rgba(42,47,64,.4)}
+.vezba-steps li:last-child{border-bottom:none}
+.vezba-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:21px;height:21px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:10px;color:var(--accent);display:flex;align-items:center;justify-content:center}
+.quiz-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:18px 0}
+.quiz-tag{font-size:10px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+.q-item{margin-bottom:16px}
+.q-item:last-child{margin-bottom:0}
+.q-text{font-size:14px;color:var(--text);margin-bottom:7px;font-weight:500}
+.q-options{display:flex;flex-direction:column;gap:5px}
+.q-option{display:flex;align-items:center;gap:7px;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none}
+.q-option:hover{border-color:var(--accent);color:var(--text)}
+.q-option.correct{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.08)}
+.q-option.wrong{border-color:var(--red);color:var(--red);background:rgba(248,113,113,.08)}
+.q-option .opt-key{font-family:var(--mono);font-size:10px;width:16px}
+.lesson-nav{display:flex;justify-content:space-between;margin-top:36px;padding-top:20px;border-top:1px solid var(--border)}
+.lesson-nav-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;text-align:left}
+.lesson-nav-btn:hover{border-color:var(--accent);color:var(--accent2)}
+.nav-dir{font-size:10px;color:var(--muted);display:block;margin-bottom:1px}
+.nav-label{font-weight:500;color:var(--text)}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:110px}
+.stat-num{font-size:24px;font-weight:700;color:var(--accent);font-family:var(--mono)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:1px}
+.stats-row{display:flex;gap:12px;margin:24px 0;flex-wrap:wrap}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:24px}
+.quick-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;text-align:left}
+.quick-card:hover{border-color:var(--accent);background:rgba(79,142,247,.06);transform:translateY(-1px)}
+.qc-num{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:5px}
+.qc-title{font-size:13px;font-weight:600;color:var(--text)}
+.qc-count{font-size:11px;color:var(--muted);margin-top:3px}
+.home-tag{display:inline-block;background:rgba(79,142,247,.15);color:var(--accent2);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid rgba(79,142,247,.3);margin-bottom:13px;letter-spacing:.05em}
+.home-title{font-size:32px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.home-title span{color:var(--accent)}
+.home-desc{font-size:14px;color:var(--muted);line-height:1.7;max-width:580px}
+mark{background:rgba(79,142,247,.25);color:var(--accent2);border-radius:2px;padding:0 2px}
+.no-results{padding:36px 18px;text-align:center;color:var(--muted);font-size:13px}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ══════════════════════════════════════════
+   TEACHER PANEL OVERLAY
+══════════════════════════════════════════ */
+#teacherOverlay{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+#teacherOverlay.open{display:flex}
+
+/* Login modal */
+#loginModal{
+  background:#0f1a0f;border:1px solid var(--t-border);border-radius:14px;
+  padding:32px 36px;width:380px;text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);
+}
+.login-icon{width:48px;height:48px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);border-radius:12px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.login-icon svg{width:24px;height:24px;fill:var(--t-accent)}
+.login-title{font-size:18px;font-weight:700;color:var(--t-accent);margin-bottom:4px}
+.login-sub{font-size:12px;color:#4a7a4a;margin-bottom:20px}
+.login-input{width:100%;background:#0a150a;border:1px solid var(--t-border);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--t-accent2);font-family:var(--mono);outline:none;transition:border-color .2s;margin-bottom:12px}
+.login-input:focus{border-color:var(--t-accent)}
+.login-btn{width:100%;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.4);border-radius:8px;padding:10px;font-size:14px;font-weight:600;color:var(--t-accent);cursor:pointer;transition:all .2s}
+.login-btn:hover{background:rgba(74,222,128,.25)}
+.login-err{font-size:12px;color:var(--t-red);margin-top:8px;min-height:16px}
+.login-close{display:block;margin-top:14px;font-size:12px;color:#4a7a4a;cursor:pointer;background:none;border:none}
+.login-close:hover{color:var(--muted)}
+
+/* Teacher panel */
+#teacherPanel{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:var(--t-bg);overflow-y:auto;
+}
+#teacherPanel.open{display:block}
+.tp-header{
+  background:#0a120a;border-bottom:1px solid var(--t-border);
+  padding:14px 28px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
+.tp-header-left{display:flex;align-items:center;gap:12px}
+.tp-logo{width:28px;height:28px;background:rgba(74,222,128,.2);border:1px solid rgba(74,222,128,.4);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.tp-logo svg{width:14px;height:14px;fill:var(--t-accent)}
+.tp-title{font-size:15px;font-weight:700;color:var(--t-accent)}
+.tp-badge{font-size:10px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);color:var(--t-accent);padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.06em}
+.tp-close{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--t-red);border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.tp-close:hover{background:rgba(248,113,113,.2)}
+.tp-body{max-width:1100px;margin:0 auto;padding:28px 28px 60px}
+.tp-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--t-bg2);border:1px solid var(--t-border);border-radius:10px;padding:4px}
+.tp-tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:600;color:#4a7a4a;cursor:pointer;border-radius:7px;transition:all .2s}
+.tp-tab.active{background:rgba(74,222,128,.15);color:var(--t-accent);border:1px solid rgba(74,222,128,.3)}
+.tp-pane{display:none}
+.tp-pane.active{display:block}
+
+/* Teacher lesson cards */
+.tp-lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.tp-lesson-card{background:var(--t-bg2);border:1px solid var(--t-border);border-radius:12px;overflow:hidden}
+.tp-lesson-header{background:#0d1a0d;padding:14px 16px;border-bottom:1px solid var(--t-border);display:flex;justify-content:space-between;align-items:flex-start}
+.tp-lesson-num{font-family:var(--mono);font-size:10px;color:var(--t-accent);margin-bottom:3px}
+.tp-lesson-title{font-size:14px;font-weight:700;color:var(--t-accent2)}
+.tp-level{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+.tp-level-basic{background:rgba(74,222,128,.12);color:var(--t-accent);border:1px solid rgba(74,222,128,.25)}
+.tp-level-mid{background:rgba(251,191,36,.12);color:var(--t-amber);border:1px solid rgba(251,191,36,.25)}
+.tp-level-adv{background:rgba(96,165,250,.12);color:var(--t-blue);border:1px solid rgba(96,165,250,.25)}
+.tp-lesson-body{padding:14px 16px}
+.tp-section{margin-bottom:10px}
+.tp-section-label{font-size:10px;font-weight:700;color:#4a7a4a;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.tp-section-text{font-size:12px;color:#8aab8a;line-height:1.6}
+.tp-section-text ul{list-style:none;padding:0}
+.tp-section-text ul li{padding:2px 0 2px 14px;position:relative}
+.tp-section-text ul li::before{content:'›';position:absolute;left:2px;color:var(--t-accent);line-height:1.4}
+.tp-timeline{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
+.tp-timeline th{background:#0a120a;color:#4a7a4a;padding:5px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--t-border)}
+.tp-timeline td{padding:5px 8px;border-bottom:1px solid rgba(30,58,30,.5);color:#8aab8a;vertical-align:top}
+.tp-timeline tr:last-child td{border-bottom:none}
+.tp-tl-time{color:var(--t-accent);font-family:var(--mono);font-size:10px;white-space:nowrap}
+.tp-tl-type{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-right:4px}
+.tp-t-uvod{background:#1a2e08;color:#a3e635}
+.tp-t-teor{background:#082030;color:#60a5fa}
+.tp-t-vez{background:#0a2010;color:#4ade80}
+.tp-t-sam{background:#1a0a30;color:#a78bfa}
+.tp-t-kraj{background:#1a1a1a;color:#8892a4}
+.tp-ishodi-list{list-style:none;padding:0}
+.tp-ishodi-list li{font-size:12px;color:#8aab8a;padding:3px 0 3px 20px;position:relative;line-height:1.55}
+.tp-ishodi-list li::before{content:counter(ish);counter-increment:ish;position:absolute;left:0;top:3px;width:16px;height:16px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);border-radius:4px;font-size:9px;color:var(--t-accent);font-family:var(--mono);display:flex;align-items:center;justify-content:center;line-height:1}
+.tp-ishodi-wrap{counter-reset:ish}
+.tp-vezba-box{background:#0a120a;border:1px solid var(--t-border);border-left:3px solid var(--t-accent);border-radius:6px;padding:10px 12px;margin-bottom:8px}
+.tp-vezba-title{font-size:12px;font-weight:700;color:var(--t-accent2);margin-bottom:6px}
+.tp-vezba-steps{list-style:none;padding:0;counter-reset:vs}
+.tp-vezba-steps li{counter-increment:vs;padding:3px 0 3px 22px;position:relative;font-size:11px;color:#8aab8a;border-bottom:1px solid rgba(30,58,30,.4);line-height:1.55}
+.tp-vezba-steps li:last-child{border-bottom:none}
+.tp-vezba-steps li::before{content:counter(vs)'.';position:absolute;left:0;font-family:var(--mono);font-size:10px;color:var(--t-accent)}
+.tp-quiz-item{background:#0a120a;border:1px solid var(--t-border);border-radius:6px;padding:8px 10px;margin-bottom:6px}
+.tp-quiz-q{font-size:12px;font-weight:600;color:var(--t-accent2);margin-bottom:5px}
+.tp-quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.tp-quiz-opt{font-size:11px;padding:3px 7px;border-radius:4px;background:#0d1a0d;border:1px solid var(--t-border);color:#8aab8a}
+.tp-quiz-opt.ok{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:var(--t-accent);font-weight:600}
+.tp-code{background:#060c06;border:1px solid var(--t-border);border-radius:6px;padding:8px 10px;margin-top:6px;font-family:monospace;font-size:11px;color:#6aaa6a;white-space:pre-wrap;line-height:1.6}
+.tp-domaci{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-left:3px solid var(--t-amber);border-radius:6px;padding:8px 12px;font-size:12px;color:#a07020;margin-top:8px}
+.tp-domaci-label{font-size:10px;font-weight:700;color:var(--t-amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+
+/* ── STATS TAB ───────────────────────────────────────── */
+.tp-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.tp-stat{background:var(--t-bg2);border:1px solid var(--t-border);border-radius:10px;padding:16px;text-align:center}
+.tp-stat-num{font-size:28px;font-weight:700;color:var(--t-accent);font-family:var(--mono)}
+.tp-stat-label{font-size:11px;color:#4a7a4a;margin-top:2px}
+.prog-bar-wrap{background:var(--t-bg2);border:1px solid var(--t-border);border-radius:10px;padding:16px}
+.prog-bar-label{display:flex;justify-content:space-between;font-size:12px;color:#4a7a4a;margin-bottom:5px}
+.prog-bar{height:6px;background:#0a120a;border-radius:3px;overflow:hidden;margin-bottom:10px}
+.prog-bar-fill{height:100%;background:var(--t-accent);border-radius:3px;transition:width .5s}
+
+/* ── HOSTING GUIDE TAB ───────────────────────────────── */
+.hosting-steps{counter-reset:hs}
+.hosting-step{background:var(--t-bg2);border:1px solid var(--t-border);border-radius:10px;padding:16px 18px;margin-bottom:12px;counter-increment:hs;position:relative;padding-left:50px}
+.hosting-step::before{content:counter(hs);position:absolute;left:14px;top:16px;width:24px;height:24px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.3);border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--t-accent);display:flex;align-items:center;justify-content:center}
+.hosting-step h4{font-size:14px;font-weight:700;color:var(--t-accent2);margin-bottom:5px}
+.hosting-step p{font-size:12px;color:#8aab8a;line-height:1.6;margin-bottom:5px}
+.hosting-step .hs-code{background:#060c06;border:1px solid var(--t-border);border-radius:5px;padding:6px 10px;font-family:monospace;font-size:11px;color:#6aaa6a;margin-top:5px}
+.hosting-options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.hosting-opt{background:var(--t-bg2);border:1px solid var(--t-border);border-radius:10px;padding:14px}
+.hosting-opt.recommended{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.04)}
+.hosting-opt-name{font-size:13px;font-weight:700;color:var(--t-accent2);margin-bottom:4px}
+.hosting-opt-price{font-size:12px;font-weight:700;color:var(--t-accent);margin-bottom:6px}
+.hosting-opt-desc{font-size:11px;color:#8aab8a;line-height:1.6}
+.rec-badge{font-size:9px;background:rgba(74,222,128,.2);color:var(--t-accent);border:1px solid rgba(74,222,128,.4);padding:1px 6px;border-radius:10px;font-weight:700;margin-left:6px}
+
+@media(max-width:700px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;min-width:unset;height:auto;border-right:none;border-bottom:1px solid var(--border)}
+  .nav{max-height:180px}
+  .content{padding:20px 14px 60px}
+  .home-title{font-size:22px}
+  .tp-lesson-grid{grid-template-columns:1fr}
+  .tp-stats-grid{grid-template-columns:repeat(2,1fr)}
+  .hosting-options{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 5h8v8H3zm10 0h8v8h-8zM3 15h8v8H3zm10 0h8v8h-8z"/></svg></div>
+      <div><div class="logo-text">Windows OS</div><div class="logo-sub">II razred · računarski smer</div></div>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M15 15l-3-3"/></svg>
+      <input type="text" id="searchInput" placeholder="Pretraži teme..." autocomplete="off">
+    </div>
+  </div>
+  <nav class="nav" id="navList"></nav>
+  <div class="nav-divider"></div>
+  <button class="teacher-btn" onclick="openTeacherLogin()">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+    Panel za nastavnike
+  </button>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="mainContent">
+  <div class="content" id="contentArea"></div>
+</main>
+</div>
+
+<!-- ══ TEACHER LOGIN OVERLAY ══ -->
+<div id="teacherOverlay">
+  <div id="loginModal">
+    <div class="login-icon"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
+    <div class="login-title">Nastavnički panel</div>
+    <div class="login-sub">Pristup zaštićen lozinkom</div>
+    <input type="password" id="pwInput" class="login-input" placeholder="Unesite lozinku..." onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Prijavi se</button>
+    <div class="login-err" id="loginErr"></div>
+    <button class="login-close" onclick="closeTeacherLogin()">Zatvori</button>
+  </div>
+</div>
+
+<!-- ══ TEACHER PANEL ══ -->
+<div id="teacherPanel">
+  <div class="tp-header">
+    <div class="tp-header-left">
+      <div class="tp-logo"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg></div>
+      <div>
+        <div class="tp-title">Nastavnički panel</div>
+      </div>
+      <span class="tp-badge">ZAŠTIĆENO</span>
+    </div>
+    <button class="tp-close" onclick="closeTeacherPanel()">✕ Izlaz</button>
+  </div>
+  <div class="tp-body">
+    <div class="tp-tabs">
+      <div class="tp-tab active" onclick="switchTab(this,'pane-pripreme')">📋 Pripreme za čas</div>
+      <div class="tp-tab" onclick="switchTab(this,'pane-stats')">📊 Pregled lekcija</div>
+      <div class="tp-tab" onclick="switchTab(this,'pane-hosting')">🌐 Online hosting vodič</div>
+    </div>
+
+    <!-- PANE: PRIPREME -->
+    <div class="tp-pane active" id="pane-pripreme">
+      <div class="tp-lesson-grid" id="tpLessonGrid"></div>
+    </div>
+
+    <!-- PANE: STATS -->
+    <div class="tp-pane" id="pane-stats">
+      <div class="tp-stats-grid">
+        <div class="tp-stat"><div class="tp-stat-num">14</div><div class="tp-stat-label">Lekcija ukupno</div></div>
+        <div class="tp-stat"><div class="tp-stat-num">14</div><div class="tp-stat-label">Lab. vežbi</div></div>
+        <div class="tp-stat"><div class="tp-stat-num">80+</div><div class="tp-stat-label">Test pitanja</div></div>
+        <div class="tp-stat"><div class="tp-stat-num">4</div><div class="tp-stat-label">Nivoa težine</div></div>
+      </div>
+      <div class="prog-bar-wrap" id="statsContent"></div>
+    </div>
+
+    <!-- PANE: HOSTING -->
+    <div class="tp-pane" id="pane-hosting">
+      <div style="margin-bottom:20px">
+        <div style="font-size:16px;font-weight:700;color:var(--t-accent2);margin-bottom:6px">Kako postaviti ovaj portal online besplatno 24/7</div>
+        <div style="font-size:12px;color:#4a7a4a;line-height:1.7">Ovaj portal je jedna HTML datoteka – ne treba server, baza podataka ni hosting plan. Postoji više besplatnih opcija.</div>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--t-accent);margin-bottom:10px">Preporučene besplatne opcije</div>
+      <div class="hosting-options">
+        <div class="hosting-opt recommended">
+          <div class="hosting-opt-name">GitHub Pages <span class="rec-badge">PREPORUČENO</span></div>
+          <div class="hosting-opt-price">Besplatno zauvek</div>
+          <div class="hosting-opt-desc">Microsoft platforma, 100% besplatna za statičke sajtove. Bez limita propusnosti. SSL sertifikat gratis. URL: <em>korisnik.github.io/windows-os</em>. Potreban GitHub nalog.</div>
+        </div>
+        <div class="hosting-opt">
+          <div class="hosting-opt-name">Netlify</div>
+          <div class="hosting-opt-price">Besplatno (100GB/mes)</div>
+          <div class="hosting-opt-desc">Prevuci i pusti HTML fajl. Gotovo za 30 sekundi. Automatski HTTPS. URL: <em>ime.netlify.app</em>. Moguć i custom domen.</div>
+        </div>
+        <div class="hosting-opt">
+          <div class="hosting-opt-name">Cloudflare Pages</div>
+          <div class="hosting-opt-price">Besplatno (bez limita)</div>
+          <div class="hosting-opt-desc">Najbrži CDN na svetu. Neograničen bandwidth. URL: <em>ime.pages.dev</em>. Zahteva GitHub nalog za deploy.</div>
+        </div>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--t-accent);margin-bottom:12px;margin-top:4px">Korak-po-korak: GitHub Pages (najlakši put)</div>
+      <div class="hosting-steps">
+        <div class="hosting-step">
+          <h4>Kreirajte GitHub nalog</h4>
+          <p>Idite na <strong>github.com</strong> → Sign up → unesite email, lozinku i korisničko ime (npr. <em>profos-pera</em>). Besplatno, bez kreditne kartice.</p>
+        </div>
+        <div class="hosting-step">
+          <h4>Kreirajte novi repozitorijum</h4>
+          <p>Kliknite <strong>New repository</strong> → unesite ime npr. <em>windows-os-portal</em> → označi <strong>Public</strong> → Create repository.</p>
+        </div>
+        <div class="hosting-step">
+          <h4>Otpremite HTML fajl</h4>
+          <p>Na stranici repozitorijuma kliknite <strong>uploading an existing file</strong> → prevucite <em>os_portal.html</em> → obavezno preimenujte u <strong>index.html</strong> → Commit changes.</p>
+          <div class="hs-code">Fajl mora biti nazvan: index.html</div>
+        </div>
+        <div class="hosting-step">
+          <h4>Uključite GitHub Pages</h4>
+          <p>U repozitorijumu: <strong>Settings → Pages → Source → Deploy from branch → main → / (root)</strong> → Save. Sačekajte 1–2 minuta.</p>
+        </div>
+        <div class="hosting-step">
+          <h4>Vaš portal je online!</h4>
+          <p>URL će biti: <strong>https://korisnicko-ime.github.io/windows-os-portal/</strong><br>Pošaljite link učenicima – radi na svakom uređaju, telefonu, tabletu, računaru.</p>
+          <div class="hs-code">Primer: https://profos-pera.github.io/windows-os-portal/</div>
+        </div>
+        <div class="hosting-step">
+          <h4>Ažuriranje sadržaja</h4>
+          <p>Kad dobijete novu verziju HTML fajla, jednostavno otpremite novi fajl na GitHub (zamena starog). Sajt se automatski ažurira za ~1 minut. Bez FTP, bez servera.</p>
+        </div>
+        <div class="hosting-step">
+          <h4>(Opciono) Vlastiti domen</h4>
+          <p>Ako škola ima domen (npr. <em>ostrakomp.rs</em>), možete podesiti da portal bude na adresi <em>os.ostrakomp.rs</em> — besplatno putem CNAME DNS zapisa. GitHub Pages podržava custom domene bez doplate.</p>
+          <div class="hs-code">Settings → Pages → Custom domain → unesite domen → Save</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-left:3px solid var(--t-amber);border-radius:8px;padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;color:var(--t-amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Napomena o nastavničkoj lozinci</div>
+        <div style="font-size:12px;color:#a07020;line-height:1.7">
+          Lozinka je ugrađena u HTML fajl. Za produkcijsku upotrebu promenite je pre postavljanja online:<br>
+          U fajlu pronađite: <code style="background:#1a1200;padding:1px 5px;border-radius:3px;color:#fbbf24">TEACHER_PASSWORD = 'nastavnik2025'</code><br>
+          i zamenite sa sopstvenom lozinkom pre upload-a na GitHub.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- tp-body -->
+</div><!-- teacherPanel -->
+
+<script>
+// ════════════════════════════════════════════════════════
+// TEACHER AUTH
+// ════════════════════════════════════════════════════════
+const TEACHER_PASSWORD = 'nastavnik2025';
+
+function openTeacherLogin(){
+  document.getElementById('teacherOverlay').classList.add('open');
+  document.getElementById('pwInput').value='';
+  document.getElementById('loginErr').textContent='';
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+function closeTeacherLogin(){
+  document.getElementById('teacherOverlay').classList.remove('open');
+}
+function doLogin(){
+  const pw=document.getElementById('pwInput').value;
+  if(pw===TEACHER_PASSWORD){
+    closeTeacherLogin();
+    openTeacherPanel();
+  } else {
+    document.getElementById('loginErr').textContent='Pogrešna lozinka. Pokušajte ponovo.';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+function openTeacherPanel(){
+  document.getElementById('teacherPanel').classList.add('open');
+  buildTeacherPanel();
+}
+function closeTeacherPanel(){
+  document.getElementById('teacherPanel').classList.remove('open');
+}
+function switchTab(el,pane){
+  document.querySelectorAll('.tp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tp-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(pane).classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+// STUDENT LESSON DATA
+// ════════════════════════════════════════════════════════
+const lessons=[
+  {id:'home',num:'',title:'Početna',isHome:true,tags:[]},
+  {id:'l01',num:'01',title:'Uvod u Windows',tags:['uvod','istorijat','arhitektura','kernel','hal','verzije'],duration:'45 min',level:'Osnovno',
+   subsections:['Istorijat i verzije','Arhitektura OS-a','Kernel i HAL','Poređenje OS-a'],
+   content:`<section><h2 class="sec" id="s1">1. Istorijat i verzije Windowsa</h2>
+<p class="para">Windows je familija operativnih sistema koje razvija Microsoft Corporation. Nastao je 1985. kao grafička nadgradnja za MS-DOS, a tokom decenija razvio se u najrasprostranjeniji desktop operativni sistem na svetu.</p>
+<div class="table-wrap"><table class="data"><tr><th>Verzija</th><th>Godina</th><th>Ključne novosti</th></tr>
+<tr><td>Windows 95</td><td>1995</td><td>Start meni, taskbar, Plug and Play</td></tr>
+<tr><td>Windows XP</td><td>2001</td><td>Stabilnost, NT kernel za sve korisnike</td></tr>
+<tr><td>Windows 7</td><td>2009</td><td>Superbar, biblioteke, poboljšan UAC</td></tr>
+<tr><td>Windows 10</td><td>2015</td><td>Cortana, WSL, servisni model ažuriranja</td></tr>
+<tr><td>Windows 11</td><td>2021</td><td>Novi dizajn, TPM 2.0, Android podrška</td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Arhitektura Windows OS-a</h2>
+<p class="para">Windows koristi slojevitu arhitekturu podeljenu na <strong>korisnički</strong> i <strong>kernel</strong> mode.</p>
+<h3 class="subsec">Kernel mode</h3>
+<ul class="list"><li><strong>HAL (Hardware Abstraction Layer)</strong> – skriva razlike između hardvera</li>
+<li><strong>Windows Kernel</strong> – upravljanje procesima, memorijom, I/O</li>
+<li><strong>Executive</strong> – I/O Manager, Memory Manager, Process Manager</li>
+<li><strong>Drajveri uređaja</strong> – upravljački programi koji komuniciraju s hardverom</li></ul>
+<div class="info-box"><div class="ib-title">Zašto je važna razlika Kernel / User mode?</div>
+<p>Greška u kernel modu može srušiti ceo sistem (BSOD). Greška u user modu izoluje samo tu aplikaciju.</p></div></section>
+<section><h2 class="sec" id="s3">3. Poređenje sa Linux i macOS</h2>
+<div class="table-wrap"><table class="data"><tr><th>Karakteristika</th><th>Windows</th><th>Linux</th><th>macOS</th></tr>
+<tr><td>Kernel tip</td><td>Hybrid kernel</td><td>Monolithic kernel</td><td>Hybrid (XNU)</td></tr>
+<tr><td>Otvoreni kod</td><td>Ne</td><td>Da</td><td>Delimično</td></tr>
+<tr><td>Fajl sistem</td><td>NTFS</td><td>ext4, btrfs</td><td>APFS</td></tr>
+<tr><td>Tržišno učešće</td><td>~72%</td><td>~4%</td><td>~15%</td></tr></table></div></section>`,
+   vezbe:[{title:'Istraži verziju Windowsa na VM',icon:'🖥️',steps:['Pritisnite Win+R i ukucajte winver – zapišite verziju i build broj','Otvorite Sistem → O računaru i pronađite model procesora i RAM','Pokrenite CMD: systeminfo | find "OS"','Uporedite Build broj sa susedovim računarom']}],
+   pitanja:[
+     {q:'Koji sloj arhitekture direktno komunicira sa hardverom?',opts:['Win32 API','HAL (Hardware Abstraction Layer)','User mode aplikacije','Control Panel'],ans:1},
+     {q:'Šta se dešava kada dođe do greške u kernel modu?',opts:['Samo ta aplikacija se zatvara','Pojavljuje se BSOD (plavi ekran)','Sistem nastavlja normalno','Pokreće se System Restore'],ans:1},
+     {q:'Koja verzija Windowsa je uvela Start meni i Taskbar?',opts:['Windows 3.1','Windows 98','Windows 95','Windows NT'],ans:2},
+     {q:'Koji tip kernela koristi Windows?',opts:['Monolithic kernel','Hybrid kernel','Micro kernel','Nano kernel'],ans:1},
+     {q:'Šta je BSOD?',opts:['Blue Screen of Death – prikazuje se pri grešci u kernel modu','Program za analizu diskova','Vrsta kompresije fajlova','Sigurnosni protokol'],ans:0}
+   ]},
+
+  {id:'l02',num:'02',title:'Instalacija i pokretanje sistema',tags:['instalacija','boot','bios','uefi','particije','mbr','gpt'],duration:'45 min',level:'Osnovno',
+   subsections:['Sistemski zahtevi','Proces instalacije','Boot process','MBR vs GPT'],
+   content:`<section><h2 class="sec" id="s1">1. Sistemski zahtevi za Windows 11</h2>
+<div class="table-wrap"><table class="data"><tr><th>Komponenta</th><th>Minimalni</th><th>Preporučeno</th></tr>
+<tr><td>Procesor</td><td>1 GHz, 2 jezgra, 64-bit</td><td>2+ GHz, višejezgarni</td></tr>
+<tr><td>RAM</td><td>4 GB</td><td>8–16 GB</td></tr>
+<tr><td>Disk</td><td>64 GB slobodnih</td><td>256 GB SSD</td></tr>
+<tr><td>Firmware</td><td>UEFI, Secure Boot</td><td>Isto</td></tr>
+<tr><td>TPM</td><td>TPM 2.0</td><td>Isto</td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Proces instalacije</h2>
+<ul class="list"><li><strong>Priprema medijuma</strong> – kreiranje bootabilnog USB-a pomoću Media Creation Tool</li>
+<li><strong>Boot redosled</strong> – podešavanja u BIOS/UEFI</li>
+<li><strong>Odabir particije</strong> – formatiranje ili instalacija pored postojećeg OS-a</li>
+<li><strong>OOBE</strong> – podešavanje korisničkog naloga, regiona, lozinke</li></ul>
+<div class="warn-box"><div class="ib-title">⚠ Pažnja pri odabiru particije</div><p>Formatiranjem particije brišu se SVI podaci. Uvek napravite rezervnu kopiju pre instalacije.</p></div></section>
+<section><h2 class="sec" id="s3">3. Boot process</h2>
+<ul class="list"><li><strong>POST</strong> – firmware proverava RAM, CPU, hardver</li>
+<li><strong>BIOS/UEFI</strong> – pronalazi bootabilni uređaj</li>
+<li><strong>bootmgr</strong> – Windows Boot Manager</li>
+<li><strong>winload.exe</strong> – učitava kernel i HAL</li>
+<li><strong>smss.exe</strong> – Session Manager, priprema korisnički prostor</li></ul></section>
+<section><h2 class="sec" id="s4">4. MBR vs GPT</h2>
+<div class="table-wrap"><table class="data"><tr><th>Osobina</th><th>MBR</th><th>GPT</th></tr>
+<tr><td>Maks. particija</td><td>4 primarne</td><td>128</td></tr>
+<tr><td>Maks. disk</td><td>2 TB</td><td>9.4 ZB</td></tr>
+<tr><td>Kompatibilnost</td><td>BIOS i UEFI</td><td>Samo UEFI za boot</td></tr>
+<tr><td>Preporučeno Win11</td><td>Ne</td><td>Da</td></tr></table></div></section>`,
+   vezbe:[{title:'Analiza particija na VM',icon:'💾',steps:['Otvorite Disk Management: Win+X → Disk Management','Identifikujte tip šeme (MBR ili GPT) – desni klik na Disk 0','Zapišite sve particije: slovo, naziv, veličinu, fajl sistem','Pronađite EFI System Partition i objasnite čemu služi']}],
+   pitanja:[
+     {q:'Koji program pokreće Windows kernel tokom boot procesa?',opts:['smss.exe','winlogon.exe','winload.exe','explorer.exe'],ans:2},
+     {q:'Koliki je maksimalni kapacitet diska uz MBR?',opts:['1 TB','2 TB','4 TB','8 TB'],ans:1},
+     {q:'Šta je POST?',opts:['Program za upravljanje particijama','Samotestiranje hardvera pri uključivanju','Vrsta fajl sistema','Alat za instalaciju drajvera'],ans:1},
+     {q:'Koji je maksimalni broj particija na GPT disku u Windowsu?',opts:['4','32','128','256'],ans:2},
+     {q:'Šta je OOBE?',opts:['Out of Box Experience – početno podešavanje sistema','Online Operating Boot Environment','Offline OS Backup Engine','Open Object Based Environment'],ans:0}
+   ]},
+
+  {id:'l03',num:'03',title:'Korisnički interfejs',tags:['desktop','taskbar','start meni','file explorer','precice'],duration:'45 min',level:'Osnovno',
+   subsections:['Desktop i radna površina','Taskbar i Start meni','File Explorer','Korisne prečice'],
+   content:`<section><h2 class="sec" id="s1">1. Desktop</h2>
+<ul class="list"><li><strong>Ikone</strong> – prečice do programa, fajlova i foldera</li>
+<li><strong>Tapeta</strong> – pozadinska slika, Settings → Personalization</li>
+<li><strong>Virtuelni desktopi</strong> – Win+Tab za kreiranje više radnih površina</li></ul></section>
+<section><h2 class="sec" id="s2">2. Taskbar i Start meni</h2>
+<ul class="list"><li>System Tray: sat, mreža, zvuk, baterija, Action Center</li>
+<li>Start meni: instaliran softver, pretraga, gašenje/restart</li>
+<li>Zakačene aplikacije na Taskbar-u</li></ul></section>
+<section><h2 class="sec" id="s3">3. File Explorer</h2>
+<ul class="list"><li>Pokretanje: <code>Win + E</code></li>
+<li>Address bar – direktan unos putanje</li>
+<li>Quick Access – česti folderi i skorašnji fajlovi</li></ul></section>
+<section><h2 class="sec" id="s4">4. Korisne prečice</h2>
+<div class="table-wrap"><table class="data"><tr><th>Prečica</th><th>Funkcija</th></tr>
+<tr><td><code>Win + E</code></td><td>Otvori File Explorer</td></tr>
+<tr><td><code>Win + D</code></td><td>Prikaži Desktop</td></tr>
+<tr><td><code>Win + L</code></td><td>Zaključaj računar</td></tr>
+<tr><td><code>Win + R</code></td><td>Run dijalog</td></tr>
+<tr><td><code>Win + I</code></td><td>Settings</td></tr>
+<tr><td><code>Ctrl+Shift+Esc</code></td><td>Task Manager</td></tr>
+<tr><td><code>Win+Shift+S</code></td><td>Snipping Tool</td></tr></table></div></section>`,
+   vezbe:[{title:'Prilagođavanje radnog okruženja',icon:'🎨',steps:['Kreirajte dva virtuelna desktopa (Win+Tab → New Desktop)','Na Desktop 1: Notepad i Browser; na Desktop 2: Explorer i Calculator','Zakačite 3 aplikacije na Taskbar','Promenite tapetu: desni klik → Personalize','Demonstrirajte 5 prečica nastavniku']}],
+   pitanja:[
+     {q:'Koja prečica direktno otvara File Explorer?',opts:['Win+R','Win+E','Win+F','Ctrl+E'],ans:1},
+     {q:'Šta se nalazi u System Tray oblasti?',opts:['Otvorene aplikacije','Ikone pozadinskih programa, sat, mreža, zvuk','Virtuelni desktopi','Start meni'],ans:1},
+     {q:'Kojom prečicom zakačite prozor na levu stranu?',opts:['Win+↑','Win+←','Alt+←','Ctrl+←'],ans:1},
+     {q:'Kako se pokreće Task Manager direktno?',opts:['Win+T','Alt+T','Ctrl+Shift+Esc','Win+Shift+T'],ans:2},
+     {q:'Šta radi Win+D?',opts:['Otvara Desktop Settings','Minimizuje sve prozore i prikazuje Desktop','Briše Desktop ikone','Otvara Disk Management'],ans:1}
+   ]},
+
+  {id:'l04',num:'04',title:'Upravljanje datotekama',tags:['ntfs','fat32','exfat','datoteke','folderi','atributi','putanja','efs'],duration:'45 min',level:'Srednje',
+   subsections:['Fajl sistemi','Putanje i atributi','CMD operacije','EFS kompresija'],
+   content:`<section><h2 class="sec" id="s1">1. Fajl sistemi</h2>
+<div class="table-wrap"><table class="data"><tr><th>Fajl sistem</th><th>Maks. fajl</th><th>Karakteristike</th></tr>
+<tr><td><strong>NTFS</strong></td><td>16 EB</td><td>Permisije, kompresija, šifrovanje, journaling</td></tr>
+<tr><td><strong>FAT32</strong></td><td>4 GB</td><td>Kompatibilno sa svim OS, bez permisija</td></tr>
+<tr><td><strong>exFAT</strong></td><td>16 EB</td><td>Za USB/SD kartice, kompatibilno s macOS</td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Atributi fajlova</h2>
+<div class="table-wrap"><table class="data"><tr><th>Atribut</th><th>Slovo</th><th>Opis</th></tr>
+<tr><td>Read-only</td><td>R</td><td>Fajl se ne može menjati</td></tr>
+<tr><td>Hidden</td><td>H</td><td>Nije vidljiv u Explorer-u po defaultu</td></tr>
+<tr><td>System</td><td>S</td><td>Sistemski fajl – zaštićen</td></tr>
+<tr><td>Archive</td><td>A</td><td>Čeka backup</td></tr></table></div></section>
+<section><h2 class="sec" id="s3">3. CMD komande za fajlove</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">cmd.exe</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="comment">:: Kreiranje foldera i fajla</span>
+<span class="cmd">mkdir</span> C:\Vezba\Podaci
+<span class="cmd">echo</span> <span class="string">Test</span> > C:\Vezba\test.txt
+<span class="comment">:: Kopiranje i premeštanje</span>
+<span class="cmd">copy</span> test.txt kopija.txt
+<span class="cmd">move</span> kopija.txt C:\Arhiva\
+<span class="comment">:: Atributi</span>
+<span class="cmd">attrib</span> +h +r tajni.txt
+<span class="cmd">attrib</span> -h tajni.txt
+<span class="comment">:: NTFS dozvole</span>
+<span class="cmd">icacls</span> C:\Vezba</code></pre></div></section>`,
+   vezbe:[{title:'Rad sa fajlovima i atributima',icon:'📂',steps:['Otvorite CMD kao administrator','Kreirajte strukturu: mkdir C:\\Vezba\\Podaci\\Tajni','Napravite fajl: echo Ovo je test > C:\\Vezba\\test.txt','Postavite hidden+read-only: attrib +h +r','Proverite u File Explorer (opcija Show hidden items)','Obrišite sve: rmdir /s /q C:\\Vezba']}],
+   pitanja:[
+     {q:'Koji fajl sistem podržava permisije, kompresiju i šifrovanje?',opts:['FAT32','exFAT','NTFS','ReFS'],ans:2},
+     {q:'Šta znači atribut H?',opts:['High priority','Hidden – skriven','Hard link','Hardware zaštita'],ans:1},
+     {q:'Koja komanda prikazuje skrivene fajlove u CMD-u?',opts:['dir /h','dir /s','dir /a','ls -a'],ans:2},
+     {q:'Koja je maksimalna veličina fajla na FAT32?',opts:['2 GB','4 GB','8 GB','16 GB'],ans:1},
+     {q:'Šta je NTFS journaling?',opts:['Dnevnik korisničkih aktivnosti','Log sistemskih grešaka','Evidencija operacija za oporavak diska','Backup fajlova'],ans:2}
+   ]},
+
+  {id:'l05',num:'05',title:'Upravljanje procesima',tags:['procesi','niti','threads','task manager','prioritet','servisi','pid'],duration:'45 min',level:'Srednje',
+   subsections:['Procesi i niti','Task Manager','Prioriteti','Windows servisi'],
+   content:`<section><h2 class="sec" id="s1">1. Procesi i niti</h2>
+<ul class="list"><li><strong>PID</strong> – Process ID, jedinstveni broj svakog procesa</li>
+<li><strong>Niti (threads)</strong> – najmanji delovi koji se paralelno izvršavaju unutar procesa</li>
+<li><strong>Multithreading</strong> – jedan proces koristi više niti za paralelne zadatke</li></ul></section>
+<section><h2 class="sec" id="s2">2. Task Manager kartice</h2>
+<div class="table-wrap"><table class="data"><tr><th>Kartica</th><th>Šta prikazuje</th></tr>
+<tr><td>Processes</td><td>Lista sa CPU/RAM/disk/mrežom</td></tr>
+<tr><td>Performance</td><td>Grafovi resursa u realnom vremenu</td></tr>
+<tr><td>Startup</td><td>Programi koji se pokreću sa sistemom</td></tr>
+<tr><td>Details</td><td>PID, status, broj niti</td></tr>
+<tr><td>Services</td><td>Windows servisi</td></tr></table></div>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – procesi</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">tasklist</span>
+<span class="cmd">tasklist</span> /fi <span class="string">"imagename eq notepad.exe"</span>
+<span class="cmd">taskkill</span> /IM notepad.exe /F
+<span class="cmd">taskkill</span> /PID <span class="num">4512</span> /F</code></pre></div></section>
+<section><h2 class="sec" id="s3">3. Prioriteti procesa</h2>
+<div class="table-wrap"><table class="data"><tr><th>Prioritet</th><th>Primena</th></tr>
+<tr><td>Real-time</td><td>Sistemski drajveri</td></tr>
+<tr><td>High</td><td>Task Manager, antivirusni sken</td></tr>
+<tr><td>Normal</td><td>Sve korisničke aplikacije</td></tr>
+<tr><td>Idle</td><td>Defragmentacija, backup</td></tr></table></div></section>`,
+   vezbe:[{title:'Analiza procesa i servisa',icon:'⚙️',steps:['Otvorite Task Manager i sortirajte po CPU','Pronađite PID procesa explorer.exe (kartica Details)','CMD: tasklist | find "explorer"','Otvorite services.msc i pronađite Windows Update','Promenite startup tip na Manual pa ručno pokrenite']}],
+   pitanja:[
+     {q:'Šta je PID?',opts:['Program Install Directory','Process Identifier – jedinstveni ID','Primary Input Device','Processor Interrupt'],ans:1},
+     {q:'Koja prečica direktno otvara Task Manager?',opts:['Ctrl+Alt+Del','Ctrl+Shift+Esc','Win+X','Alt+F4'],ans:1},
+     {q:'Koji prioritet koriste backup programi u pozadini?',opts:['Real-time','High','Normal','Idle'],ans:3},
+     {q:'Šta je multithreading?',opts:['Pokretanje više programa istovremeno','Korišćenje više niti unutar jednog procesa','Deljenje procesora između korisnika','Brže učitavanje programa'],ans:1},
+     {q:'Koji alat prikazuje listu svih Windows servisa?',opts:['taskman.exe','devmgmt.msc','services.msc','sysmon.exe'],ans:2}
+   ]},
+
+  {id:'l06',num:'06',title:'Upravljanje memorijom',tags:['ram','virtuelna memorija','paging','swap','pagefile'],duration:'45 min',level:'Srednje',
+   subsections:['Fizička memorija','Virtuelna memorija','Straničenje','Monitorisanje'],
+   content:`<section><h2 class="sec" id="s1">1. Fizička memorija</h2>
+<ul class="list"><li>RAM je brza, privremena memorija aktivnih programa</li>
+<li>Windows 11 minimum 4 GB; preporučeno 8–16 GB</li>
+<li>Svaki proces dobija vlastiti virtuelni adresni prostor</li></ul></section>
+<section><h2 class="sec" id="s2">2. Virtuelna memorija i Paging</h2>
+<ul class="list"><li><strong>Pagefile.sys</strong> – deo diska koji Windows koristi kao proširenje RAM-a</li>
+<li><strong>Page fault</strong> – tražena stranica nije u RAM-u, OS je mora učitati sa diska</li>
+<li><strong>Thrashing</strong> – sistem toliko paginuje da je sporiji od normalnog rada</li></ul>
+<div class="warn-box"><div class="ib-title">⚠ Pagefile na SSD</div><p>SSD ima ograničen broj ciklusa pisanja. Razmotriti smanjivanje pagefile-a ako je SSD mali.</p></div></section>
+<section><h2 class="sec" id="s3">3. PowerShell – memorija</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="comment"># Ukupna i slobodna memorija</span>
+<span class="cmd">Get-WmiObject</span> Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory
+<span class="comment"># Top 10 po RAM-u</span>
+<span class="cmd">Get-Process</span> | Sort-Object WorkingSet -Descending | Select-Object -First <span class="num">10</span></code></pre></div></section>`,
+   vezbe:[{title:'Analiza memorije',icon:'🧠',steps:['Task Manager → Performance → Memory – zapišite ukupan/slobodan RAM','Otvorite resmon.exe i pogledajte grafički prikaz','PowerShell komanda za prikaz po procesima','Pronađite pagefile.sys na C: (Show hidden items)','Otvorite podešavanja virtuelne memorije']}],
+   pitanja:[
+     {q:'Šta je pagefile.sys?',opts:['Sistemski log','Proširenje RAM-a na disku','Fajl za oporavak','Konfiguracioni fajl'],ans:1},
+     {q:'Šta je page fault?',opts:['Sistem se ruši','OS učitava stranicu sa diska u RAM','RAM se puni maksimalno','Proces se završava'],ans:1},
+     {q:'Kolika je veličina memorijske stranice u x86?',opts:['1 KB','4 KB','8 KB','64 KB'],ans:1},
+     {q:'Šta je thrashing?',opts:['Prekoračenje RAM kapaciteta','Prekomerno paginovanje koje usporava sistem','Greška u virtualizaciji','Curenje memorije'],ans:1},
+     {q:'Gde se podešava virtuelna memorija?',opts:['Task Manager → Memory','Control Panel → System → Advanced → Performance','Device Manager','Resource Monitor'],ans:1}
+   ]},
+
+  {id:'l07',num:'07',title:'Korisnici i prava pristupa',tags:['korisnici','grupe','administrator','uac','ntfs dozvole','permissions','share'],duration:'45 min',level:'Srednje',
+   subsections:['Lokalni korisnici i grupe','Admin vs Standard','UAC','NTFS i Share dozvole'],
+   content:`<section><h2 class="sec" id="s1">1. Lokalni korisnici i grupe</h2>
+<ul class="list"><li>Upravljanje: Computer Management → Local Users and Groups</li>
+<li>Ugrađene grupe: Administrators, Users, Guests, Power Users</li>
+<li>Novokreirani korisnik automatski ulazi u grupu Users</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">cmd.exe</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">net user</span>
+<span class="cmd">net user</span> Marko Sifra123! /add
+<span class="cmd">net localgroup</span> Administrators Marko /add
+<span class="cmd">net user</span> Marko /delete</code></pre></div></section>
+<section><h2 class="sec" id="s2">2. UAC – User Account Control</h2>
+<ul class="list"><li>Prikazuje dijalog pri sistemskim promenama</li>
+<li>Administrator: "Allow/Cancel" – standardni korisnik: traži Admin lozinku</li>
+<li>4 nivoa zaštite u Control Panel → Action Center</li></ul></section>
+<section><h2 class="sec" id="s3">3. NTFS dozvole</h2>
+<div class="table-wrap"><table class="data"><tr><th>Dozvola</th><th>Fajl</th><th>Folder</th></tr>
+<tr><td>Read (R)</td><td>Čitanje sadržaja</td><td>Listanje</td></tr>
+<tr><td>Write (W)</td><td>Izmena</td><td>Kreiranje fajlova</td></tr>
+<tr><td>Modify (M)</td><td>R+W+X+brisanje</td><td>Sve+brisanje</td></tr>
+<tr><td>Full Control (F)</td><td>M+promena dozvola</td><td>M+promena dozvola</td></tr></table></div>
+<div class="info-box"><div class="ib-title">NTFS + Share = restriktivniji pobedi</div>
+<p>Pristup putem mreže: Windows primenjuje obe dozvole i uzima restriktivniju. Lokalan pristup: samo NTFS.</p></div>
+<div class="code-block"><div class="code-header"><span class="code-label">icacls komanda</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">icacls</span> C:\Vezba\Tajni
+<span class="cmd">icacls</span> C:\Vezba\Tajni /grant Marko:(R)
+<span class="cmd">icacls</span> C:\Vezba\Tajni /grant Marko:(M)
+<span class="cmd">icacls</span> C:\Vezba\Tajni /deny Marko:(W)
+<span class="cmd">icacls</span> C:\Vezba\Tajni /remove Marko</code></pre></div></section>`,
+   vezbe:[{title:'Kreiranje korisnika i NTFS dozvole',icon:'👤',steps:['Kreirati Marko (standardni) i Admin2 (administrator)','Prijaviti se kao Marko i pokušati sistemsku radnju','Kreirati C:\\Vezba\\Tajni i podesiti Read-only za Marko','Test: otvori, izmeni, kreiraj fajl – šta uspeva?','Dodati Deny:Write i posmatrati prioritet Deny nad Allow']}],
+   pitanja:[
+     {q:'U kojoj grupi je automatski novokreirani korisnik?',opts:['Administrators','Users','Power Users','Guests'],ans:1},
+     {q:'Šta ima prednost: Allow ili Deny NTFS dozvola?',opts:['Allow uvek pobedi','Deny uvek pobedi','Zavisi od redosleda','Pobedi ona koja je novija'],ans:1},
+     {q:'NTFS=Full Control, Share=Read, pristup putem mreže. Efektivna dozvola?',opts:['Full Control','Read','Modify','Nema pristupa'],ans:1},
+     {q:'Šta UAC traži od standardnog korisnika?',opts:['Samo potvrdu klikom','Admin lozinku','PIN kod','Biometrijsku potvrdu'],ans:1},
+     {q:'Koja komanda prikazuje NTFS dozvole na folderu?',opts:['dir /p','icacls','attrib','net share'],ans:1}
+   ]},
+
+  {id:'l08',num:'08',title:'Registar sistema',tags:['registry','registar','regedit','hkey','kljucevi','vrednosti','backup'],duration:'45 min',level:'Napredno',
+   subsections:['Šta je Registry','HKEY struktura','regedit i reg komande','Bezbednost'],
+   content:`<section><h2 class="sec" id="s1">1. Šta je Windows Registry?</h2>
+<p class="para">Centralna hijerarhijska baza konfiguracionih podataka. Fizički smeštena u C:\\Windows\\System32\\config\\ (SAM, SYSTEM, SOFTWARE) i C:\\Users\\[user]\\NTUSER.DAT.</p>
+<div class="warn-box"><div class="ib-title">⚠ Uvek pravljiti backup pre izmena</div><p>Oštećen Registry može sprečiti pokretanje Windowsa.</p></div></section>
+<section><h2 class="sec" id="s2">2. Hijerarhija – 5 HKEY korena</h2>
+<div class="table-wrap"><table class="data"><tr><th>Koren</th><th>Skraćenica</th><th>Sadržaj</th></tr>
+<tr><td>HKEY_LOCAL_MACHINE</td><td>HKLM</td><td>Podešavanja za ceo sistem</td></tr>
+<tr><td>HKEY_CURRENT_USER</td><td>HKCU</td><td>Podešavanja prijavljenog korisnika</td></tr>
+<tr><td>HKEY_CLASSES_ROOT</td><td>HKCR</td><td>Asocijacije ekstenzija (.pdf → Acrobat)</td></tr>
+<tr><td>HKEY_USERS</td><td>HKU</td><td>Profili svih korisnika</td></tr>
+<tr><td>HKEY_CURRENT_CONFIG</td><td>HKCC</td><td>Hardverski profil tekuće sesije</td></tr></table></div></section>
+<section><h2 class="sec" id="s3">3. reg komande</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – reg</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">reg query</span> HKLM\Software\Microsoft\Windows\CurrentVersion /v ProgramFilesDir
+<span class="cmd">reg export</span> HKCU\Software\MojaApp C:\backup.reg
+<span class="cmd">reg import</span> C:\backup.reg
+<span class="cmd">reg add</span> HKCU\Software\Test /v Jezik /t REG_SZ /d <span class="string">"srpski"</span>
+<span class="cmd">reg delete</span> HKCU\Software\Test /f</code></pre></div></section>`,
+   vezbe:[{title:'Istraživanje Registry-a i backup',icon:'🔑',steps:['Win+R → regedit (UAC potvrda)','Navigiraj do HKCU\\...\\CurrentVersion\\Run','File → Export → backup_run.reg na Desktop','Otvori .reg u Notepad-u i analizuj strukturu','CMD: reg query HKCU\\...\\Run']}],
+   pitanja:[
+     {q:'Koji HKEY čuva podešavanja za ceo sistem?',opts:['HKCU','HKCR','HKLM','HKU'],ans:2},
+     {q:'Koji fajl odgovara HKEY_CURRENT_USER?',opts:['C:\\Windows\\System32\\config\\SOFTWARE','C:\\Users\\[user]\\NTUSER.DAT','C:\\Windows\\System32\\config\\SAM','C:\\Windows\\Registry.dat'],ans:1},
+     {q:'Koji tip vrednosti čuva 32-bitni broj?',opts:['REG_SZ','REG_BINARY','REG_DWORD','REG_MULTI_SZ'],ans:2},
+     {q:'Gde su programi koji startuju sa sistemom za SVE korisnike?',opts:['HKCU\\...\\Run','HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run','HKCR\\Autorun','HKCC\\Startup'],ans:1},
+     {q:'Šta radi RunOnce ključ?',opts:['Pokreće program jedanput dnevno','Pokreće jednom pa briše unos','Pokreće samo pri prvoj prijavi','Pokreće sa admin pravima'],ans:1}
+   ]},
+
+  {id:'l09',num:'09',title:'Komandna linija i PowerShell',tags:['cmd','komandna linija','powershell','bat','skripta','wmic','schtasks'],duration:'60 min',level:'Napredno',
+   subsections:['CMD komande','Batch skripte','PowerShell cmdlet-i','WMIC i schtasks'],
+   content:`<section><h2 class="sec" id="s1">1. CMD – referentne komande</h2>
+<div class="table-wrap"><table class="data"><tr><th>Komanda</th><th>Opis</th><th>Primer</th></tr>
+<tr><td><code>dir</code></td><td>Listanje</td><td><code>dir /a /o:n</code></td></tr>
+<tr><td><code>cd</code></td><td>Promena foldera</td><td><code>cd %USERPROFILE%</code></td></tr>
+<tr><td><code>xcopy</code></td><td>Kopiranje sa opcijama</td><td><code>xcopy C:\Src D:\Dst /E /Y</code></td></tr>
+<tr><td><code>tasklist</code></td><td>Lista procesa</td><td><code>tasklist /fi "status eq running"</code></td></tr>
+<tr><td><code>systeminfo</code></td><td>Sistemske info</td><td><code>systeminfo | find "OS"</code></td></tr></table></div></section>
+<section><h2 class="sec" id="s2">2. Batch skripta</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">backup.bat</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="kw">@echo off</span>
+<span class="kw">set</span> IZVOR=C:\Dokumenti
+<span class="kw">set</span> ODREDISTE=C:\Backup
+<span class="kw">if not exist</span> %ODREDISTE% <span class="cmd">mkdir</span> %ODREDISTE%
+<span class="cmd">xcopy</span> %IZVOR% %ODREDISTE% /E /Y /C
+<span class="cmd">echo</span> Backup: %date% %time% >> %ODREDISTE%\log.txt
+<span class="kw">pause</span></code></pre></div></section>
+<section><h2 class="sec" id="s3">3. PowerShell cmdlet-i</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">Get-Process</span> | Sort-Object WorkingSet -Descending | Select-Object -First <span class="num">5</span>
+<span class="cmd">Get-Service</span> | Where-Object { $_.Status -eq <span class="string">"Running"</span> }
+<span class="cmd">Get-WmiObject</span> Win32_OperatingSystem | Select-Object Caption, Version
+<span class="cmd">Get-HotFix</span> | Sort-Object InstalledOn -Descending | Select-Object -First <span class="num">5</span></code></pre></div></section>
+<section><h2 class="sec" id="s4">4. WMIC i Scheduled Tasks</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">WMIC + schtasks</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="comment">:: WMIC – informacije o sistemu</span>
+<span class="cmd">wmic</span> cpu get Name, NumberOfCores
+<span class="cmd">wmic</span> memorychip get Capacity, Speed
+<span class="cmd">wmic</span> process get Name, ProcessId, ExecutablePath
+<span class="comment">:: Zakazani zadatak – svaki dan u 14:00</span>
+<span class="cmd">schtasks</span> /create /tn <span class="string">"DnevniBackup"</span> /tr C:\backup.bat /sc daily /st <span class="num">14:00</span>
+<span class="cmd">schtasks</span> /query /fo list /v
+<span class="cmd">schtasks</span> /delete /tn <span class="string">"DnevniBackup"</span> /f</code></pre></div></section>`,
+   vezbe:[{title:'Batch skripta i PowerShell',icon:'💻',steps:['CMD: kreirajte folder strukturu i 3 fajla, sačuvajte dir output','Napišite .bat skriptu sa set, if not exist, xcopy i log','Pokrenite skriptu i proverite rezultat','PowerShell: 5 procesa po RAM-u','WMIC: prikaz CPU info → sačuvati u fajl','schtasks: kreirajte, pokrenite i obrišite zadatak']}],
+   pitanja:[
+     {q:'Kako se zovu komande u PowerShell-u?',opts:['Commands','Functions','Cmdlets','Scripts'],ans:2},
+     {q:'Šta radi | (pipe)?',opts:['Čuva u fajl','Prosleđuje output jedne komande kao input drugoj','Dodaje na kraj fajla','Pokreće kao admin'],ans:1},
+     {q:'Razlika između > i >> u CMD?',opts:['> je brži','> overwrite, >> append','> za tekst, >> za binarne','Nema razlike'],ans:1},
+     {q:'Šta prikazuje wmic cpu get NumberOfCores?',opts:['Potrošnju CPU-a','Temperaturu procesora','Broj jezgara procesora','Lista procesa'],ans:2},
+     {q:'Koja schtasks opcija pokreće zadatak odmah?',opts:['/start','/run','/execute','/now'],ans:1}
+   ]},
+
+  {id:'l10',num:'10',title:'Mrežno umrežavanje',tags:['mreza','ip adresa','dns','gateway','ping','ipconfig','netstat','deljenje','workgroup'],duration:'45 min',level:'Srednje',
+   subsections:['Mrežni adapteri','IP, DNS, Gateway','Deljenje i mapiranje','Dijagnostika'],
+   content:`<section><h2 class="sec" id="s1">1. Mrežni adapteri</h2>
+<ul class="list"><li>Pregled: Control Panel → Network Connections</li>
+<li><strong>DHCP</strong> – automatska dodela IP od rutera</li>
+<li><strong>Statička IP</strong> – ručna, za servere i štampače</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">netsh – konfiguracija</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">netsh</span> interface ip set address <span class="string">"Local Area Connection"</span> static 192.168.1.100 255.255.255.0
+<span class="cmd">netsh</span> interface ip set dns <span class="string">"Local Area Connection"</span> static 8.8.8.8
+<span class="cmd">netsh</span> interface ip set address <span class="string">"Local Area Connection"</span> dhcp</code></pre></div></section>
+<section><h2 class="sec" id="s2">2. IP adresiranje</h2>
+<div class="table-wrap"><table class="data"><tr><th>Pojam</th><th>Primer</th><th>Opis</th></tr>
+<tr><td>IP adresa</td><td>192.168.1.100</td><td>Adresa uređaja u mreži</td></tr>
+<tr><td>Subnet maska</td><td>255.255.255.0</td><td>Mreža vs. host deo IP-a</td></tr>
+<tr><td>Default Gateway</td><td>192.168.1.1</td><td>Adresa rutera</td></tr>
+<tr><td>DNS Server</td><td>8.8.8.8</td><td>Prevodi domene u IP</td></tr></table></div></section>
+<section><h2 class="sec" id="s3">3. Deljenje foldera i mapiranje</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – mrežno deljenje</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">net share</span> Deljeni=C:\Deljeni /GRANT:Everyone,READ
+<span class="cmd">net share</span>
+<span class="cmd">net use</span> Z: \\192.168.56.101\Deljeni
+<span class="cmd">net use</span> Z: /delete</code></pre></div></section>
+<section><h2 class="sec" id="s4">4. Dijagnostika</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">Mrežna dijagnostika</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">ipconfig</span> /all
+<span class="cmd">ipconfig</span> /flushdns
+<span class="cmd">ping</span> -n 4 8.8.8.8
+<span class="cmd">tracert</span> google.com
+<span class="cmd">netstat</span> -an | find <span class="string">"ESTABLISHED"</span>
+<span class="cmd">nslookup</span> google.com
+<span class="cmd">arp</span> -a</code></pre></div></section>`,
+   vezbe:[{title:'VirtualBox mrežna konfiguracija i deljenje',icon:'🌐',steps:['Podesiti statičku IP na Host-Only adapteru (IP sa table)','ipconfig /all – proveriti novu adresu','Pingati VM2 iz para – proveriti firewall ako ne radi','Kreirati C:\\DeljeniKlas i deliti ga (net share)','VM2: pristupiti \\\\IP_VM1\\DeljeniKlas','Mapirati kao Z: (net use Z:) i proveriti u Explorer-u']}],
+   pitanja:[
+     {q:'Šta radi ipconfig /flushdns?',opts:['Resetuje adapter','Briše DNS keš','Traži novu IP od DHCP','Prikazuje DNS servere'],ans:1},
+     {q:'Kako se pristupa deljenom folderu Skola na PC01?',opts:['http://PC01/Skola','\\\\PC01\\Skola','ftp://PC01/Skola','PC01://Skola'],ans:1},
+     {q:'Tracert pokazuje 25 hopova. Šta to znači?',opts:['25 sekundi latencije','DNS razrešava 25 adresa','Paket prolazi kroz 25 rutera','25 alternativnih puteva'],ans:2},
+     {q:'Ping do 8.8.8.8 radi, ping do google.com ne. Uzrok?',opts:['Firewall blokira HTTP','Google je van mreže','Problem sa DNS razrešavanjem','Pogrešna subnet maska'],ans:2},
+     {q:'Koja komanda mapira mrežni folder kao disk Z:?',opts:['net use Z: \\\\Server\\Posao','map Z: \\\\Server\\Posao','net share Z: \\\\Server\\Posao','mount Z: \\\\Server\\Posao'],ans:0}
+   ]},
+
+  {id:'l11',num:'11',title:'Bezbednost sistema',tags:['bezbednost','windows defender','antivirus','firewall','windows update','bitlocker'],duration:'45 min',level:'Srednje',
+   subsections:['Windows Defender','Firewall','Windows Update','BitLocker'],
+   content:`<section><h2 class="sec" id="s1">1. Windows Defender</h2>
+<ul class="list"><li>Real-time protection – skenira fajlove u trenutku otvaranja</li>
+<li>Controlled folder access – štiti od ransomvera</li>
+<li>Cloud-delivered protection – detekcija novih pretnji</li></ul></section>
+<section><h2 class="sec" id="s2">2. Windows Firewall</h2>
+<ul class="list"><li>Inbound/Outbound rules – dolazni/odlazni saobraćaj</li>
+<li>Profili: Domain, Private, Public</li>
+<li>Upravljanje: wf.msc</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – Firewall</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">Get-NetFirewallRule</span> | Select-Object Name, Enabled, Direction, Action
+<span class="cmd">New-NetFirewallRule</span> -DisplayName <span class="string">"Blokiraj HTTP"</span> -Direction Outbound -Protocol TCP -LocalPort <span class="num">80</span> -Action Block</code></pre></div></section>
+<section><h2 class="sec" id="s3">3. Windows Update i BitLocker</h2>
+<ul class="list"><li><strong>Patch Tuesday</strong> – drugi utorak meseca</li>
+<li><strong>BitLocker</strong> – enkripcija celog diska, zahteva TPM 2.0</li>
+<li>Recovery key obavezno sačuvati!</li></ul></section>`,
+   vezbe:[{title:'Bezbednosna podešavanja',icon:'🛡️',steps:['Windows Security – proveriti status svih komponenti','Quick Scan Defenderom','wf.msc – pregledati inbound pravila','Dodati pravilo koje blokira Notepad od mreže','Windows Update – proveriti čekajuća ažuriranja']}],
+   pitanja:[
+     {q:'Šta je Controlled Folder Access?',opts:['Ograničava internet','Štiti foldere od ransomvera','Kontroliše mrežno deljenje','Upravljanje NTFS dozvolama'],ans:1},
+     {q:'Koji Firewall profil se koristi u javnim Wi-Fi mrežama?',opts:['Domain','Private','Public','Secure'],ans:2},
+     {q:'Šta je Patch Tuesday?',opts:['Automatski restart','Dan kada Microsoft objavljuje zakrpe','Test ažuriranja','Backup procedura'],ans:1},
+     {q:'Šta zahteva BitLocker?',opts:['SSD disk','TPM 2.0 čip','Windows Pro licencu','Grafičku karticu'],ans:1},
+     {q:'Šta je Recovery Key u BitLocker-u?',opts:['Lozinka za Windows nalog','Ključ za dekripciju diska ako TPM zataji','PIN za BIOS','Backup lozinka za mrežu'],ans:1}
+   ]},
+
+  {id:'l12',num:'12',title:'Upravljanje uređajima',tags:['device manager','drajveri','plug and play','hardver','sfc','dism'],duration:'45 min',level:'Osnovno',
+   subsections:['Device Manager','Drajveri','Plug and Play','Sistemski alati'],
+   content:`<section><h2 class="sec" id="s1">1. Device Manager</h2>
+<ul class="list"><li>Pokretanje: devmgmt.msc</li>
+<li>⚠ Žuti uzvik – problem sa drajverom</li>
+<li>❌ Crveni X – uređaj onemogućen</li></ul></section>
+<section><h2 class="sec" id="s2">2. Drajveri</h2>
+<ul class="list"><li>Rollback Driver – vraća na prethodnu verziju</li>
+<li>Signed drivers – digitalno potpisani, Windows 11 ih zahteva</li></ul>
+<div class="code-block"><div class="code-header"><span class="code-label">CMD – drajveri i sistem</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">driverquery</span> /v /fo csv > drajveri.csv
+<span class="cmd">sfc</span> /scannow
+<span class="cmd">DISM</span> /Online /Cleanup-Image /RestoreHealth</code></pre></div></section>`,
+   vezbe:[{title:'Analiza drajvera i hardvera',icon:'🔌',steps:['Device Manager – kategorije uređaja','Display Adapter → Properties → Driver tab','driverquery /fo table – prebrojati drajvere','sfc /scannow (admin) – čekati rezultat','msinfo32.exe – Components sekcija']}],
+   pitanja:[
+     {q:'Šta znači žuti uzvik u Device Manager-u?',opts:['Radi ispravno','Problem sa drajverom','Onemogućen','Ažurira se'],ans:1},
+     {q:'Šta radi sfc /scannow?',opts:['Skenira viruse','Proverava/popravlja sistemske fajlove','Ažurira drajvere','Skenira disk'],ans:1},
+     {q:'Šta je Rollback Driver?',opts:['Brisanje drajvera','Vraćanje na prethodnu verziju drajvera','Prisilno ažuriranje','Backup drajvera'],ans:1},
+     {q:'Šta je Plug and Play?',opts:['USB priključak','Automatsko prepoznavanje hardvera','App za drajvere','Tip konektora'],ans:1},
+     {q:'Gde se čuvaju drajveri u Windows-u?',opts:['C:\\Windows\\Drivers','C:\\Windows\\System32\\DriverStore','C:\\Program Files\\Drivers','C:\\Windows\\Inf'],ans:1}
+   ]},
+
+  {id:'l13',num:'13',title:'Sistemski alati',tags:['control panel','settings','disk management','event viewer','logovi','backup','system restore','diskpart'],duration:'45 min',level:'Srednje',
+   subsections:['Control Panel vs Settings','Disk Management','Event Viewer','System Restore'],
+   content:`<section><h2 class="sec" id="s1">1. Disk Management i diskpart</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">diskpart</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">diskpart</span>
+<span class="kw">list disk</span>
+<span class="kw">select disk</span> <span class="num">0</span>
+<span class="kw">list partition</span>
+<span class="kw">exit</span></code></pre></div></section>
+<section><h2 class="sec" id="s2">2. Event Viewer</h2>
+<ul class="list"><li>eventvwr.msc – pregled sistemskih, aplikativnih i bezbednosnih logova</li>
+<li>Event ID 41 – neočekivano gašenje</li>
+<li>Event ID 4625 – neuspešna prijava</li></ul></section>
+<section><h2 class="sec" id="s3">3. System Restore</h2>
+<ul class="list"><li>Restore točke automatski pre instalacija i ažuriranja</li>
+<li>Ne menja korisničke fajlove</li>
+<li>Ručno: Control Panel → System → System Protection → Create</li></ul></section>`,
+   vezbe:[{title:'Logovi i restore točke',icon:'🔧',steps:['Event Viewer – pronađi 3 greške u System logu','Za svaku: Event ID, izvor, poruka, vreme','Security log – uspešna prijavljivanja (ID 4624)','System Protection → kreiraj ručno restore točku','Disk Management – skica rasporeda particija']}],
+   pitanja:[
+     {q:'Koji Event ID označava neočekivano gašenje?',opts:['1000','41','7001','4625'],ans:1},
+     {q:'Šta System Restore NE vraća?',opts:['Sistemske fajlove','Registry','Drajvere','Korisnikove dokumente'],ans:3},
+     {q:'Koji alat za CLI upravljanje particijama?',opts:['fdisk','format','diskpart','partmgr'],ans:2},
+     {q:'Koji Event ID je neuspešna prijava?',opts:['4624','4625','4648','4720'],ans:1},
+     {q:'Gde se kreira ručna restore točka?',opts:['Control Panel → System → System Protection','Disk Management → Properties','Event Viewer → Create','Task Scheduler'],ans:0}
+   ]},
+
+  {id:'l14',num:'14',title:'Virtuelizacija i WSL',tags:['hyper-v','virtuelizacija','wsl','windows subsystem for linux','sandbox','vm'],duration:'45 min',level:'Napredno',
+   subsections:['Uvod u virtuelizaciju','Hyper-V','WSL','Windows Sandbox'],
+   content:`<section><h2 class="sec" id="s1">1. Virtuelizacija</h2>
+<ul class="list"><li><strong>Type 1 (bare-metal)</strong> – direktno na hardveru: Hyper-V, VMware ESXi</li>
+<li><strong>Type 2 (hosted)</strong> – unutar OS: VirtualBox, VMware Workstation</li></ul></section>
+<section><h2 class="sec" id="s2">2. Hyper-V</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – Hyper-V</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">Get-VM</span>
+<span class="cmd">New-VM</span> -Name <span class="string">"TestVM"</span> -MemoryStartupBytes <span class="num">2GB</span>
+<span class="cmd">Start-VM</span> -Name <span class="string">"TestVM"</span>
+<span class="cmd">Stop-VM</span> -Name <span class="string">"TestVM"</span> -Force</code></pre></div></section>
+<section><h2 class="sec" id="s3">3. WSL i Sandbox</h2>
+<div class="code-block"><div class="code-header"><span class="code-label">PowerShell – WSL</span><button class="copy-btn" onclick="copyCode(this)">Kopiraj</button></div>
+<pre><code><span class="cmd">wsl</span> --install
+<span class="cmd">wsl</span> --list --online
+<span class="cmd">wsl</span> --install -d kali-linux
+<span class="comment"># Pristup Windows fajlovima iz WSL</span>
+ls /mnt/c/Users</code></pre></div>
+<div class="info-box"><div class="ib-title">Windows Sandbox</div>
+<p>Privremena VM koja se briše po zatvaranju. Idealna za testiranje sumnjivih programa. Aktivacija: Turn Windows Features → Windows Sandbox.</p></div></section>`,
+   vezbe:[{title:'WSL instalacija i Hyper-V',icon:'🐧',steps:['wsl --status u PowerShell-u','wsl --install (admin, restart)','Ubuntu: kreirati korisnika, sudo apt update','ls /mnt/c/Users – Windows fajlovi iz Linux-a','Python skripta u WSL: python3 hello.py']}],
+   pitanja:[
+     {q:'Razlika između Type 1 i Type 2?',opts:['Type 1 je sporiji','Type 1 na hardveru, Type 2 unutar OS-a','Type 2 podržava više VM','Nema razlike'],ans:1},
+     {q:'Kako se pristupa Windows C: disku iz WSL?',opts:['/windows/c','/mnt/c','C:\\','//windows/c'],ans:1},
+     {q:'Šta se dešava sa instaliranim programima kad zatvorite Sandbox?',opts:['Čuvaju se na hostu','Prenose se','Automatski se brišu','Čuvaju u backup-u'],ans:2},
+     {q:'Koji Hyper-V cmdlet pokreće VM?',opts:['Run-VM','Launch-VM','Start-VM','Begin-VM'],ans:2},
+     {q:'Šta je WSL 2 u odnosu na WSL 1?',opts:['Brži download','Koristi pravi Linux kernel umesto emulacije','Samo za 64-bit','Plaćena verzija'],ans:1}
+   ]}
+];
+
+// ════════════════════════════════════════════════════════
+// TEACHER LESSON DATA (pripreme)
+// ════════════════════════════════════════════════════════
+const teacherData = [
+  {
+    id:'l07', cilj:'Osposobiti učenike za upravljanje korisnicima, grupama i NTFS/Share dozvolama u Windows 7 VirtualBox okruženju.',
+    ishodi:['Kreira i briše korisnike putem Computer Management i CMD','Razlikuje Admin/Standard nalog i primenjuje princip najmanjih privilegija','Opisuje UAC i podešava nivo zaštite','Konfiguriše NTFS dozvole i testira sa 3 naloga','Razlikuje Share i NTFS dozvole (restriktivniji pobedi)','Koristi icacls za pregled i izmenu dozvola'],
+    metode:'Demonstracija · Dijaloška metoda · Praktičan rad · Problemska metoda · Metoda scenarija',
+    oblici:'Frontalni (uvod, teorija) · Par (vežbe 1 i 2) · Individualni (samostalni zadatak)',
+    korelacija:'Mreže (mrežne dozvole) · Baze podataka (kontrola pristupa) · Programiranje (sistemski API)',
+    literatura:'Microsoft TechNet; Šaša Tošić – Operativni sistemi; docs.microsoft.com',
+    raspored:[['0–5','Nastavnik','Uvod','uvod'],['5–20','Nastavnik','Teorija: korisnici, grupe, UAC, demonstracija','teor'],['20–35','Učenici','Vežba 1: kreiranje korisnika Marko/Admin2, testiranje UAC','vez'],['35–50','Nastavnik','Teorija: NTFS dozvole, Share dozvole, icacls','teor'],['50–70','Učenici','Vežba 2: NTFS dozvole, testiranje Deny vs Allow','vez'],['70–85','Učenici','Samostalni: Scenario firma (Direktor/Referent/Dizajner)','sam'],['85–90','Zajednički','Rezime, domaći','kraj']],
+    vezba1:{title:'Kreiranje korisnika i testiranje UAC-a',uvod:'Prijaviti se kao Administrator u Windows 7 VM.',koraci:['Computer Management → Local Users and Groups → Users','Kreirati Marko (bez admin prava) i Admin2 (u grupi Administrators)','CMD: net user i net localgroup Administrators','Odjaviti se, prijaviti kao Marko','Pokušati instalirati program – posmatrati UAC','Pokušati cmd.exe Run as Administrator – uneti Admin lozinku','Promeniti UAC nivo na Never notify – šta se menja?']},
+    vezba2:{title:'NTFS dozvole – Deny vs Allow',uvod:'Prijavljeni kao Administrator.',koraci:['Kreirati C:\\Vezba\\Javni i C:\\Vezba\\Tajni','echo Tajni podaci > C:\\Vezba\\Tajni\\podaci.txt','Security → Edit: Marko = samo Read na Tajni','Kao Marko: otvori fajl ✓, izmeni ?, kreiraj novi ?','Dodati Deny:Write – šta se dešava sa Modify?','icacls C:\\Vezba – prikazati finalne dozvole']},
+    domaci:'Istražiti razliku između Share dozvola i NTFS dozvola. Šta se dešava kada su u konfliktu?'
+  },
+  {
+    id:'l08', cilj:'Upoznati učenike sa strukturom Registry-a, bezbednim radom u regedit-u i upravljanjem putem reg komandi uz obavezan backup.',
+    ishodi:['Opisuje ulogu Registry-a i navodi fizičke hive fajlove','Identifikuje svih 5 HKEY korena','Navigira regedit-om i razlikuje tipove vrednosti','Kreira backup i uvozi reg fajl','Identifikuje autostart programe','Primenjuje principe bezbednog rada'],
+    metode:'Demonstracija · Istraživački rad · Metoda otkrivanja · Razgovor',
+    oblici:'Frontalni (uvod, teorija, demonstracija) · Par (istraživanje) · Individualni (izmene i backup)',
+    korelacija:'Programiranje (Registry API) · Baze podataka (hijerarhijska ključ-vrednost struktura)',
+    literatura:'Microsoft TechNet; Mark Russinovich – Windows Internals',
+    raspored:[['0–5','Nastavnik','Uvod – šta je .ini fajl?','uvod'],['5–15','Nastavnik','Teorija: Registry, HKEY struktura','teor'],['15–25','Nastavnik','Demonstracija regedit-a','teor'],['25–45','Učenici','Vežba 1: Istraživanje i backup','vez'],['45–55','Nastavnik','Teorija: reg komande, bezbednost','teor'],['55–75','Učenici','Vežba 2: Kreiranje, brisanje, obnavljanje ključeva','vez'],['75–85','Učenici','Samostalni: Analiza Autostart ključeva','sam'],['85–90','Zajednički','Diskusija i rezime','kraj']],
+    vezba1:{title:'Istraživanje Registry-a i backup',uvod:'regedit kao Administrator. OPREZ: samo čitamo!',koraci:['HKCU\\...\\CurrentVersion\\Run – zapisati sve vrednosti','File → Export → backup_run.reg na Desktop','Otvoriti .reg u Notepad-u – analizirati strukturu','CMD: reg query HKCU\\...\\Run','HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion – BuildLab','HKCR\\.txt – šta Default vrednost znači?']},
+    vezba2:{title:'Kreiranje, brisanje i obnavljanje ključeva',uvod:'Samo u HKCU – nikada u HKLM tokom vežbe.',koraci:['reg add HKCU\\Software\\VezbaSkola','Dodati: Predmet (REG_SZ), Razred (REG_SZ), BrojSati (REG_DWORD)','Proveriti u regedit-u','reg export HKCU\\Software\\VezbaSkola C:\\vezba_backup.reg','reg delete HKCU\\Software\\VezbaSkola /f','reg import C:\\vezba_backup.reg – proveriti obnovu']},
+    domaci:'Istražiti razliku između Run i RunOnce ključa. Čemu služi RunOnce pri instalaciji softvera?'
+  },
+  {
+    id:'l09', cilj:'Osposobiti učenike za efikasno korišćenje CMD i PowerShell-a u administraciji sistema, sa naglaskom na automatizaciju (bat skripte, schtasks) i WMIC.',
+    ishodi:['Izvršava CMD komande za navigaciju i fajlove','Primenjuje pipe i redirect','Piše i izvršava .bat skriptu sa if i set','Pokreće PowerShell cmdlet-e','Koristi WMIC za sistemske informacije','Kreira zakazani zadatak putem schtasks'],
+    metode:'Demonstracija · Praktičan rad · Metoda postupnosti · Metoda otkrivanja grešaka',
+    oblici:'Frontalni (demonstracija) · Individualni (sve vežbe)',
+    korelacija:'Programiranje (logika, petlje) · Mreže (mrežne komande) · Baze podataka (WMIC upiti)',
+    literatura:'Microsoft docs.microsoft.com – CMD reference; PowerShell docs; Scripting Guy Blog',
+    raspored:[['0–5','Nastavnik','Uvod: kada je CLI brži?','uvod'],['5–20','Nastavnik','Demo CMD: navigacija, pipe, redirect','teor'],['20–38','Učenici','Vežba 1: CMD komande, pipe, redirect','vez'],['38–50','Nastavnik','Demo: .bat skripte i PowerShell','teor'],['50–70','Učenici','Vežba 2: bat skripta + PowerShell','vez'],['70–85','Učenici','Samostalni: WMIC + schtasks','sam'],['85–90','Zajednički','Pregled grešaka','kraj']],
+    vezba1:{title:'CMD – pipe, redirect i promenljive',uvod:'CMD (ne mora biti admin). Sve upisivati ručno.',koraci:['echo %USERNAME% radi na %COMPUTERNAME%','mkdir Desktop\\Vezba\\Podaci\\Arhiva','Kreirati 3 .txt fajla','dir Desktop\\Vezba /a > lista.txt','find /c /v "" lista.txt – brojanje linija','tasklist | sort > procesi.txt','tasklist | find "svc"']},
+    vezba2:{title:'.bat skripta i PowerShell',uvod:'Deo A: Notepad → .bat. Deo B: PowerShell.',koraci:['Napisati bat: datumski folder + xcopy + log','Sačuvati kao moj_backup.bat, pokrenuti','Dodati if not exist proveru','PS: 5 procesa po RAM-u','PS: Get-Service W* – Running servisi','PS: Get-WmiObject Win32_OperatingSystem']},
+    domaci:'PowerShell skripta: ime računara, IP, ukupan RAM, OS verzija, 5 poslednjih hotfix-eva → system_report.txt'
+  },
+  {
+    id:'l10', cilj:'Osposobiti učenike za konfiguraciju mrežnih adaptera u Windows 7 VirtualBox okruženju, deljenje resursa i primenu mrežnih dijagnostičkih alata.',
+    ishodi:['Identifikuje adaptere i razlikuje NAT/Host-Only u VirtualBox-u','Konfiguriše statičku IP putem GUI i netsh','Deli folder i pristupa UNC putanjom','Mapira mrežni disk (net use)','Primenjuje ipconfig, ping, tracert, netstat, nslookup','Interpretira output dijagnostičkih komandi'],
+    metode:'Demonstracija · Praktičan rad · Metoda scenarija · Problemska metoda',
+    oblici:'Frontalni (uvod, teorija) · Par (mrežne vežbe) · Individualni (dijagnostika)',
+    korelacija:'Računarske mreže (IP adresiranje) · Korisnici i prava (mrežne dozvole) · CLI (netsh)',
+    literatura:'Andrew Tanenbaum – Računarske mreže; Microsoft TechNet; RFC 1918',
+    raspored:[['0–8','Nastavnik','Uvod: topologija kabineta, VBox adapteri','uvod'],['8–20','Nastavnik','Teorija: IP, subnet, DNS, gateway','teor'],['20–40','Učenici','Vežba 1: Host-Only konfiguracija i ping','vez'],['40–52','Nastavnik','Teorija: Deljenje, UNC, mapiranje, Workgroup','teor'],['52–72','Učenici','Vežba 2: Deljenje foldera i mapiranje Z:','vez'],['72–85','Učenici','Samostalni: Kompletna mrežna dijagnostika','sam'],['85–90','Zajednički','Diskusija mrežnih problema','kraj']],
+    vezba1:{title:'Host-Only konfiguracija i test',uvod:'Parovi dobijaju IP adrese sa table (192.168.56.101+).',koraci:['Control Panel → Network Connections → VBox Host-Only → IPv4','Uneti statičku IP, subnet 255.255.255.0','ipconfig /all – proveriti','ping IP_VM2 iz para','Firewall: File and Printer Sharing (Echo Request) → Enable','arp -a – MAC adresa VM2?']},
+    vezba2:{title:'Deljenje i mapiranje mrežnog diska',uvod:'VM1 deli, VM2 pristupa. Zatim se uloge menjaju.',koraci:['VM1: mkdir C:\\DeljeniKlas, 3 txt fajla','Workgroup: oba moraju biti "WORKGROUP"','Share: net share DeljeniKlas=C:\\DeljeniKlas /GRANT:Everyone,READ','VM2: \\\\IP_VM1\\DeljeniKlas – videli fajlovi?','VM2: net use Z: \\\\IP_VM1\\DeljeniKlas','Start → Computer – vidi Z: disk?']},
+    domaci:'Razlika između privatnih (RFC 1918) i javnih IP adresa. Šta radi NAT u ruteru?'
+  }
+];
+
+// ════════════════════════════════════════════════════════
+// RENDER STUDENT NAV
+// ════════════════════════════════════════════════════════
+let activeId='home';
+function renderNav(filter=''){
+  const nav=document.getElementById('navList');
+  nav.innerHTML='';
+  const filtered=lessons.filter(l=>{
+    if(l.isHome) return !filter;
+    const s=filter.toLowerCase();
+    return !filter||l.title.toLowerCase().includes(s)||l.tags.some(t=>t.includes(s))||(l.subsections||[]).some(x=>x.toLowerCase().includes(s));
+  });
+  if(!filter){
+    const g=document.createElement('div');
+    g.innerHTML=`<div class="nav-item ${activeId==='home'?'active':''}" onclick="showPage('home')"><span class="nav-num">—</span>Početna</div>`;
+    nav.appendChild(g);
+    const lvls={'Osnovno':[],'Srednje':[],'Napredno':[]};
+    lessons.filter(l=>!l.isHome).forEach(l=>lvls[l.level].push(l));
+    for(const[lvl,items] of Object.entries(lvls)){
+      if(!items.length) continue;
+      const g=document.createElement('div');
+      g.innerHTML=`<div class="sec-hdr">${lvl}</div>`+items.map(l=>`<div class="nav-item ${activeId===l.id?'active':''}" onclick="showPage('${l.id}')"><span class="nav-num">${l.num}</span>${l.title}<span class="nav-badge">${l.vezbe.length}v·${l.pitanja.length}p</span></div>`).join('');
+      nav.appendChild(g);
+    }
+  } else {
+    if(!filtered.length){nav.innerHTML='<div class="no-results">Nema rezultata</div>';return;}
+    const g=document.createElement('div');
+    g.innerHTML=`<div class="sec-hdr">Rezultati (${filtered.length})</div>`+filtered.map(l=>`<div class="nav-item ${activeId===l.id?'active':''}" onclick="showPage('${l.id}')"><span class="nav-num">${l.num||'—'}</span>${l.title}</div>`).join('');
+    nav.appendChild(g);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// RENDER STUDENT PAGES
+// ════════════════════════════════════════════════════════
+function renderHome(){
+  const nl=lessons.filter(l=>!l.isHome);
+  const tv=nl.reduce((s,l)=>s+(l.vezbe||[]).length,0);
+  const tp=nl.reduce((s,l)=>s+(l.pitanja||[]).length,0);
+  return `<div class="home-tag">II razred · Računarski smer</div>
+<h1 class="home-title">Windows <span>Operativni sistemi</span></h1>
+<p class="home-desc">Kompletne lekcije sa primerima, laboratorijskim vežbama i testovima. Windows 7 u VirtualBox okruženju.</p>
+<div class="stats-row">
+<div class="stat-card"><div class="stat-num">${nl.length}</div><div class="stat-label">Lekcija</div></div>
+<div class="stat-card"><div class="stat-num">${tv}</div><div class="stat-label">Lab. vežbi</div></div>
+<div class="stat-card"><div class="stat-num">${tp}</div><div class="stat-label">Test pitanja</div></div>
+<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Nivoa težine</div></div>
+</div>
+<div style="margin:24px 0 10px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Sve lekcije</div>
+<div class="quick-grid">${nl.map(l=>`<button class="quick-card" onclick="showPage('${l.id}')"><div class="qc-num">${l.num}</div><div class="qc-title">${l.title}</div><div class="qc-count">${l.vezbe.length} vežb${l.vezbe.length===1?'a':'e'} · ${l.pitanja.length} pitanja · ${l.level}</div></button>`).join('')}</div>`;
+}
+function renderLesson(l){
+  const all=lessons.filter(x=>!x.isHome),idx=all.findIndex(x=>x.id===l.id);
+  const prev=idx>0?all[idx-1]:null,next=idx<all.length-1?all[idx+1]:null;
+  const toc=l.subsections?`<div class="toc"><div class="toc-title">Sadržaj lekcije</div><ul class="toc-list">${l.subsections.map((s,i)=>`<li><a href="#s${i+1}"><span class="dot">${String(i+1).padStart(2,'0')}</span>${s}</a></li>`).join('')}<li><a href="#vezbe"><span class="dot">✦</span>Vežbe</a></li><li><a href="#pitanja"><span class="dot">✦</span>Pitanja</a></li></ul></div>`:'';
+  const vezbeHtml=(l.vezbe||[]).map(v=>`<div class="vezba-card"><div class="vezba-header"><div class="vezba-icon">${v.icon}</div><div><div class="vezba-tag">Laboratorijska vežba</div><div class="vezba-title">${v.title}</div></div></div><ol class="vezba-steps">${v.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>`).join('');
+  const pHtml=l.pitanja.length?`<div class="quiz-card" id="pitanja"><div class="quiz-tag">Pitanja za proveru znanja – ${l.pitanja.length} pitanja</div>${l.pitanja.map((p,qi)=>`<div class="q-item" id="q${qi}"><div class="q-text">${qi+1}. ${p.q}</div><div class="q-options">${p.opts.map((o,oi)=>`<div class="q-option" onclick="checkAns(${qi},${oi},${p.ans})"><span class="opt-key">${String.fromCharCode(65+oi)}</span>${o}</div>`).join('')}</div></div>`).join('')}</div>`:'';
+  const nav=`<div class="lesson-nav">${prev?`<button class="lesson-nav-btn" onclick="showPage('${prev.id}')"><div><span class="nav-dir">← Prethodna</span><span class="nav-label">${prev.title}</span></div></button>`:'<div></div>'}${next?`<button class="lesson-nav-btn" onclick="showPage('${next.id}')" style="text-align:right"><div><span class="nav-dir">Sledeća →</span><span class="nav-label">${next.title}</span></div></button>`:'<div></div>'}</div>`;
+  return `<div class="lesson-num">Lekcija ${l.num}</div><h1 class="lesson-title">${l.title}</h1>
+<div class="lesson-meta"><span class="badge badge-blue">⏱ ${l.duration}</span><span class="badge badge-${l.level==='Osnovno'?'green':l.level==='Srednje'?'amber':'blue'}">${l.level}</span><span class="badge badge-green">✦ ${l.vezbe.length} vežb${l.vezbe.length===1?'a':'e'}</span></div>
+${toc}<div class="lesson-body">${l.content}</div>
+<section id="vezbe">${vezbeHtml}</section>${pHtml}${nav}`;
+}
+function showPage(id){
+  activeId=id;
+  const l=lessons.find(x=>x.id===id);
+  if(!l) return;
+  document.getElementById('contentArea').innerHTML=l.isHome?renderHome():renderLesson(l);
+  document.getElementById('mainContent').scrollTop=0;
+  renderNav(document.getElementById('searchInput').value);
+}
+function checkAns(qi,oi,correct){
+  const qEl=document.getElementById('q'+qi);
+  qEl.querySelectorAll('.q-option').forEach((o,i)=>{
+    o.classList.remove('correct','wrong');
+    o.style.pointerEvents='none';
+    if(i===correct) o.classList.add('correct');
+    else if(i===oi&&oi!==correct) o.classList.add('wrong');
+  });
+}
+function copyCode(btn){
+  const text=btn.closest('.code-block').querySelector('pre').innerText;
+  navigator.clipboard.writeText(text).then(()=>{btn.textContent='Kopirano!';setTimeout(()=>btn.textContent='Kopiraj',2000);});
+}
+let st;
+document.getElementById('searchInput').addEventListener('input',function(){
+  clearTimeout(st);st=setTimeout(()=>renderNav(this.value.trim()),150);
+});
+
+// ════════════════════════════════════════════════════════
+// BUILD TEACHER PANEL
+// ════════════════════════════════════════════════════════
+function buildTeacherPanel(){
+  // Pripreme grid
+  const grid=document.getElementById('tpLessonGrid');
+  if(grid.childElementCount>0) return; // already built
+  grid.innerHTML=teacherData.map(td=>{
+    const sl=lessons.find(l=>l.id===td.id);
+    const lvlClass=sl?`tp-level-${sl.level==='Osnovno'?'basic':sl.level==='Srednje'?'mid':'adv'}`:'tp-level-mid';
+    const lvlLabel=sl?sl.level:'';
+    const rasporedRows=td.raspored.map(([t,ko,act,tip])=>`<tr><td class="tp-tl-time">${t}</td><td><span class="tp-tl-type tp-t-${tip}">${ko}</span></td><td>${act}</td></tr>`).join('');
+    const ishodiHtml=`<div class="tp-ishodi-wrap"><ul class="tp-ishodi-list">${td.ishodi.map(i=>`<li>${i}</li>`).join('')}</ul></div>`;
+    const v1=td.vezba1,v2=td.vezba2;
+    return `<div class="tp-lesson-card">
+      <div class="tp-lesson-header">
+        <div><div class="tp-lesson-num">${sl?'Lekcija '+sl.num:''}</div><div class="tp-lesson-title">${sl?sl.title:td.id}</div></div>
+        <span class="tp-level ${lvlClass}">${lvlLabel}</span>
+      </div>
+      <div class="tp-lesson-body">
+        <div class="tp-section"><div class="tp-section-label">🎯 Cilj časa</div><div class="tp-section-text">${td.cilj}</div></div>
+        <div class="tp-section"><div class="tp-section-label">✅ Ishodi učenja</div>${ishodiHtml}</div>
+        <div class="tp-section"><div class="tp-section-label">📋 Metode rada</div><div class="tp-section-text">${td.metode}</div></div>
+        <div class="tp-section"><div class="tp-section-label">👥 Oblici rada</div><div class="tp-section-text">${td.oblici}</div></div>
+        <div class="tp-section"><div class="tp-section-label">🔗 Korelacija</div><div class="tp-section-text">${td.korelacija}</div></div>
+        <div class="tp-section"><div class="tp-section-label">⏱ Vremenski raspored</div>
+          <table class="tp-timeline"><tr><th>Vreme</th><th>Ko</th><th>Aktivnost</th></tr>${rasporedRows}</table>
+        </div>
+        <div class="tp-section">
+          <div class="tp-section-label">🧪 Laboratorijska vežba 1</div>
+          <div class="tp-vezba-box"><div class="tp-vezba-title">${v1.title}</div>
+          <div style="font-size:11px;color:#4a7a4a;margin-bottom:5px;font-style:italic">${v1.uvod}</div>
+          <ol class="tp-vezba-steps">${v1.koraci.map(k=>`<li>${k}</li>`).join('')}</ol></div>
+          <div class="tp-vezba-box"><div class="tp-vezba-title">${v2.title}</div>
+          <div style="font-size:11px;color:#4a7a4a;margin-bottom:5px;font-style:italic">${v2.uvod}</div>
+          <ol class="tp-vezba-steps">${v2.koraci.map(k=>`<li>${k}</li>`).join('')}</ol></div>
+        </div>
+        <div class="tp-section"><div class="tp-section-label">📝 Pitanja (${sl?sl.pitanja.length:0} kom)</div>
+          <div>${sl?sl.pitanja.map((p,i)=>`<div class="tp-quiz-item"><div class="tp-quiz-q">${i+1}. ${p.q}</div><div class="tp-quiz-opts">${p.opts.map((o,oi)=>`<div class="tp-quiz-opt${oi===p.ans?' ok':''}">${String.fromCharCode(65+oi)}) ${o}</div>`).join('')}</div></div>`).join(''):''}
+        </div></div>
+        <div class="tp-domaci"><div class="tp-domaci-label">📚 Domaći zadatak</div>${td.domaci}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Stats pane
+  const sc=document.getElementById('statsContent');
+  sc.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--t-accent2);margin-bottom:12px">Pregled pokrivenosti po lekcijama</div>`+
+  lessons.filter(l=>!l.isHome).map(l=>`<div class="prog-bar-label"><span>${l.num}. ${l.title}</span><span style="font-family:monospace;font-size:11px">${l.pitanja.length} pit · ${l.vezbe.length} vež</span></div>
+  <div class="prog-bar"><div class="prog-bar-fill" style="width:${Math.min(100,l.pitanja.length*12)}%"></div></div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+showPage('home');
+</script>
+</body>
+</html>
