@@ -280,6 +280,50 @@ mark{background:rgba(79,142,247,.25);color:var(--accent2);border-radius:2px;padd
   .tp-stats-grid{grid-template-columns:repeat(2,1fr)}
   .hosting-options{grid-template-columns:1fr}
 }
+
+/* ── PRAKTIČNI TESTOVI ─────────────────────────────── */
+.test-header{background:linear-gradient(135deg,#1a2f4e 0%,#2a3f6f 100%);color:white;padding:20px 24px 16px;border-radius:10px;margin-bottom:20px}
+.test-header .chip{display:inline-block;background:rgba(255,255,255,.18);font-size:10px;padding:2px 9px;border-radius:12px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.test-header h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.test-header .sub{font-size:13px;color:#93c5fd;margin-bottom:10px}
+.test-scenario{background:rgba(255,255,255,.1);border-radius:6px;padding:10px 14px;font-size:13px;line-height:1.65;color:#e0e8f4}
+.skala-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+.skala-table th{background:var(--bg3);color:var(--muted);padding:7px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.skala-table td{padding:6px 12px;border-bottom:1px solid rgba(42,47,64,.5);color:#c8d0de}
+.skala-table tr:last-child td{border-bottom:none}
+.test-sekcija{margin-bottom:22px}
+.test-sekcija h3{font-size:15px;font-weight:600;color:var(--accent2);padding:8px 0;border-bottom:2px solid var(--border);margin-bottom:10px}
+.task-row{display:grid;grid-template-columns:44px 1fr 52px;gap:0;border-bottom:1px solid rgba(42,47,64,.4);padding:10px 0;align-items:start}
+.task-row:last-child{border-bottom:none}
+.task-num{font-family:var(--mono);font-size:11px;color:var(--accent);padding-top:2px;font-weight:700}
+.task-txt{font-size:14px;color:#c8d0de;line-height:1.7}
+.task-txt code{font-family:var(--mono);font-size:12px;color:var(--accent2);background:var(--bg3);padding:1px 5px;border-radius:3px}
+.task-pts{text-align:right;padding-top:2px}
+.pts-badge{display:inline-block;background:rgba(79,142,247,.15);color:var(--accent2);border:1px solid rgba(79,142,247,.3);border-radius:12px;padding:1px 8px;font-size:11px;font-weight:700;font-family:var(--mono)}
+.ukupno-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:16px;font-size:14px;font-weight:600;color:var(--text)}
+.ukupno-pts{font-family:var(--mono);font-size:18px;color:var(--accent);font-weight:700}
+.potpis-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px}
+.potpis-field{border-top:1px solid var(--border);padding-top:8px;font-size:12px;color:var(--muted);text-align:center}
+
+/* Load Hive guide */
+.hive-step{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.hive-step-num{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.hive-step-title{font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.hive-step ul{list-style:none;padding:0}
+.hive-step ul li{font-size:13px;color:#c8d0de;padding:4px 0 4px 18px;position:relative;line-height:1.65}
+.hive-step ul li::before{content:'›';position:absolute;left:3px;color:var(--accent);font-size:15px;line-height:1.4}
+.hive-warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:7px;padding:10px 14px;margin:10px 0;font-size:13px;color:#fbbf24;line-height:1.65}
+.hive-pred{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px}
+.hive-pred ul{list-style:none;padding:0}
+.hive-pred ul li{font-size:13px;color:#c8d0de;padding:4px 0;line-height:1.65}
+
+/* Test nav items */
+.nav-section-test{padding:6px 16px;font-size:10px;font-weight:600;color:#f59e0b;letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
+.nav-item.test-item{color:var(--muted)}
+.nav-item.test-item.active{background:rgba(245,158,11,.1);color:#fbbf24;border-left-color:#f59e0b}
+.nav-item.test-item .nav-num{color:#92400e}
+.nav-item.test-item.active .nav-num{color:#f59e0b}
+
 </style>
 </head>
 <body>
@@ -298,6 +342,8 @@ mark{background:rgba(79,142,247,.25);color:var(--accent2);border-radius:2px;padd
     </div>
   </div>
   <nav class="nav" id="navList"></nav>
+  <div class="nav-divider"></div>
+  <div id="testNavSection"></div>
   <div class="nav-divider"></div>
   <button class="teacher-btn" onclick="openTeacherLogin()">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
@@ -775,6 +821,13 @@ function renderNav(filter=''){
       g.innerHTML=`<div class="sec-hdr">${lvl}</div>`+items.map(l=>`<div class="nav-item ${activeId===l.id?'active':''}" onclick="showPage('${l.id}')"><span class="nav-num">${l.num}</span>${l.title}<span class="nav-badge">${l.vezbe.length}v·${l.pitanja.length}p</span></div>`).join('');
       nav.appendChild(g);
     }
+    // Praktični testovi section
+    const tg=document.createElement('div');
+    tg.innerHTML=`<div class="nav-divider" style="margin:10px 16px 0"></div>
+      <div class="nav-section-test">Praktični testovi · WinXP</div>
+      <div class="nav-item test-item ${activeId==='load_hive'?'active':''}" onclick="showPage('load_hive')"><span class="nav-num" style="font-size:9px">📄</span>Load Hive – uputstvo</div>
+      ${practicalTests.map(t=>`<div class="nav-item test-item ${activeId===t.id?'active':''}" onclick="showPage('${t.id}')"><span class="nav-num">${t.group}</span>${t.title.replace('Praktični test – ','')}</div>`).join('')}`;
+    nav.appendChild(tg);
   } else {
     if(!filtered.length){nav.innerHTML='<div class="no-results">Nema rezultata</div>';return;}
     const g=document.createElement('div');
@@ -797,7 +850,7 @@ function renderHome(){
 <div class="stat-card"><div class="stat-num">${nl.length}</div><div class="stat-label">Lekcija</div></div>
 <div class="stat-card"><div class="stat-num">${tv}</div><div class="stat-label">Lab. vežbi</div></div>
 <div class="stat-card"><div class="stat-num">${tp}</div><div class="stat-label">Test pitanja</div></div>
-<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Nivoa težine</div></div>
+<div class="stat-card"><div class="stat-num">${practicalTests.length}</div><div class="stat-label">Praktičnih testova</div></div>
 </div>
 <div style="margin:24px 0 10px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Sve lekcije</div>
 <div class="quick-grid">${nl.map(l=>`<button class="quick-card" onclick="showPage('${l.id}')"><div class="qc-num">${l.num}</div><div class="qc-title">${l.title}</div><div class="qc-count">${l.vezbe.length} vežb${l.vezbe.length===1?'a':'e'} · ${l.pitanja.length} pitanja · ${l.level}</div></button>`).join('')}</div>`;
@@ -816,6 +869,20 @@ ${toc}<div class="lesson-body">${l.content}</div>
 }
 function showPage(id){
   activeId=id;
+  // Check practical tests
+  if(id === 'load_hive'){
+    document.getElementById('contentArea').innerHTML=renderHiveGuide(hiveGuide);
+    document.getElementById('mainContent').scrollTop=0;
+    renderNav(document.getElementById('searchInput').value);
+    return;
+  }
+  const pt=practicalTests.find(t=>t.id===id);
+  if(pt){
+    document.getElementById('contentArea').innerHTML=renderTest(pt);
+    document.getElementById('mainContent').scrollTop=0;
+    renderNav(document.getElementById('searchInput').value);
+    return;
+  }
   const l=lessons.find(x=>x.id===id);
   if(!l) return;
   document.getElementById('contentArea').innerHTML=l.isHome?renderHome():renderLesson(l);
@@ -912,6 +979,103 @@ function buildTeacherPanel(){
       <div class="prog-bar"><div class="prog-bar-fill" style="width:${Math.min(100,l.pitanja.length*9)}%"></div></div>`).join('');
   }
 }
+
+// ════════════════════════════════════════════════════════
+// PRAKTIČNI TESTOVI DATA
+// ════════════════════════════════════════════════════════
+const practicalTests = [{"id": "test_a", "group": "A", "title": "Praktični test – Grupa A", "subtitle": "Windows XP / VirtualBox · Školska računarska učionica", "scenario": "Tvoj zadatak je da u VirtualBox okruženju konfigurišeš Windows XP virtualnu mašinu tako da bude upotrebljiva za rad u školskoj računarskoj učionici. Mašina treba da ima dva tipa korisnika, ograničena prava, deljenu vezu sa host-om i kontrolisan prostor na disku.", "skala": [["0–5", "1", "Nedovoljan"], ["6–9", "2", "Dovoljan"], ["10–13", "3", "Dobar"], ["14–17", "4", "Vrlo dobar"], ["18–20", "5", "Odličan"]], "ukupno": 20, "sekcije": [{"naziv": "1. Korisnici i grupe", "zadaci": [["1.1", "Kreirati lokalnog korisnika: <code>ucenik01</code>, lozinka: <code>Skola2024</code>, opcija <em>Password never expires</em> uključena.", 2], ["1.2", "Kreirati lokalnog korisnika: <code>ucenik02</code>, lozinka: <code>Skola2024</code>, iste opcije.", 1], ["1.3", "Kreirati grupu: <code>Ucenici</code> i dodati oba korisnika u nju.", 2]]}, {"naziv": "2. Prava pristupa i dozvole", "zadaci": [["2.1", "Kreirati folder <code>C:\\UcenickiFajlovi</code>.", 1], ["2.2", "Dodeliti grupi <code>Ucenici</code> dozvolu <em>Read &amp; Execute</em> na folderu <code>C:\\UcenickiFajlovi</code>. Oduzeti <em>Write</em> dozvolu.", 2], ["2.3", "Administratorskom nalogu (<code>Administrator</code>) dodeliti <em>Full Control</em> na istom folderu.", 1]]}, {"naziv": "3. Zabrana sistemskih alata (Registry)", "zadaci": [["3.1", "Za korisnika <code>ucenik01</code> zabraniti pristup Control Panel-u putem Registry-ja (Load Hive metoda).<br><code>HKLM\\ucenik01_hive\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer</code><br>Vrednost: <code>NoControlPanel = 1</code> (DWORD)", 2], ["3.2", "Za korisnika <code>ucenik01</code> zabraniti pokretanje CMD-a.<br><code>HKLM\\ucenik01_hive\\Software\\Policies\\Microsoft\\Windows\\System</code><br>Vrednost: <code>DisableCMD = 1</code> (DWORD)", 2]]}, {"naziv": "4. Različiti desktopi po korisniku", "zadaci": [["4.1", "Prijaviti se kao <code>ucenik01</code> i postaviti pozadinu desktopa na čvrstu boju (npr. plavu).", 1], ["4.2", "Prijaviti se kao <code>ucenik02</code> i postaviti drugačiju pozadinu (npr. zelenu ili sliku).", 1]]}, {"naziv": "5. Deljeni folder HOST–GUEST", "zadaci": [["5.1", "Na HOST mašini kreirati folder <code>C:\\Razmena_A</code>.", 1], ["5.2", "U VirtualBox Settings → Shared Folders dodati: putanja <code>C:\\Razmena_A</code>, naziv <code>share_A</code>, Auto-mount uključen.", 1], ["5.3", "U gostujućoj XP mašini potvrditi da je mrežni disk montiran. Kreirati fajl <code>test_A.txt</code> sa tekstom <em>Grupa A</em>.", 1]]}, {"naziv": "6. Disk kvota", "zadaci": [["6.1", "Uključiti disk kvote na C: disku (Properties → Quota).", 1], ["6.2", "Postaviti Default limit: 200 MB, Warning level: 150 MB. Primeniti za korisnika <code>ucenik01</code>.", 1]]}]}, {"id": "test_b", "group": "B", "title": "Praktični test – Grupa B", "subtitle": "Windows XP / VirtualBox · Kabinet administratora", "scenario": "Tvoj zadatak je da u VirtualBox okruženju konfigurišeš Windows XP virtualnu mašinu tako da bude upotrebljiva za rad u kabinetu administratora. Mašina treba da ima administratorski i gostujući nalog, zabranjen pristup sistemskim alatima za goste, deljeni folder sa host-om i disk kvotu.", "skala": [["0–5", "1", "Nedovoljan"], ["6–9", "2", "Dovoljan"], ["10–13", "3", "Dobar"], ["14–17", "4", "Vrlo dobar"], ["18–20", "5", "Odličan"]], "ukupno": 20, "sekcije": [{"naziv": "1. Korisnici i grupe", "zadaci": [["1.1", "Kreirati lokalnog korisnika: <code>admin_b</code>, lozinka: <code>Admin2024</code>, nalog je član grupe <em>Administrators</em>.", 2], ["1.2", "Kreirati lokalnog korisnika: <code>gost_b</code>, lozinka: <code>Gost2024</code>, opcija <em>User cannot change password</em> uključena.", 1], ["1.3", "Kreirati grupu: <code>Gosti</code> i dodati <code>gost_b</code> u tu grupu.", 2]]}, {"naziv": "2. Prava pristupa i dozvole", "zadaci": [["2.1", "Kreirati folder <code>C:\\AdminFajlovi</code>.", 1], ["2.2", "Dodeliti grupi <em>Administrators</em> Full Control na <code>C:\\AdminFajlovi</code>. Grupi <code>Gosti</code> oduzeti sva prava.", 2], ["2.3", "Kreirati folder <code>C:\\JavniFajlovi</code> i dati grupi <code>Gosti</code> dozvolu Read-Only.", 1]]}, {"naziv": "3. Zabrana sistemskih alata (Registry)", "zadaci": [["3.1", "Za korisnika <code>gost_b</code> zabraniti pristup Control Panel-u (Load Hive metoda).<br><code>HKLM\\gost_b_hive\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer</code><br>Vrednost: <code>NoControlPanel = 1</code> (DWORD)", 2], ["3.2", "Za korisnika <code>gost_b</code> zabraniti pokretanje Registry Editor-a.<br><code>HKLM\\gost_b_hive\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System</code><br>Vrednost: <code>DisableRegistryTools = 1</code> (DWORD)", 2]]}, {"naziv": "4. Različiti desktopi po korisniku", "zadaci": [["4.1", "Prijaviti se kao <code>admin_b</code> i postaviti pozadinu sa slikom (npr. Windows XP default pozadina).", 1], ["4.2", "Prijaviti se kao <code>gost_b</code> i postaviti pozadinu na čvrstu tamnu boju.", 1]]}, {"naziv": "5. Deljeni folder HOST–GUEST", "zadaci": [["5.1", "Na HOST mašini kreirati folder <code>C:\\Razmena_B</code>.", 1], ["5.2", "U VirtualBox Settings → Shared Folders dodati: putanja <code>C:\\Razmena_B</code>, naziv <code>share_B</code>, Auto-mount uključen.", 1], ["5.3", "U gostujućoj XP mašini potvrditi montirani disk. Kreirati fajl <code>test_B.txt</code> sa tekstom <em>Grupa B</em>.", 1]]}, {"naziv": "6. Disk kvota", "zadaci": [["6.1", "Uključiti disk kvote na C: disku (Properties → Quota).", 1], ["6.2", "Dodati kvotu za korisnika <code>gost_b</code>: Limit 150 MB, Warning level 100 MB. Primeniti.", 1]]}]}, {"id": "test_g", "group": "G", "title": "Praktični test – Grupa G", "subtitle": "Windows XP / VirtualBox · Školska biblioteka", "scenario": "Dobio si zadatak da konfigurišeš Windows XP računar u školskoj biblioteci. Računar koriste učenici za pretragu kataloga i nastavnik kao administrator. Učenici ne smeju da menjaju sistemska podešavanja, ne smeju da pristupe Control Panel-u, imaju ograničen prostor na disku, a nastavnik može da razmenjuje fajlove sa host računara preko deljenog foldera.", "skala": [["0–5", "1", "Nedovoljan"], ["6–9", "2", "Dovoljan"], ["10–13", "3", "Dobar"], ["14–17", "4", "Vrlo dobar"], ["18–20", "5", "Odličan"]], "ukupno": 20, "sekcije": [{"naziv": "1. Korisnici i grupe", "zadaci": [["1.1", "Kreirati korisnika: <code>bibliotekar</code>, lozinka: <code>Biblio2024</code>, član grupe <em>Administrators</em>.", 2], ["1.2", "Kreirati korisnika: <code>clan_biblioteke</code>, lozinka: <code>Clan2024</code>, opcija <em>Password never expires</em> uključena.", 1], ["1.3", "Kreirati grupu: <code>Clanovi</code> i dodati <code>clan_biblioteke</code> u grupu. Proveriti da <code>clan_biblioteke</code> NIJE u grupi Administrators.", 2]]}, {"naziv": "2. Registry zabrane (Load Hive metoda)", "zadaci": [["2.1", "Load Hive: učitati profil <code>clan_biblioteke</code> → nazvati hajv: <code>clan_hive</code>.<br>Putanja: <code>C:\\Documents and Settings\\clan_biblioteke\\NTUSER.DAT</code>", 1], ["2.2", "Kreirati putanju ako ne postoji i dodati zabranu Control Panel-a:<br><code>HKLM\\clan_hive\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer</code><br><code>NoControlPanel = 1</code> (DWORD)", 2], ["2.3", "Zabraniti pokretanje regedit-a za <code>clan_biblioteke</code>:<br><code>HKLM\\clan_hive\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System</code><br><code>DisableRegistryTools = 1</code> (DWORD). Uraditi Unload Hive.", 2]]}, {"naziv": "3. Disk kvota", "zadaci": [["3.1", "Uključiti disk kvote na C: → Properties → Quota → Enable quota management + Deny disk space to users exceeding quota limit.", 1], ["3.2", "Dodati kvotu za <code>clan_biblioteke</code>: Limit 100 MB, Warning level 80 MB.", 2]]}, {"naziv": "4. Deljeni folder HOST–GUEST", "zadaci": [["4.1", "Na HOST mašini kreirati folder: <code>C:\\Biblioteka_G</code>", 1], ["4.2", "VirtualBox Settings → Shared Folders → dodati: putanja <code>C:\\Biblioteka_G</code>, naziv <code>biblio_G</code>, Auto-mount uključen.", 2], ["4.3", "U gostujućoj XP mašini potvrditi montirani disk i kreirati fajl <code>katalog_G.txt</code> sa tekstom <em>Biblioteka Grupa G</em>.", 2]]}, {"naziv": "5. Verifikacija", "zadaci": [["5.1", "Prijaviti se kao <code>clan_biblioteke</code> i potvrditi: Control Panel nije dostupan, regedit nije dostupan, deljeni folder je vidljiv.", 2]]}]}, {"id": "test_d", "group": "D", "title": "Praktični test – Grupa D", "subtitle": "Windows XP / VirtualBox · Računovodstvena kancelarija", "scenario": "Konfigurišeš Windows XP računar u maloj računovodstvenoj kancelariji. Računar koriste dva zaposlena i menadžer. Zaposleni ne smeju da pristupaju sistemskim podešavanjima niti da menjaju konfiguraciju, imaju strogo ograničen prostor na disku, a menadžer može da postavlja dokumente direktno sa svog (host) računara u deljeni folder na virtualnoj mašini.", "skala": [["0–5", "1", "Nedovoljan"], ["6–9", "2", "Dovoljan"], ["10–13", "3", "Dobar"], ["14–17", "4", "Vrlo dobar"], ["18–20", "5", "Odličan"]], "ukupno": 20, "sekcije": [{"naziv": "1. Korisnici i grupe", "zadaci": [["1.1", "Kreirati korisnika: <code>menadzer</code>, lozinka: <code>Mgr2024</code>, član grupe <em>Administrators</em>.", 2], ["1.2", "Kreirati korisnika: <code>radnik01</code>, lozinka: <code>Rad2024</code>, i korisnika: <code>radnik02</code>, lozinka: <code>Rad2024</code>. Opcija <em>Password never expires</em> uključena za oba.", 1], ["1.3", "Kreirati grupu: <code>Radnici</code> i dodati <code>radnik01</code> i <code>radnik02</code> u grupu. Proveriti da nisu članovi Administrators grupe.", 2]]}, {"naziv": "2. Registry zabrane (Load Hive metoda)", "zadaci": [["2.1", "Load Hive: učitati profil <code>radnik01</code> → nazvati hajv: <code>radnik01_hive</code>.<br>Putanja: <code>C:\\Documents and Settings\\radnik01\\NTUSER.DAT</code>", 1], ["2.2", "Kreirati putanju ako ne postoji i dodati zabranu Control Panel-a za <code>radnik01</code>:<br><code>HKLM\\radnik01_hive\\...\\Policies\\Explorer</code> → <code>NoControlPanel = 1</code> (DWORD). Unload Hive.", 2], ["2.3", "Ponoviti isti postupak (Load Hive) za <code>radnik02</code> → hajv: <code>radnik02_hive</code>. Dodati <code>NoControlPanel = 1</code> za radnik02. Unload Hive.", 2]]}, {"naziv": "3. Disk kvota", "zadaci": [["3.1", "Uključiti disk kvote na C: → Properties → Quota → Enable quota management + Deny disk space to users exceeding quota limit.", 1], ["3.2", "Dodati kvotu za <code>radnik01</code>: Limit 150 MB, Warning 120 MB. Dodati kvotu za <code>radnik02</code>: Limit 150 MB, Warning 120 MB.", 2]]}, {"naziv": "4. Deljeni folder HOST–GUEST", "zadaci": [["4.1", "Na HOST mašini kreirati folder: <code>C:\\Dokumenti_D</code>", 1], ["4.2", "VirtualBox Settings → Shared Folders → dodati: putanja <code>C:\\Dokumenti_D</code>, naziv <code>docs_D</code>, Auto-mount uključen.", 2], ["4.3", "U gostujućoj XP mašini potvrditi montirani disk i kreirati fajl <code>izvestaj_D.txt</code> sa tekstom <em>Računovodstvo Grupa D</em>.", 2]]}, {"naziv": "5. Verifikacija", "zadaci": [["5.1", "Prijaviti se kao <code>radnik01</code> i potvrditi: Control Panel nije dostupan, deljeni folder je vidljiv, kvota je aktivna (My Computer → C: → Properties → Quota).", 2]]}]}];
+const hiveGuide = {"id": "load_hive", "title": "Uputstvo: Load Hive metoda", "subtitle": "Zabrana pristupa Control Panel-u i regedit-u putem Registry-ja", "intro": "Ako zabranu postavite iz učeničkog naloga (HKCU), učenik može sam sebi da skine zabranu. Load Hive metoda omogućava da menjate Registry tuđeg profila bez prijavljivanja kao taj korisnik. Rezultat: učenik dobije zabranu, nema regedit, ne može je ukloniti.", "predduslovi": ["Prijavljen si kao Administrator (ili nalog sa administratorskim pravima)", "Korisnik čiji profil učitavate mora biti odjavljen — profil ne sme biti učitan u memoriji", "⚠ Ako je korisnik prijavljen, NTUSER.DAT je zaključan i Load Hive će javiti grešku"], "koraci": [{"broj": "1", "naziv": "Otvori Registry Editor", "stavke": ["Start → Run → unesi: <code>regedit</code> → klikni OK", "Otvoriće se Registry Editor sa stablom ključeva u levom panelu"]}, {"broj": "2", "naziv": "Učitaj profil korisnika (Load Hive)", "stavke": ["U regedit-u: <strong>File → Load Hive</strong>", "U prozoru za navigaciju idi do: <code>C:\\Documents and Settings\\ucenik01\\</code>", "Izaberi fajl: <code>NTUSER.DAT</code>", "⚠ Ako ne vidiš fajl: Tools → Folder Options → View → uključi <em>Show hidden files and folders</em>", "U polju <em>Key Name</em> unesi naziv hajva (npr. <code>ucenik01_hive</code>) → klikni OK", "⚠ Sada u stablu pod HKEY_LOCAL_MACHINE vidiš novi ključ: <code>ucenik01_hive</code>"]}, {"broj": "3", "naziv": "Zabrani Control Panel", "stavke": ["Idi do: <code>HKLM \\ ucenik01_hive \\ Software \\ Microsoft \\ Windows \\ CurrentVersion \\ Policies</code>", "Desni klik na <strong>Policies</strong> → New → Key → unesi naziv: <code>Explorer</code> → Enter", "Klikni na ključ <code>Explorer</code> da ga izabereš", "Desni klik u DESNOM panelu → New → DWORD Value", "Naziv vrednosti: <code>NoControlPanel</code> → Enter", "Dvostruki klik na <code>NoControlPanel</code> → Value data: <strong>1</strong> → OK", "✓ Rezultat: korisnik će dobiti poruku o zabrani pri pokušaju otvaranja Control Panel-a"]}, {"broj": "4", "naziv": "Zabrani regedit korisniku (opciono)", "stavke": ["Idi do: <code>HKLM \\ ucenik01_hive \\ Software \\ Microsoft \\ Windows \\ CurrentVersion \\ Policies</code>", "Desni klik na <strong>Policies</strong> → New → Key → naziv: <code>System</code> → Enter", "Desni klik u desnom panelu → New → DWORD Value", "Naziv: <code>DisableRegistryTools</code> → Enter → Value data: <strong>1</strong> → OK", "✓ Rezultat: korisnik ne može pokrenuti regedit i samostalno skinuti zabrane"]}, {"broj": "5", "naziv": "Odjavi hajv (Unload Hive) — OBAVEZNO!", "stavke": ["U levom panelu klikni na ključ <code>ucenik01_hive</code> da ga izabereš", "<strong>File → Unload Hive</strong> → potvrdi klikom na Yes", "⚠ OBAVEZNO! Ako preskočiš ovaj korak, NTUSER.DAT ostaje zaključan i profil može biti oštećen", "Zatvori regedit"]}, {"broj": "6", "naziv": "Verifikacija (provera)", "stavke": ["Odjavi se: Start → Log Off", "Prijavi se kao: <code>ucenik01</code> | lozinka: <code>Skola2024</code>", "Pokušaj da otvoriš: Start → Control Panel", "✓ Očekivano: poruka <em>\"This operation has been cancelled due to restrictions in effect on this computer.\"</em>", "Pokušaj: Start → Run → <code>regedit</code> → treba da dobiješ poruku o zabrani", "✓ Ako oba testa pokazuju zabranu — zadatak je uspešno završen!"]}, {"broj": "7", "naziv": "Napomena za nastavnika — povratak podešavanja", "stavke": ["Prijavi se kao Administrator → Load Hive → <code>ucenik01_hive</code>", "Obriši ključeve <code>NoControlPanel</code> i <code>DisableRegistryTools</code>", "Unload Hive", "Alternativno: obriši profil korisnika i napravi novi", "Po završetku — ne isključuj računar! Pozovi nastavnika na pregled."]}]};
+
+// ════════════════════════════════════════════════════════
+// RENDER PRACTICAL TEST
+// ════════════════════════════════════════════════════════
+function renderTest(test) {
+  const skalaRows = test.skala.map(([pts,oc,rec]) =>
+    `<tr><td>${pts} poena</td><td>${oc}</td><td>${rec}</td></tr>`
+  ).join('');
+
+  const sekcijeHtml = test.sekcije.map(sek => {
+    const zadaciHtml = sek.zadaci.map(([rbr, txt, pts]) =>
+      `<div class="task-row">
+        <div class="task-num">${rbr}</div>
+        <div class="task-txt">${txt}</div>
+        <div class="task-pts"><span class="pts-badge">${pts} pt</span></div>
+      </div>`
+    ).join('');
+    return `<div class="test-sekcija"><h3>${sek.naziv}</h3>${zadaciHtml}</div>`;
+  }).join('');
+
+  const ukupno = test.sekcije.reduce((s,sek) => s + sek.zadaci.reduce((a,[,, p]) => a+p, 0), 0);
+
+  return `
+    <div class="test-header">
+      <div class="chip">Praktični test · Windows XP / VirtualBox</div>
+      <h1>${test.title}</h1>
+      <div class="sub">${test.subtitle}</div>
+      <div class="test-scenario">${test.scenario}</div>
+    </div>
+
+    <div class="potpis-row">
+      <div class="potpis-field">Učenik: ___________________________</div>
+      <div class="potpis-field">Odeljenje: _________ Datum: _________</div>
+      <div class="potpis-field">Grupa: <strong>Grupa ${test.group}</strong></div>
+    </div>
+
+    <h2 class="sec" style="margin-top:20px">Skala ocenjivanja</h2>
+    <div class="table-wrap"><table class="data skala-table">
+      <tr><th>Osvojeni poeni</th><th>Ocena</th><th>Rečima</th></tr>
+      ${skalaRows}
+    </table></div>
+
+    <h2 class="sec">Zadaci</h2>
+    ${sekcijeHtml}
+
+    <div class="ukupno-row">
+      <span>UKUPNO</span>
+      <span class="ukupno-pts">${ukupno} poena</span>
+    </div>
+
+    <div class="potpis-row" style="margin-top:24px">
+      <div class="potpis-field">Ocena: __________</div>
+      <div class="potpis-field">Poena: _______ / ${ukupno}</div>
+      <div class="potpis-field">Potpis nastavnika: ______________</div>
+    </div>
+
+    <div style="margin-top:24px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted)">
+      💡 Za Registry zabrane koristiti <strong>Load Hive metodu</strong> — pogledaj uputstvo u navigacionom meniju (sekcija Praktični testovi).
+    </div>
+  `;
+}
+
+function renderHiveGuide(guide) {
+  const predHtml = `<div class="hive-pred"><div style="font-size:12px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Preduslovi</div>
+    <ul>${guide.predduslovi.map(p => `<li>${p}</li>`).join('')}</ul></div>`;
+
+  const koraciHtml = guide.koraci.map(k => `
+    <div class="hive-step">
+      <div class="hive-step-num">Korak ${k.broj}</div>
+      <div class="hive-step-title">${k.naziv}</div>
+      <ul>${k.stavke.map(s => `<li>${s}</li>`).join('')}</ul>
+    </div>`).join('');
+
+  return `
+    <div class="lesson-num">Uputstvo · Registry</div>
+    <h1 class="lesson-title">${guide.title}</h1>
+    <div class="lesson-meta">
+      <span class="badge badge-amber">⚠ Load Hive metoda</span>
+      <span class="badge badge-blue">Windows XP</span>
+      <span class="badge badge-green">Administrator nalog</span>
+    </div>
+    <div class="info-box" style="margin-bottom:18px">
+      <div class="ib-title">Zašto Load Hive metoda?</div>
+      <p>${guide.intro}</p>
+    </div>
+    ${predHtml}
+    <h2 class="sec">Koraci</h2>
+    ${koraciHtml}
+  `;
+}
+
 // ════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════
